@@ -170,7 +170,7 @@ function onStop(hub, input, me) {
     out({
       decision: 'block',
       reason: `Session Hub: your listener isn't running, so other agents can't wake you. ` +
-        `Start it with the Bash tool, run_in_background: true: ${CLI} wait --as ${me} — then you can stop.`,
+        `Start it with the Bash tool, run_in_background: true: ${CLI} wait --as ${me}: then you can stop.`,
     });
   }
 }
