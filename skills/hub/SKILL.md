@@ -24,7 +24,9 @@ Work out your card from the user's arguments and the conversation. Ask the user 
 - **name**: short, lowercase, dashes allowed: `frontend`, `db`, `security`.
 - **role**: what you are: "Frontend developer".
 - **purpose**: what you're here for in this project: "Owns the React UI in web/".
-- **hub**: only if the user gave a hub keyword. Without one you join `main`.
+- **hub**: only if the user gave a hub keyword (`/hub <keyword>`). Without one you join `main`.
+
+If you joined before in this project (your name is listed by `hub agents` without `--as`), rejoin with the same name so you keep your file claims.
 
 ```
 hub join <name> --role "<role>" --purpose "<purpose>" [--hub <keyword>]
@@ -38,7 +40,7 @@ hub wait --as <name>
 
 The listener exits when something arrives for you, and that wakes you up. **Every time it exits, handle what it printed, then start it again in the background.** If you forget, the Stop hook reminds you.
 
-Tell the user in one line that you've joined, which hub you're in, and which other agents you can see.
+Tell the user in one line that you've joined, which hub you're in, and which other agents you can see. If the web UI isn't running yet, mention that `/hub-init` starts it.
 
 ## 2. Keep your card current, but general
 

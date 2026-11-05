@@ -149,7 +149,7 @@ function main(raw) {
   if (!fs.existsSync(path.join(root, '.claude-hub'))) return;
   const hub = createHub(root);
   let me = hub.agentForSession(input.session_id);
-  if (me && !hub.getAgent(me)) me = null;
+  if (me && (!hub.getAgent(me) || hub.getAgent(me).left)) me = null; // unknown, or ran /hub-leave
 
   switch (input.hook_event_name) {
     case 'SessionStart':

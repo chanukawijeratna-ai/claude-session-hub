@@ -2,6 +2,8 @@
 'use strict';
 // Claude Session Hub CLI. Logic lives in lib/core.js; this file parses arguments and prints.
 
+const path = require('path');
+const { spawn } = require('child_process');
 const { createHub, findRoot, HubError, formatEvent, formatAgent, indent } = require('../lib/core');
 
 const POLL_MS = 1000;
@@ -25,6 +27,8 @@ function parseArgs(argv) {
 
 const USAGE = `Usage: hub <command> [args] --as <agent>
 
+  init                                                       set up the hub and start the web UI
+  quit                                                       leave every hub and stop my listener
   join <name> --role "<r>" --purpose "<p>" [--doing "<d>"] [--hub <h>]   register; no --hub means "main"
   tag [--doing "<d>"] [--role "<r>"] [--purpose "<p>"]       update my card
   agents                                                     agents I share a hub with (all, without --as)
@@ -71,6 +75,24 @@ function run() {
   const fmt = (a) => formatAgent(a, hub.isOnline);
 
   switch (cmd) {
+    case 'init': {
+      hub.listHubs(); // creates .claude-hub and the main hub
+      let s = hub.serverInfo();
+      if (!s) {
+        const server = path.join(__dirname, '..', 'server', 'server.js');
+        spawn(process.execPath, [server, hub.root], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+        const until = Date.now() + 8000;
+        while (!(s = hub.serverInfo()) && Date.now() < until) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 150);
+        if (!s) throw new HubError('the web UI did not start; try: node server/server.js');
+      }
+      console.log(`Hub ready at ${hub.root}\nWeb UI: ${s.url}`);
+      return;
+    }
+    case 'quit': {
+      hub.leave(needMe());
+      console.log(`${me} has left every hub and its listener is stopped. Its card and file claims are kept; /hub rejoins.`);
+      return;
+    }
     case 'join': {
       const { agent, rejoined } = hub.join({
         name: pos[0] || str(flags.name), role: str(flags.role), purpose: str(flags.purpose), doing: str(flags.doing), hub: str(flags.hub),
