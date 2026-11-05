@@ -135,12 +135,22 @@ const THEMES = ['system', 'light', 'dark'];
 const THEME_ICON = { system: 'monitor', light: 'sun', dark: 'moon' };
 const THEME_LABEL = { system: 'Theme follows your system', light: 'Light theme', dark: 'Dark theme' };
 function getTheme() { try { return localStorage.getItem('hub-theme') || 'system'; } catch { return 'system'; } }
+// Colours switch in one frame: transitions are off while the theme changes, so nothing is left half-changed.
+function switchColours(change) {
+  const root = document.documentElement;
+  root.classList.add('theme-switching');
+  change();
+  paintCamo();
+  void root.offsetWidth;
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
+}
 function applyTheme(t) {
-  if (t === 'system') document.documentElement.removeAttribute('data-theme');
-  else document.documentElement.setAttribute('data-theme', t);
+  switchColours(() => {
+    if (t === 'system') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+  });
   const b = $('themeBtn');
   if (b) { b.innerHTML = ic(THEME_ICON[t]); b.title = `${THEME_LABEL[t]}. Click to change.`; b.setAttribute('aria-label', b.title); }
-  paintCamo();
 }
 function initTheme() {
   applyTheme(getTheme());
@@ -150,5 +160,5 @@ function initTheme() {
     applyTheme(next);
     toast(THEME_LABEL[next]);
   });
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (getTheme() === 'system') paintCamo(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { if (getTheme() === 'system') switchColours(() => {}); });
 }

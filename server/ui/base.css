@@ -124,6 +124,8 @@ a.brand:hover .logo { transform: rotate(-8deg) scale(1.05); }
 #toast svg.i { color: var(--toast-icon); }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+.theme-switching *, .theme-switching *::before, .theme-switching *::after { transition: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

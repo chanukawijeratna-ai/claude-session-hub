@@ -1078,8 +1078,6 @@ function viewGraph(h) {
   }
   const w = (n) => Math.min(1.6 + Math.log2(n + 1) * 1.6, 8);
   const totalPosts = Object.values(posts).reduce((a, b) => a + b, 0);
-  const boardEdges = Object.entries(posts).filter(([n]) => pos[n]).map(([n, c]) =>
-    `<line x1="${cx}" y1="${cy}" x2="${pos[n][0]}" y2="${pos[n][1]}" stroke="var(--border-strong)" stroke-width="1.6" stroke-dasharray="3 6" stroke-linecap="round"><title>${esc(n)} posted ${c} times on the board</title></line>`).join('');
   const labels = [];
   const edges = [...flow.entries()].map(([k, c]) => {
     const [a, b] = k.split('>');
@@ -1093,8 +1091,11 @@ function viewGraph(h) {
     const [ex, ey] = toward(x2, y2, mx, my, NR + 10);
     const total = c.msgs + c.tasks + c.reports;
     const parts = [c.tasks && plural(c.tasks, 'task'), c.reports && plural(c.reports, 'update'), c.msgs && plural(c.msgs, 'message')].filter(Boolean);
-    const lx = 0.25 * x1 + 0.5 * mx + 0.25 * x2, ly = 0.25 * y1 + 0.5 * my + 0.25 * y2;
-    labels.push(`<text x="${lx}" y="${ly + 4}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent-text)" stroke="var(--panel)" stroke-width="6" stroke-linejoin="round" paint-order="stroke" pointer-events="none">${esc(parts.join(', '))}</text>`);
+    // Label just outside the curve, anchored away from it, so the two directions' labels never overlap.
+    const nx = -dy / len, ny = dx / len;
+    const lx = 0.25 * x1 + 0.5 * mx + 0.25 * x2 + nx * 10, ly = 0.25 * y1 + 0.5 * my + 0.25 * y2 + ny * 10;
+    const anchor = nx > 0.35 ? 'start' : nx < -0.35 ? 'end' : 'middle';
+    labels.push(`<text x="${lx}" y="${ly + 4}" text-anchor="${anchor}" font-size="12" font-weight="600" fill="var(--accent-text)" stroke="var(--panel)" stroke-width="6" stroke-linejoin="round" paint-order="stroke" pointer-events="none">${esc(parts.join(', '))}</text>`);
     const d = `M${sx} ${sy} Q${mx} ${my} ${ex} ${ey}`;
     return `<g class="edge" data-convo="${esc(pairKey(a, b))}">
       <path class="ln" d="${d}" fill="none" stroke="var(--accent)" stroke-opacity=".55" stroke-width="${w(total)}" stroke-linecap="round" marker-end="url(#arr)"/>
@@ -1116,16 +1117,14 @@ function viewGraph(h) {
       <text x="${x}" y="${dy}" text-anchor="middle" fill="var(--faint)" font-size="11.5" stroke="var(--panel)" stroke-width="6" stroke-linejoin="round" paint-order="stroke">${esc(doing.slice(0, 34))}${doing.length > 34 ? '…' : ''}</text>
       <title>${esc(a.name)}, ${esc(a.role)}. Click for details.</title></g>`;
   }).join('');
-  const bw = 100;
-  const board = `<g><rect x="${cx - bw / 2}" y="${cy - 22}" width="${bw}" height="44" rx="12" fill="var(--panel-2)" stroke="var(--border-strong)"/>
-    <text x="${cx}" y="${cy - 2}" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="700">Board</text>
-    <text x="${cx}" y="${cy + 13}" text-anchor="middle" fill="var(--faint)" font-size="11">${plural(totalPosts, 'post')}</text></g>`;
+  // The board sits in a corner, out of the way of lines between agents.
+  const board = `<g><rect x="16" y="16" width="112" height="30" rx="9" fill="var(--panel-2)" stroke="var(--border-strong)"/>
+    <text x="72" y="36" text-anchor="middle" fill="var(--muted)" font-size="12" font-weight="650">Board: ${plural(totalPosts, 'post')}</text></g>`;
   const defs = `<defs><marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>`;
   const key = (inner) => `<svg class="k" viewBox="0 0 26 10">${inner}</svg>`;
-  return `<div class="graph-wrap surface"><svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="Who talks to whom in ${HN(h)}">${defs}${boardEdges}${edges}${board}${nodes}${labels.join('')}</svg>
+  return `<div class="graph-wrap surface"><svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="Who talks to whom in ${HN(h)}">${defs}${edges}${board}${nodes}${labels.join('')}</svg>
     <div class="legend">
       <span>${key('<path d="M2 5h20" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><path d="M19 2l3 3-3 3" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>')}Tasks, messages and updates, in the direction they went. Thicker means more.</span>
-      <span>${key('<path d="M2 5h22" stroke="var(--border-strong)" stroke-width="1.6" stroke-dasharray="3 5" stroke-linecap="round"/>')}Board posts</span>
       <span>${key('<circle cx="13" cy="5" r="4" fill="var(--lime)"/>')}Glowing agents are working now</span>
     </div></div>`;
 }
