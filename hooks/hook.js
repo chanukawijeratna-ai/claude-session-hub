@@ -104,12 +104,27 @@ function guard(hub, input, me) {
   });
 }
 
+// The join command prints `Joined the hub at <root> as "<name>"`. Matching its output works
+// however the command was written (full path, a shell variable, an alias...).
+function joinedAs(response) {
+  const text = typeof response === 'string' ? response : JSON.stringify(response || '');
+  const all = [...text.matchAll(/Joined the hub at .*? as \\?"([a-z0-9][a-z0-9-]*)\\?"/g)];
+  return all.length ? all[all.length - 1][1] : null;
+}
+
+// Fallback for a session that never linked: a hub command run `--as <name>` says who it is.
+function asFlag(command) {
+  if (!/\bhub(\.js)?\b/.test(command || '')) return null;
+  const m = /--as[=\s]+["']?([a-z0-9][a-z0-9-]*)/.exec(command);
+  return m ? m[1] : null;
+}
+
 function onPostToolUse(hub, input, me) {
   const ti = input.tool_input || {};
   // Link this session to the agent it just joined as.
   if (SHELL_TOOLS.includes(input.tool_name)) {
-    const m = /hub(?:\.js)?["']?\s+join\s+([a-z0-9][a-z0-9-]*)/.exec(ti.command || '');
-    if (m && hub.getAgent(m[1])) { hub.mapSession(input.session_id, m[1]); me = m[1]; }
+    const name = joinedAs(input.tool_response) || (!me && asFlag(ti.command));
+    if (name && name !== me && hub.getAgent(name)) { hub.mapSession(input.session_id, name); me = name; }
   }
   if (!me) return;
   hub.touch(me);

@@ -27,12 +27,21 @@ function hook(input, cwd = root) {
   return r.stdout ? JSON.parse(r.stdout) : null;
 }
 
-const joinCmd = (name) => `node "C:/x/bin/hub.js" join ${name} --role "r" --purpose "p"`;
+// Real sessions often run the CLI through a shell variable, so the link must come from the output.
+const joinCmd = (name) => `H="C:/x/bin/hub.js"; node "$H" agents; node "$H" join ${name} --role "r" --purpose "p"`;
 
 function link(session, name) {
-  hub('join', name, '--role', `${name} role`, '--purpose', `${name} purpose`);
-  hook({ hook_event_name: 'PostToolUse', session_id: session, tool_name: 'Bash', tool_input: { command: joinCmd(name) } });
+  const stdout = hub('join', name, '--role', `${name} role`, '--purpose', `${name} purpose`);
+  hook({ hook_event_name: 'PostToolUse', session_id: session, tool_name: 'Bash', tool_input: { command: joinCmd(name) }, tool_response: { stdout, stderr: '', interrupted: false } });
 }
+
+test('a session that never linked is linked by a hub command run --as its name', () => {
+  hub('join', 'late', '--role', 'r', '--purpose', 'p');
+  hook({ hook_event_name: 'PostToolUse', session_id: 'S-late', tool_name: 'Bash', tool_input: { command: 'H="C:/x/bin/hub.js"; node "$H" inbox --as late' }, tool_response: { stdout: '' } });
+  const sessions = fs.readdirSync(path.join(root, '.claude-hub', 'sessions')).map((f) => fs.readFileSync(path.join(root, '.claude-hub', 'sessions', f), 'utf8'));
+  assert.ok(sessions.some((s) => s.includes('late')));
+  hub('quit', '--as', 'late');
+});
 
 before(() => {
   link('S-backend', 'backend');
