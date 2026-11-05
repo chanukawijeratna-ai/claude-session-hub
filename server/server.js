@@ -70,11 +70,12 @@ async function handle(req, res, port) {
     req.on('close', () => clients.delete(res));
     return undefined;
   }
-  if (req.method === 'POST' && (url.pathname === '/api/hubs' || url.pathname === '/api/membership')) {
+  if (req.method === 'POST' && ['/api/hubs', '/api/membership', '/api/work'].includes(url.pathname)) {
     if (!trustedWrite(req, port)) return send(res, 403, { error: 'forbidden' });
     try {
       const body = await readBody(req);
       if (url.pathname === '/api/hubs') hub.createHubNamed(String(body.name || '').trim(), 'user');
+      else if (url.pathname === '/api/work') hub.postWork({ hub: String(body.hub || ''), lead: String(body.lead || ''), title: body.title, body: body.body });
       else if (body.action === 'add') hub.addToHub(String(body.agent), String(body.hub), 'user');
       else if (body.action === 'remove') hub.removeFromHub(String(body.agent), String(body.hub), 'user');
       else throw new HubError('action must be add or remove');

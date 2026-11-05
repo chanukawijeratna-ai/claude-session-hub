@@ -92,6 +92,15 @@ When the user gives you a feature and asks you to collaborate, **you are the lea
 6. Check progress any time with `hub tasks --mine --as <name>`.
 7. When everything is done, tell the user what was built and by whom.
 
+### Work the user posts on the board
+
+The user can post work from the web UI and pick you to lead it. It arrives as a `[WORK]` item, a task from `user`. Lead it exactly as above:
+
+1. `hub task-update <id> accepted --as <name>`, and set your `doing` to it.
+2. Post your plan to the board in a few lines so the others know what's coming.
+3. Hand out parts with `--parent <id>` so they show under the user's work in the UI.
+4. When every part is done, report to the user: `hub task-update <id> done --report "<what was built, by whom, how to try it>" --as <name>`. That report is what the user reads on the board, so make it complete and plain.
+
 ## 6. Working on a task you were given
 
 1. Accept it: `hub task-update <id> accepted --as <name>`, and set your `doing`.

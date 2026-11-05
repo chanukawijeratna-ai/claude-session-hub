@@ -81,6 +81,28 @@ test('creating a hub and moving an agent notifies the agent', async () => {
   assert.match(hub('hubs'), /unassigned: frontend/);
 });
 
+test('work posted on the board goes to the chosen lead only', async () => {
+  hub('enter', 'main', '--as', 'frontend');
+  const r = await json('POST', '/api/work', { hub: 'main', lead: 'backend', title: 'Add login', body: 'Email and password.' });
+  assert.strictEqual(r.status, 200);
+  const inbox = hub('inbox', '--as', 'backend');
+  assert.match(inbox, /\[WORK @main\] user -> backend: "Add login"/);
+  assert.match(inbox, /chose you to lead it/);
+  assert.doesNotMatch(hub('inbox', '--as', 'frontend'), /Add login/);
+  const id = /id ([0-9a-f]{8})/.exec(inbox)[1];
+  hub('task-update', id, 'done', '--report', 'Built it', '--as', 'backend');
+  const { json: s } = await json('GET', '/api/state');
+  const t = s.tasks.find((x) => x.id === id);
+  assert.strictEqual(t.work, true);
+  assert.strictEqual(t.status, 'done');
+
+  assert.match((await json('POST', '/api/work', { hub: 'main', lead: '', title: 'x' })).json.error, /choose an agent/);
+  assert.match((await json('POST', '/api/work', { hub: 'main', lead: 'backend', title: '  ' })).json.error, /title/);
+  hub('enter', 'lab2', '--as', 'frontend');
+  assert.match((await json('POST', '/api/work', { hub: 'lab2', lead: 'backend', title: 'x' })).json.error, /not in hub/);
+  hub('leave', 'lab2', '--as', 'frontend');
+});
+
 test('bad input is a 400 with a reason', async () => {
   const r = await json('POST', '/api/hubs', { name: 'Bad Name' });
   assert.strictEqual(r.status, 400);
