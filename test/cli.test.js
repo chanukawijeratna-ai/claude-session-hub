@@ -9,7 +9,7 @@ const path = require('node:path');
 
 const HUB = path.join(__dirname, '..', 'bin', 'hub.js');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-test-'));
-const env = { ...process.env, HUB_ROOT: root };
+const env = { ...process.env, HUB_ROOT: root, HUB_HOME: fs.mkdtempSync(path.join(os.tmpdir(), 'hub-home-')), HUB_NO_SERVER: '1' };
 
 function hub(...args) {
   const r = spawnSync(process.execPath, [HUB, ...args], { env, encoding: 'utf8' });
@@ -26,8 +26,17 @@ before(() => {
   ok('join', 'backend', '--role', 'Backend dev', '--purpose', 'API server');
   ok('join', 'frontend', '--role', 'Frontend dev', '--purpose', 'React UI');
   ok('join', 'security', '--role', 'Security reviewer', '--purpose', 'Audits changes');
+  require('../lib/core').createHub(root).createHubNamed('lab'); // private hubs are made in the web UI
   ok('join', 'alpha', '--role', 'Prototype dev', '--purpose', 'Spike A', '--hub', 'lab');
   ok('join', 'beta', '--role', 'Prototype dev', '--purpose', 'Spike B', '--hub', 'lab');
+});
+
+test('/hub with a hub name that does not exist joins main', () => {
+  const out = ok('join', 'gamma', '--role', 'r', '--purpose', 'p', '--hub', 'nowhere');
+  assert.match(out, /no hub named "nowhere", so you joined "main"/);
+  assert.match(ok('hubs'), /main: [^\n]*gamma/);
+  assert.doesNotMatch(ok('hubs'), /nowhere/);
+  ok('quit', '--as', 'gamma');
 });
 
 test('agents lists every card when no --as is given', () => {

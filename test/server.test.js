@@ -1,5 +1,5 @@
 'use strict';
-// Starts the web server against a temp project and drives its API. Run: node --test test/
+// Starts the shared web server against a temp project and drives its API. Run: node --test test/
 const { test, before, after } = require('node:test');
 const assert = require('node:assert');
 const { spawnSync, spawn } = require('node:child_process');
@@ -11,9 +11,12 @@ const http = require('node:http');
 const HUB = path.join(__dirname, '..', 'bin', 'hub.js');
 const SERVER = path.join(__dirname, '..', 'server', 'server.js');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-server-'));
+const home = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-home-'));
 const port = 5100 + Math.floor(Math.random() * 400);
-const env = { ...process.env, HUB_ROOT: root, HUB_PORT: String(port) };
+const env = { ...process.env, HUB_ROOT: root, HUB_HOME: home, HUB_PORT: String(port) };
 let server;
+let slug;
+const api = (p) => `/api/p/${slug}/${p}`;
 
 function hub(...args) {
   const r = spawnSync(process.execPath, [HUB, ...args], { env, encoding: 'utf8' });
@@ -27,7 +30,7 @@ function req(method, p, body, headers = {}) {
     const r = http.request({ host: '127.0.0.1', port, path: p, method, headers: { ...(data ? { 'Content-Type': 'application/json' } : {}), ...headers } }, (res) => {
       let raw = '';
       res.on('data', (d) => { raw += d; });
-      res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'], body: raw }));
+      res.on('end', () => resolve({ status: res.statusCode, type: res.headers['content-type'], body: raw, headers: res.headers }));
     });
     r.on('error', reject);
     if (data) r.write(data);
@@ -39,51 +42,72 @@ const json = async (...a) => { const r = await req(...a); return { ...r, json: J
 before(async () => {
   hub('join', 'backend', '--role', 'Backend dev', '--purpose', 'API');
   hub('join', 'frontend', '--role', 'Frontend dev', '--purpose', 'UI');
-  server = spawn(process.execPath, [SERVER, root], { env });
+  server = spawn(process.execPath, [SERVER], { env });
   await new Promise((resolve, reject) => {
     server.stdout.on('data', (d) => { if (String(d).includes('http://localhost:')) resolve(); });
     server.on('exit', (c) => reject(new Error(`server exited ${c}`)));
   });
+  slug = /Project: (\S+)/.exec(hub('init'))[1];
 });
 after(() => server.kill());
 
-test('serves the UI page', async () => {
-  const r = await req('GET', '/');
+test('a project gets a readable, unique slug and its own address', () => {
+  assert.match(slug, new RegExp(`^${path.basename(root).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-[0-9a-f]{4}$`));
+  assert.match(hub('init'), new RegExp(`Web UI: http://localhost:${port}/p/${slug}/`));
+  assert.match(hub('join', 'backend'), new RegExp(`/p/${slug}/`));
+});
+
+test('the home page lists every project that uses the hub', async () => {
+  const page = await req('GET', '/');
+  assert.strictEqual(page.status, 200);
+  assert.match(page.body, /<title>Session Hub<\/title>/);
+  const { json: j } = await json('GET', '/api/projects');
+  const p = j.projects.find((x) => x.slug === slug);
+  assert.ok(p, 'project listed');
+  assert.strictEqual(p.root, path.resolve(root));
+  assert.deepStrictEqual(p.agents.map((a) => a.name).sort(), ['backend', 'frontend']);
+});
+
+test('serves a project UI under its slug, and 404s unknown projects', async () => {
+  const r = await req('GET', `/p/${slug}/`);
   assert.strictEqual(r.status, 200);
   assert.match(r.type, /text\/html/);
-  assert.match(r.body, /<title>Session Hub<\/title>/);
+  assert.strictEqual((await req('GET', `/p/${slug}`)).headers.location, `/p/${slug}/`);
+  assert.strictEqual((await req('GET', '/api/p/nope-0000/state')).status, 404);
+  assert.match((await req('GET', '/ui/base.css')).type, /text\/css/);
 });
 
 test('state lists hubs, agents and events', async () => {
   hub('post', 'hello all', '--as', 'backend');
-  const { json: s } = await json('GET', '/api/state');
+  const { json: s } = await json('GET', api('state'));
+  assert.strictEqual(s.slug, slug);
   assert.deepStrictEqual(s.hubs, ['main']);
   assert.deepStrictEqual(s.agents.map((a) => a.name).sort(), ['backend', 'frontend']);
   assert.ok(s.agents.every((a) => a.online === true && a.listening === false));
   assert.ok(s.events.some((e) => e.text === 'hello all' && e.hub === 'main'));
 });
 
-test('records itself so hub init can find it', () => {
-  const info = JSON.parse(fs.readFileSync(path.join(root, '.claude-hub', 'server.json'), 'utf8'));
+test('records itself once for the whole machine', () => {
+  const info = JSON.parse(fs.readFileSync(path.join(home, 'server.json'), 'utf8'));
   assert.strictEqual(info.port, port);
-  assert.match(hub('init'), new RegExp(`Web UI: http://localhost:${port}`));
+  assert.ok(!fs.existsSync(path.join(root, '.claude-hub', 'server.json')));
 });
 
 test('creating a hub and moving an agent notifies the agent', async () => {
-  assert.strictEqual((await json('POST', '/api/hubs', { name: 'lab' })).status, 200);
-  assert.strictEqual((await json('POST', '/api/membership', { agent: 'frontend', hub: 'lab', action: 'add' })).status, 200);
+  assert.strictEqual((await json('POST', api('hubs'), { name: 'lab' })).status, 200);
+  assert.strictEqual((await json('POST', api('membership'), { agent: 'frontend', hub: 'lab', action: 'add' })).status, 200);
   assert.match(hub('hubs'), /lab: frontend/);
   assert.match(hub('inbox', '--as', 'frontend'), /\[HUB\] user added you to hub "lab"[\s\S]*main, lab/);
 
-  await json('POST', '/api/membership', { agent: 'frontend', hub: 'main', action: 'remove' });
-  await json('POST', '/api/membership', { agent: 'frontend', hub: 'lab', action: 'remove' });
+  await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'remove' });
+  await json('POST', api('membership'), { agent: 'frontend', hub: 'lab', action: 'remove' });
   assert.match(hub('inbox', '--as', 'frontend'), /unassigned/);
   assert.match(hub('hubs'), /unassigned: frontend/);
 });
 
 test('work posted on the board goes to the chosen lead only', async () => {
   hub('enter', 'main', '--as', 'frontend');
-  const r = await json('POST', '/api/work', { hub: 'main', lead: 'backend', title: 'Add login', body: 'Email and password.' });
+  const r = await json('POST', api('work'), { hub: 'main', lead: 'backend', title: 'Add login', body: 'Email and password.' });
   assert.strictEqual(r.status, 200);
   const inbox = hub('inbox', '--as', 'backend');
   assert.match(inbox, /\[WORK @main\] user -> backend: "Add login"/);
@@ -91,32 +115,47 @@ test('work posted on the board goes to the chosen lead only', async () => {
   assert.doesNotMatch(hub('inbox', '--as', 'frontend'), /Add login/);
   const id = /id ([0-9a-f]{8})/.exec(inbox)[1];
   hub('task-update', id, 'done', '--report', 'Built it', '--as', 'backend');
-  const { json: s } = await json('GET', '/api/state');
+  const { json: s } = await json('GET', api('state'));
   const t = s.tasks.find((x) => x.id === id);
   assert.strictEqual(t.work, true);
   assert.strictEqual(t.status, 'done');
 
-  assert.match((await json('POST', '/api/work', { hub: 'main', lead: '', title: 'x' })).json.error, /choose an agent/);
-  assert.match((await json('POST', '/api/work', { hub: 'main', lead: 'backend', title: '  ' })).json.error, /title/);
+  assert.match((await json('POST', api('work'), { hub: 'main', lead: '', title: 'x' })).json.error, /choose an agent/);
+  assert.match((await json('POST', api('work'), { hub: 'main', lead: 'backend', title: '  ' })).json.error, /title/);
   hub('enter', 'lab2', '--as', 'frontend');
-  assert.match((await json('POST', '/api/work', { hub: 'lab2', lead: 'backend', title: 'x' })).json.error, /not in hub/);
+  assert.match((await json('POST', api('work'), { hub: 'lab2', lead: 'backend', title: 'x' })).json.error, /not in hub/);
   hub('leave', 'lab2', '--as', 'frontend');
 });
 
+test('images attached to work are saved, served, and listed for the lead', async () => {
+  const png = Buffer.from('89504e470d0a1a0a0000000d4948445200000001000000010806000000', 'hex'); // a PNG header is enough here
+  const r = await json('POST', api('work'), { hub: 'main', lead: 'backend', title: 'Match this mockup', images: [{ name: 'mockup.png', type: 'image/png', data: png.toString('base64') }] });
+  assert.strictEqual(r.status, 200, r.body);
+  const inbox = hub('inbox', '--as', 'backend');
+  assert.match(inbox, /attached 1 image\(s\)[\s\S]*attachments[\\/][0-9a-f]{12}-0\.png {2}\(mockup\.png\)/);
+  const file = /([0-9a-f]{12}-0\.png)/.exec(inbox)[1];
+  assert.ok(fs.existsSync(path.join(root, '.claude-hub', 'attachments', file)));
+  const img = await req('GET', api(`attachments/${file}`));
+  assert.strictEqual(img.status, 200);
+  assert.strictEqual(img.type, 'image/png');
+  assert.strictEqual((await req('GET', api('attachments/..%2Fagents%2Fbackend.json'))).status, 404);
+  assert.match((await json('POST', api('work'), { hub: 'main', lead: 'backend', title: 'x', images: [{ name: 'a.svg', type: 'image/svg+xml', data: 'PHN2Zz4=' }] })).json.error, /not a PNG/);
+});
+
 test('bad input is a 400 with a reason', async () => {
-  const r = await json('POST', '/api/hubs', { name: 'Bad Name' });
+  const r = await json('POST', api('hubs'), { name: 'Bad Name' });
   assert.strictEqual(r.status, 400);
   assert.match(r.json.error, /bad hub name/);
-  assert.strictEqual((await json('POST', '/api/membership', { agent: 'ghost', hub: 'main', action: 'add' })).status, 400);
-  const dup = await json('POST', '/api/hubs', { name: 'main' });
+  assert.strictEqual((await json('POST', api('membership'), { agent: 'ghost', hub: 'main', action: 'add' })).status, 400);
+  const dup = await json('POST', api('hubs'), { name: 'main' });
   assert.strictEqual(dup.status, 400);
   assert.match(dup.json.error, /already exists/);
 });
 
 test('writes from other origins are refused', async () => {
-  assert.strictEqual((await req('POST', '/api/hubs', { name: 'evil' }, { Host: 'evil.example' })).status, 403);
+  assert.strictEqual((await req('POST', api('hubs'), { name: 'evil' }, { Host: 'evil.example' })).status, 403);
   const plain = await new Promise((resolve) => {
-    const r = http.request({ host: '127.0.0.1', port, path: '/api/hubs', method: 'POST', headers: { 'Content-Type': 'text/plain' } }, (res) => resolve(res.statusCode));
+    const r = http.request({ host: '127.0.0.1', port, path: api('hubs'), method: 'POST', headers: { 'Content-Type': 'text/plain' } }, (res) => resolve(res.statusCode));
     r.on('error', () => {}); // the server may close before reading the body
     r.end('{"name":"evil"}');
   });
@@ -127,7 +166,7 @@ test('writes from other origins are refused', async () => {
 test('stream pushes the state, then changes', async () => {
   const got = [];
   await new Promise((resolve, reject) => {
-    const r = http.get({ host: '127.0.0.1', port, path: '/api/stream' }, (res) => {
+    const r = http.get({ host: '127.0.0.1', port, path: api('stream') }, (res) => {
       let buf = '';
       res.on('data', (d) => {
         buf += d;
@@ -153,10 +192,38 @@ test('quit takes an agent out of every hub and stops its listener', async () => 
   await new Promise((r) => setTimeout(r, 800));
   hub('quit', '--as', 'backend');
   await Promise.race([exited, new Promise((_, rej) => setTimeout(() => rej(new Error('listener still running')), 4000))]);
-  const { json: s } = await json('GET', '/api/state');
+  const { json: s } = await json('GET', api('state'));
   const b = s.agents.find((a) => a.name === 'backend');
   assert.deepStrictEqual(b.hubs, []);
   assert.strictEqual(b.online, false);
   hub('join', 'backend');
   assert.match(hub('hubs'), /main: backend/);
+});
+
+test('wipe needs the user to type the slug, then deletes everything', async () => {
+  const run = (...args) => spawnSync(process.execPath, [HUB, ...args], { env, encoding: 'utf8' });
+  const w = spawn(process.execPath, [HUB, 'wait', '--as', 'backend'], { env });
+  const exited = new Promise((r) => w.on('exit', r));
+  await new Promise((r) => setTimeout(r, 800));
+
+  assert.match(hub('wipe'), new RegExp(`type the project name in the chat, exactly:\\s+${slug}`));
+  assert.match(run('wipe', '--confirm', 'wrong').stderr, /must be exactly/);
+  assert.match(run('wipe', '--confirm', slug).stderr, /has not typed/); // the agent alone can't confirm
+  assert.ok(fs.existsSync(path.join(root, '.claude-hub', 'agents')));
+
+  // The user types the slug as their own message; the prompt hook records it.
+  const HOOK = path.join(__dirname, '..', 'hooks', 'hook.js');
+  spawnSync(process.execPath, [HOOK], { env, input: JSON.stringify({ hook_event_name: 'UserPromptSubmit', session_id: 'S1', cwd: root, prompt: `  ${slug}\n` }) });
+  assert.match(hub('wipe', '--confirm', slug), /Wiped/);
+  await Promise.race([exited, new Promise((_, rej) => setTimeout(() => rej(new Error('listener survived the wipe')), 4000))]);
+
+  assert.ok(!fs.existsSync(path.join(root, '.claude-hub')));
+  assert.ok(!(await json('GET', '/api/projects')).json.projects.some((p) => p.slug === slug));
+  assert.strictEqual((await req('GET', api('state'))).status, 404);
+  assert.match(run('agents').stderr, /no Session Hub/);
+  assert.ok(!fs.existsSync(path.join(root, '.claude-hub')), 'reading must not recreate the hub');
+
+  hub('join', 'fresh', '--role', 'r', '--purpose', 'p'); // /hub starts over
+  assert.match(hub('agents'), /fresh/);
+  assert.doesNotMatch(hub('agents'), /backend/);
 });

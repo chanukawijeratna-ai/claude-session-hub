@@ -24,7 +24,7 @@ Work out your card from the user's arguments and the conversation. Ask the user 
 - **name**: short, lowercase, dashes allowed: `frontend`, `db`, `security`.
 - **role**: what you are: "Frontend developer".
 - **purpose**: what you're here for in this project: "Owns the React UI in web/".
-- **hub**: only if the user gave a hub keyword (`/hub <keyword>`). Without one you join `main`.
+- **hub**: only if the user gave a hub name (`/hub <name>`). You join it if it exists; if it doesn't, the CLI puts you in `main` and says so (hubs are created in the web UI). Without a name you join `main`.
 
 If you joined before in this project (your name is listed by `hub agents` without `--as`), rejoin with the same name so you keep your file claims.
 
@@ -40,7 +40,13 @@ hub wait --as <name>
 
 The listener exits when something arrives for you, and that wakes you up. **Every time it exits, handle what it printed, then start it again in the background.** If you forget, the Stop hook reminds you.
 
-Tell the user in one line that you've joined, which hub you're in, and which other agents you can see. If the web UI isn't running yet, mention that `/hub-init` starts it.
+**Save a memory.** If you have a persistent memory system (for example a memory folder with a MEMORY.md index), save one short project memory so that you and later sessions in this project keep using the hub. Update it if one already exists; don't create a duplicate. Put this in it:
+
+> This project uses Session Hub: several Claude Code sessions work here at once, each registered as an agent. Before changing, moving or deleting code you didn't write or don't recognise, or when something unexpected happens (unfamiliar files, changes you didn't make, tests breaking for no clear reason), run `hub whois <path>` and ask the owner, or post on the hub board, before acting. Run /hub to rejoin in a new session.
+
+The hooks also repeat this rule at every turn, but the memory keeps it in sessions that haven't joined yet.
+
+Tell the user in one line that you've joined, which hub you're in, which other agents you can see, and the web UI address from the join output. If the UI isn't running, mention that `/hub-init` starts it.
 
 ## 2. Keep your card current, but general
 

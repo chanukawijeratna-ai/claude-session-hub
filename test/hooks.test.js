@@ -11,7 +11,7 @@ const HOOK = path.join(__dirname, '..', 'hooks', 'hook.js');
 const HUB = path.join(__dirname, '..', 'bin', 'hub.js');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-hooks-'));
 fs.mkdirSync(path.join(root, '.git'));
-const env = { ...process.env };
+const env = { ...process.env, HUB_HOME: fs.mkdtempSync(path.join(os.tmpdir(), 'hub-home-')), HUB_NO_SERVER: '1' };
 delete env.HUB_ROOT;
 
 function hub(...args) {
@@ -71,6 +71,12 @@ test('UserPromptSubmit delivers unread items', () => {
   hub('post', 'board news', '--as', 'backend');
   const r = hook({ hook_event_name: 'UserPromptSubmit', session_id: 'S-frontend' });
   assert.match(r.hookSpecificOutput.additionalContext, /\[BOARD @main\] backend -> board[\s\S]*board news/);
+});
+
+test('every user turn carries the standing rule to ask before touching unfamiliar work', () => {
+  const r = hook({ hook_event_name: 'UserPromptSubmit', session_id: 'S-frontend' });
+  assert.match(r.hookSpecificOutput.additionalContext, /you are "frontend"[\s\S]*didn't write[\s\S]*whois[\s\S]*board/);
+  assert.doesNotMatch(r.hookSpecificOutput.additionalContext, /new item/); // nothing unread this time
 });
 
 test('Stop blocks while items are unread, then asks for the listener once', () => {

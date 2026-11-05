@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session Hub</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231f2522'/%3E%3Cg fill='none' stroke='%23c6e05a' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-7'/%3E%3Cpath d='M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z'/%3E%3Cpath d='M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ui/base.css">
+<style>
+body { display: grid; grid-template-rows: 56px 1fr; min-height: 100%; }
+.page { overflow-y: auto; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 64px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); }
+.hero { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 40px; margin-bottom: 28px; }
+.hero h1 { margin: 0; font: 700 40px/1.05 var(--serif); letter-spacing: -.02em; }
+.hero p { margin: 8px 0 0; color: var(--muted); max-width: 60ch; }
+.totals { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-left: auto; font-size: 14px; color: var(--muted); }
+.totals span { display: inline-flex; align-items: center; gap: 7px; }
+.totals b { color: var(--text); font: 700 20px/1 var(--serif); font-variant-numeric: tabular-nums; }
+.totals svg.i { color: var(--accent); }
+
+.projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
+.proj { display: flex; flex-direction: column; gap: 14px; padding: 18px 20px 16px; color: inherit; text-decoration: none; box-shadow: none; }
+.proj:hover { box-shadow: var(--shadow-lg); }
+.proj.enter { animation: rise .45s var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+.proj-h { display: flex; gap: 13px; align-items: center; min-width: 0; }
+.proj-h .tile { width: 42px; height: 42px; border-radius: 11px; background: var(--side); color: var(--lime); display: grid; place-items: center; flex: none; transition: transform .35s var(--ease); }
+.proj:hover .proj-h .tile { transform: rotate(-6deg); }
+.proj-h .tile svg.i { width: 21px; height: 21px; }
+.proj-h .nm { min-width: 0; }
+.proj-h .nm b { display: block; font: 700 19px/1.2 var(--serif); letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proj-h .nm small.d { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.crew { display: flex; align-items: center; gap: 12px; }
+.faces { display: flex; padding-left: 5px; }
+.faces .avatar { width: 30px; height: 30px; font-size: 10.5px; border-radius: 9px; margin-left: -5px; box-shadow: 0 0 0 2.5px var(--panel); }
+.faces .avatar .on { width: 10px; height: 10px; border-width: 2px; }
+.crew .count { font-size: 13.5px; color: var(--muted); }
+.crew .count b { color: var(--text); }
+.now { font-size: 13.5px; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; min-height: 21px; }
+.now svg.i { margin-top: 2px; color: var(--accent); }
+.now b { color: var(--text); font-weight: 650; }
+.now.quiet { color: var(--faint); }
+.proj-f { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+.proj-f span { display: inline-flex; align-items: center; gap: 5px; }
+.proj-f svg.i { width: 14px; height: 14px; color: var(--faint); }
+.proj-f .open { margin-left: auto; color: var(--accent-text); font-weight: 650; }
+.proj-f .open svg.i { color: var(--accent); transition: transform .3s var(--ease); }
+.proj:hover .proj-f .open svg.i { transform: translateX(3px); }
+.proj .warn { color: var(--warn); }
+.proj .warn svg.i { color: var(--warn); }
+.skel { height: 196px; }
+@media (max-width: 640px) {
+  .hero h1 { font-size: 32px; }
+  .totals { margin-left: 0; }
+  .projects { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header class="top camo-side">
+  <a class="brand" href="/"><span class="logo" id="logo"></span>Session Hub</a>
+  <div class="spacer"></div>
+  <div class="conn wait" id="conn"><svg class="live" viewBox="0 0 14 14"><circle class="ring" cx="7" cy="7" r="4"/><circle cx="7" cy="7" r="4"/></svg><span id="connText">Connecting</span></div>
+  <button class="icon-btn" id="themeBtn" type="button"></button>
+</header>
+<main class="page camo">
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Your projects</h1>
+        <p>Every project on this computer with a Session Hub. Open one to see its agents, their work and how they talk.</p>
+      </div>
+      <div class="totals" id="totals"></div>
+    </section>
+    <section class="projects" id="projects" aria-live="polite">
+      <div class="skel"></div><div class="skel"></div><div class="skel"></div>
+    </section>
+  </div>
+</main>
+<div id="toast"></div>
+<script src="/ui/base.js"></script>
+<script>
+'use strict';
+let first = true;
+
+function avatarIn(p, a) {
+  const i = p.agents.map((x) => x.name).sort().indexOf(a.name);
+  return `<span class="avatar" style="background:${EARTH[(i >= 0 ? i : nameHash(a.name)) % EARTH.length]}" title="${esc(a.name)}${a.online ? ', online' : ''}">${esc(initials(a.name))}<span class="on ${a.online ? 'yes' : ''}"></span></span>`;
+}
+
+function card(p, i) {
+  const online = p.agents.filter((a) => a.online);
+  const busy = online.filter((a) => a.doing && a.doing !== 'Idle');
+  const shown = [...p.agents].sort((a, b) => Number(b.online) - Number(a.online)).slice(0, 7);
+  const now = busy.length
+    ? `<div class="now">${ic('spin')}<span><b>${esc(busy[0].name)}</b> is working on ${esc(busy[0].doing)}${busy.length > 1 ? `, and ${busy.length - 1} more` : ''}</span></div>`
+    : `<div class="now quiet">${ic('ring')}<span>${online.length ? 'Everyone online is idle' : p.agents.length ? 'No agent is online' : 'No agents yet. Run /hub in a session here.'}</span></div>`;
+  return `<a class="proj surface lift ${first ? 'enter' : ''}" style="${first ? `animation-delay:${i * 60}ms` : ''}" href="/p/${encodeURIComponent(p.slug)}/" aria-label="Open ${esc(p.name)}">
+    <div class="proj-h"><span class="tile">${ic('folder')}</span><div class="nm"><b>${esc(p.name)}</b><small class="d" title="${esc(p.root)}">${esc(p.root)}</small></div></div>
+    <div class="crew">${shown.length ? `<span class="faces">${shown.map((a) => avatarIn(p, a)).join('')}</span>` : ''}
+      <span class="count"><b>${online.length}</b> of ${plural(p.agents.length, 'agent')} online</span></div>
+    ${now}
+    <div class="proj-f">
+      <span>${ic('hubs')}${plural(p.hubs, 'hub')}</span>
+      <span class="${p.openWork ? 'warn' : ''}">${ic(p.openTasks ? 'clock' : 'check')}${p.openTasks ? `${p.openTasks} open ${p.openTasks === 1 ? 'task' : 'tasks'}` : 'Nothing open'}</span>
+      <span title="${esc(new Date(p.lastActivity).toLocaleString())}">${ic('activity')}${ago(p.lastActivity)}</span>
+      <span class="open">Open${ic('arrow')}</span>
+    </div>
+  </a>`;
+}
+
+function render(list) {
+  const agents = list.reduce((n, p) => n + p.agents.filter((a) => a.online).length, 0);
+  const open = list.reduce((n, p) => n + p.openTasks, 0);
+  setHTML($('totals'), list.length ? `<span>${ic('folder')}<b>${list.length}</b> ${list.length === 1 ? 'project' : 'projects'}</span>
+    <span>${ic('users')}<b>${agents}</b> online</span><span>${ic('tasks')}<b>${open}</b> open ${open === 1 ? 'task' : 'tasks'}</span>` : '');
+  setHTML($('projects'), list.length ? list.map(card).join('')
+    : `<div class="empty" style="grid-column:1/-1">${ic('sprout')}<b>No projects yet</b>Open a Claude Code session in a project and run <span class="mono">/hub-init</span>. It shows up here.</div>`);
+  first = false;
+}
+
+async function load() {
+  try {
+    const r = await fetch('/api/projects', { cache: 'no-store' });
+    const j = await r.json();
+    $('conn').className = 'conn'; $('connText').textContent = 'Live';
+    render(j.projects);
+  } catch {
+    $('conn').className = 'conn bad'; $('connText').textContent = 'Reconnecting';
+  }
+}
+
+$('logo').innerHTML = ic('sprout');
+initTheme();
+load();
+setInterval(load, 3000);
+</script>
+</body>
+</html>

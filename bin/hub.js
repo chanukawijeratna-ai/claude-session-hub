@@ -2,9 +2,11 @@
 'use strict';
 // Claude Session Hub CLI. Logic lives in lib/core.js; this file parses arguments and prints.
 
+const fs = require('fs');
 const path = require('path');
-const { spawn } = require('child_process');
-const { createHub, findRoot, HubError, formatEvent, formatAgent, indent } = require('../lib/core');
+const { spawn, spawnSync } = require('child_process');
+const { createHub, findRoot, HubError, formatEvent, formatAgent, indent, readJson, pidAlive } = require('../lib/core');
+const registry = require('../lib/registry');
 
 const POLL_MS = 1000;
 const HEARTBEAT_MS = 30 * 1000;
@@ -28,6 +30,7 @@ function parseArgs(argv) {
 const USAGE = `Usage: hub <command> [args] --as <agent>
 
   init                                                       set up the hub and start the web UI
+  wipe [--confirm <project>]                                 delete this project's hub for good (the user must confirm)
   quit                                                       leave every hub and stop my listener
   join <name> --role "<r>" --purpose "<p>" [--doing "<d>"] [--hub <h>]   register; no --hub means "main"
   tag [--doing "<d>"] [--role "<r>"] [--purpose "<p>"]       update my card
@@ -49,6 +52,36 @@ const USAGE = `Usage: hub <command> [args] --as <agent>
 Hub root: ${hub.root}`;
 
 const str = (v) => (typeof v === 'string' ? v : undefined);
+const sleep = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+
+// Earlier versions ran one web server per project, recorded in .claude-hub/server.json.
+// Stop it (only if it really is that project's hub server) so the shared server takes over.
+function stopLegacyServer() {
+  const file = path.join(hub.dir, 'server.json');
+  const s = readJson(file);
+  if (!s) return;
+  if (pidAlive(s.pid)) {
+    const probe = spawnSync(process.execPath, ['-e',
+      `fetch(${JSON.stringify(`${s.url}/api/state`)}).then((r) => r.json()).then((j) => process.stdout.write(String(j.root || ''))).catch(() => {})`],
+    { encoding: 'utf8', timeout: 4000 });
+    if (path.resolve(probe.stdout || '.') === path.resolve(hub.root)) { try { process.kill(s.pid); } catch { /* gone */ } sleep(300); }
+  }
+  fs.rmSync(file, { force: true });
+}
+
+// One web server for every project on this machine. Start it if it isn't running.
+function ensureServer() {
+  let s = registry.serverInfo();
+  if (s || process.env.HUB_NO_SERVER) return s;
+  const server = path.join(__dirname, '..', 'server', 'server.js');
+  spawn(process.execPath, [server], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+  const until = Date.now() + 8000;
+  while (!(s = registry.serverInfo()) && Date.now() < until) sleep(150);
+  if (!s) throw new HubError(`the web UI did not start; try: node "${server}"`);
+  return s;
+}
+
+const projectUrl = (s, slug) => `${s.url}/p/${slug}/`;
 
 function run() {
   const [cmd, ...rest] = process.argv.slice(2);
@@ -74,18 +107,43 @@ function run() {
   };
   const fmt = (a) => formatAgent(a, hub.isOnline);
 
+  // Every command except these needs a hub to exist already. Reading must not quietly recreate one
+  // (for example after a wipe, from another session that is still running).
+  if (cmd && !['init', 'join', 'wipe', 'help', '--help', '-h'].includes(cmd) && !hub.exists()) {
+    throw new HubError('this project has no Session Hub. Run /hub to start one.');
+  }
+
   switch (cmd) {
     case 'init': {
       hub.listHubs(); // creates .claude-hub and the main hub
-      let s = hub.serverInfo();
-      if (!s) {
-        const server = path.join(__dirname, '..', 'server', 'server.js');
-        spawn(process.execPath, [server, hub.root], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
-        const until = Date.now() + 8000;
-        while (!(s = hub.serverInfo()) && Date.now() < until) Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 150);
-        if (!s) throw new HubError('the web UI did not start; try: node server/server.js');
+      const slug = registry.register(hub.root);
+      stopLegacyServer();
+      const s = ensureServer();
+      console.log(`Hub ready at ${hub.root}\nProject: ${slug}` +
+        (s ? `\nWeb UI: ${projectUrl(s, slug)}\nAll projects: ${s.url}/` : '\nWeb UI: not started (HUB_NO_SERVER is set)'));
+      return;
+    }
+    case 'wipe': {
+      const slug = registry.slugFor(hub.root);
+      if (!hub.exists()) { registry.unregister(hub.root); console.log('This project has no Session Hub. Nothing to wipe.'); return; }
+      if (flags.confirm === undefined) {
+        const n = hub.wipeSummary();
+        console.log(`This would permanently delete the Session Hub for ${hub.root} (project "${slug}"):\n` +
+          `  ${n.agents} agents, ${n.hubs} hubs, ${n.events} events (${n.tasks} tasks), ${n.claims} file claims.\n` +
+          'Every listener is stopped and the project leaves the Session Hub home page. There is no undo.\n\n' +
+          `To confirm, the user must type the project name in the chat, exactly:\n  ${slug}\n` +
+          `Then run: hub wipe --confirm ${slug}`);
+        return;
       }
-      console.log(`Hub ready at ${hub.root}\nWeb UI: ${s.url}`);
+      if (flags.confirm !== slug) throw new HubError(`the confirmation must be exactly "${slug}". Nothing was deleted.`);
+      if (!hub.wipeConfirmed()) {
+        throw new HubError(`the user has not typed "${slug}" in the chat (or did so more than 10 minutes ago). ` +
+          'Only the user can confirm a wipe. Ask them to type it. Nothing was deleted.');
+      }
+      hub.wipe();
+      registry.unregister(hub.root);
+      console.log(`Wiped. The Session Hub for ${hub.root} is gone: agents, hubs, messages, tasks and file claims. ` +
+        'Every listener was stopped. Run /hub to start fresh.');
       return;
     }
     case 'quit': {
@@ -94,10 +152,14 @@ function run() {
       return;
     }
     case 'join': {
-      const { agent, rejoined } = hub.join({
+      const { agent, rejoined, missing } = hub.join({
         name: pos[0] || str(flags.name), role: str(flags.role), purpose: str(flags.purpose), doing: str(flags.doing), hub: str(flags.hub),
       });
-      console.log(`${rejoined ? 'Rejoined' : 'Joined'} the hub at ${hub.root} as "${agent.name}". Hubs: ${agent.hubs.join(', ') || 'none'}.\n`);
+      const slug = registry.register(hub.root);
+      const s = registry.serverInfo();
+      if (missing) console.log(`There is no hub named "${missing}", so you joined "main" instead. Hubs are created in the web UI; the user can move you there.`);
+      console.log(`${rejoined ? 'Rejoined' : 'Joined'} the hub at ${hub.root} as "${agent.name}". Hubs: ${agent.hubs.join(', ') || 'none'}.`);
+      console.log(s ? `Web UI: ${projectUrl(s, slug)}\n` : 'Web UI: not running. /hub-init starts it.\n');
       const others = agentsVisibleTo(agent.name);
       console.log(others.length ? `Agents you can talk to:\n${others.map(fmt).join('\n')}` : 'No other agents in your hubs yet.');
       return;

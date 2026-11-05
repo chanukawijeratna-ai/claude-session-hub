@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { createHub, findRoot, formatEvent, formatAgent } = require('../lib/core');
+const registry = require('../lib/registry');
 
 const HUB_CLI = path.join(__dirname, '..', 'bin', 'hub.js').split(path.sep).join('/');
 const CLI = `node "${HUB_CLI}"`;
@@ -24,6 +25,12 @@ function context(event, text) {
 function inboxText(items, me) {
   return `Session Hub: ${items.length} new item(s) for you (${me}). Deal with them before going on, unless your current step must finish first.\n\n` +
     items.map(formatEvent).join('\n\n');
+}
+
+function standingRule(me) {
+  return `Session Hub (you are "${me}"): other sessions work in this project too. Before you change, move or delete anything you didn't write, ` +
+    `or when something unexpected happens (files you don't recognise, changes you didn't make, tests breaking for no reason), ` +
+    `run ${CLI} whois <path> --as ${me} and ask its owner, or post on the board, before acting.`;
 }
 
 function protocolReminder(hub, me) {
@@ -171,10 +178,15 @@ function main(raw) {
       if (me) { hub.touch(me); context('SessionStart', protocolReminder(hub, me)); }
       break;
     case 'UserPromptSubmit':
+      // Only the user can confirm a wipe: their own message must be exactly the project's slug.
+      if (typeof input.prompt === 'string' && input.prompt.trim() === registry.slugFor(hub.root)) {
+        hub.recordWipeConfirmation(input.session_id);
+      }
       if (me) {
         hub.touch(me);
         const items = hub.takeUnread(me);
-        if (items.length) context('UserPromptSubmit', inboxText(items, me));
+        // A standing rule on every user turn, so the hub stays in mind even after compaction.
+        context('UserPromptSubmit', standingRule(me) + (items.length ? `\n\n${inboxText(items, me)}` : ''));
       }
       break;
     case 'PreToolUse':

@@ -7,75 +7,23 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231f2522'/%3E%3Cg fill='none' stroke='%23c6e05a' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-7'/%3E%3Cpath d='M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z'/%3E%3Cpath d='M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/ui/base.css">
 <style>
-:root {
-  --bg: #eef2e8; --panel: #fbfcf8; --panel-2: #f0f4ea; --border: #dbe3d1; --border-strong: #c2ceb6;
-  --text: #1f2522; --muted: #515d53; --faint: #6c776e;
-  --accent: #2f6b3a; --accent-soft: #e2eedb; --accent-text: #24572e;
-  --lime: #b5d43f; --lime-soft: #eef6cf; --lime-text: #4a5a0c;
-  --ok: #2f7d3e; --warn: #a3621a; --bad: #a8412c;
-  --diamond: rgba(47,107,58,.075); --glow-1: rgba(181,212,63,.30); --glow-2: rgba(47,107,58,.13);
-  --side: #1f2522; --side-2: #2a312d; --side-3: #343c37; --side-text: #e9eee6; --side-muted: #a3aea4; --side-faint: #7d897f; --side-line: #2f3732;
-  --shadow: 0 1px 2px rgba(31,37,34,.05), 0 2px 8px rgba(31,37,34,.05);
-  --shadow-lg: 0 14px 34px rgba(31,37,34,.13), 0 2px 6px rgba(31,37,34,.06);
-  --radius: 12px;
-  --ease: cubic-bezier(.22,.7,.2,1);
-  --font: "Figtree", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
-  --serif: "Fraunces", Georgia, serif;
-  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #141816; --panel: #1b201d; --panel-2: #222824; --border: #2c3430; --border-strong: #3b4540;
-    --text: #e6ebe3; --muted: #aab4aa; --faint: #87938a;
-    --accent: #8acb70; --accent-soft: #233320; --accent-text: #bfe5ad;
-    --lime: #cfe86a; --lime-soft: #2c3417; --lime-text: #dcef8c;
-    --ok: #85d179; --warn: #e2b05a; --bad: #ec8f78;
-    --diamond: rgba(207,232,106,.05); --glow-1: rgba(207,232,106,.08); --glow-2: rgba(138,203,112,.08);
-    --side: #0f1210; --side-2: #1a1f1c; --side-3: #242a26; --side-line: #1f2522;
-    --shadow: 0 1px 2px rgba(0,0,0,.35);
-    --shadow-lg: 0 14px 34px rgba(0,0,0,.5);
-    color-scheme: dark;
-  }
-}
-* { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; }
-body { background: var(--bg); color: var(--text); font: 14.5px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
-button, input { font: inherit; color: inherit; }
-a { color: var(--accent-text); text-underline-offset: 2px; }
-.mono, code { font-family: var(--mono); font-size: 12.5px; }
-svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -3px; }
-small.d { display: block; color: var(--faint); font-size: 12px; font-weight: 400; line-height: 1.35; letter-spacing: 0; text-transform: none; }
-
-/* ---------- top bar + sidebar (dark) ---------- */
-.top { height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 20px; background: var(--side); color: var(--side-text); }
-.brand { display: flex; align-items: center; gap: 10px; font: 600 17px/1 var(--serif); letter-spacing: -.01em; }
-.logo { width: 30px; height: 30px; border-radius: 9px; background: var(--side-3); display: grid; place-items: center; color: var(--lime); }
-.logo svg.i { width: 19px; height: 19px; stroke-width: 1.9; }
-.project { color: var(--side-muted); padding-left: 14px; border-left: 1px solid var(--side-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; }
-.spacer { flex: 1; }
-.conn { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--side-muted); white-space: nowrap; }
-.live { width: 14px; height: 14px; overflow: visible; }
-.live circle { fill: var(--lime); }
-.live .ring { fill: none; stroke: var(--lime); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: ring 2.4s var(--ease) infinite; }
-.conn.bad .live circle { fill: var(--bad); } .conn.bad .live .ring { display: none; }
-.conn.wait .live circle { fill: var(--side-faint); } .conn.wait .live .ring { display: none; }
-@keyframes ring { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
-
+/* ---------- frame ---------- */
 .layout { display: grid; grid-template-columns: 264px 1fr; height: calc(100% - 56px); }
-.side { position: relative; background: var(--side); color: var(--side-text); padding: 8px 12px 20px; overflow-y: auto; }
-.cat { margin-top: 16px; }
+.side { position: relative; color: var(--side-text); padding: 8px 12px 20px; overflow-y: auto; }
+.cat { margin-top: 18px; }
 .cat-h { display: flex; gap: 10px; align-items: flex-start; padding: 0 8px 8px; }
-.cat-h svg.i { color: var(--lime); margin-top: 2px; }
-.cat-h b { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--side-text); }
+.cat-h svg.i { color: var(--lime); margin-top: 3px; }
+.cat-h b { display: block; font: 700 15px/1.3 var(--serif); color: var(--side-text); }
 .cat-h small.d { color: var(--side-faint); }
-.side-ink { position: absolute; left: 0; top: 0; border-radius: 10px; background: var(--side-2); pointer-events: none; opacity: 0; }
+.side-ink { position: absolute; left: 0; top: 0; border-radius: 10px; background: var(--side-2); pointer-events: none; opacity: 0; box-shadow: inset 0 0 0 1px var(--side-3); }
 .side-ink::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--lime); }
 .side.ready .side-ink { transition: transform .32s var(--ease), height .32s var(--ease), width .32s var(--ease), opacity .2s; }
 .nav-item { position: relative; z-index: 1; display: flex; align-items: center; gap: 11px; width: 100%; padding: 8px 10px; margin: 1px 0; border: 1px dashed transparent; border-radius: 10px; background: none; cursor: pointer; text-align: left; color: var(--side-muted); transition: color .2s, background-color .2s, border-color .2s; }
 .nav-item:hover { color: var(--side-text); background: rgba(255,255,255,.035); }
+.nav-item:focus-visible { outline-color: var(--lime); }
 .nav-item.active { color: var(--side-text); background: none; }
 .nav-item .tile { width: 30px; height: 30px; border-radius: 8px; background: var(--side-2); display: grid; place-items: center; flex: none; transition: background-color .25s, color .25s, transform .25s var(--ease); }
 .nav-item:hover .tile { transform: translateY(-1px); }
@@ -93,104 +41,83 @@ small.d { display: block; color: var(--faint); font-size: 12px; font-weight: 400
 .new-hub button { width: 34px; border-radius: 9px; border: 1px solid var(--side-3); background: var(--side-2); color: var(--lime); cursor: pointer; display: grid; place-items: center; transition: background-color .2s, transform .15s; }
 .new-hub button:hover { background: var(--side-3); }
 .new-hub button:active { transform: scale(.94); }
-.side .hint { font-size: 12px; color: var(--side-faint); padding: 14px 8px 0; margin: 16px 0 0; border-top: 1px solid var(--side-line); line-height: 1.5; }
+.side .hint { font-size: 12px; color: var(--side-faint); padding: 14px 8px 0; margin: 18px 0 0; border-top: 1px solid var(--side-line); line-height: 1.5; }
 
-/* ---------- main area: clean gradient ---------- */
-main { overflow-y: auto; background:
-  radial-gradient(1100px 620px at 0% 0%, var(--glow-1), transparent 62%),
-  radial-gradient(900px 640px at 100% 100%, var(--glow-2), transparent 60%),
-  var(--bg); }
-.main-h { position: sticky; top: 0; z-index: 3; background: color-mix(in srgb, var(--bg) 93%, transparent); padding: 22px 30px 0; border-bottom: 1px solid var(--border); }
-.main-h h1 { margin: 0 0 3px; font: 600 24px/1.2 var(--serif); letter-spacing: -.015em; display: flex; align-items: center; gap: 10px; }
-.main-h h1 svg.i { width: 20px; height: 20px; color: var(--accent); }
-.sub { color: var(--muted); font-size: 13.5px; margin-bottom: 14px; }
+main { overflow-y: auto; }
+.main-h { position: sticky; top: 0; z-index: 3; background: color-mix(in srgb, var(--bg) 94%, transparent); padding: 22px 30px 0; border-bottom: 1px solid var(--border); }
+.main-h h1 { margin: 0 0 3px; font: 700 28px/1.15 var(--serif); letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+.main-h h1 svg.i { width: 21px; height: 21px; color: var(--accent); }
+.sub { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
 .tabbar { position: relative; }
 .tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
 .tab { display: flex; gap: 9px; align-items: flex-start; padding: 8px 14px 11px 10px; border: none; background: none; cursor: pointer; color: var(--muted); text-align: left; border-radius: 9px 9px 0 0; transition: color .2s, background-color .2s; }
 .tab svg.i { margin-top: 2px; transition: transform .25s var(--ease); }
-.tab:hover { color: var(--text); background: color-mix(in srgb, var(--panel) 60%, transparent); }
+.tab:hover { color: var(--text); background: color-mix(in srgb, var(--panel) 70%, transparent); }
 .tab:hover svg.i { transform: translateY(-1px); }
 .tab b { font-weight: 600; white-space: nowrap; }
 .tab .n { font-size: 12px; color: var(--faint); margin-left: 3px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .tab small.d { font-size: 11.5px; white-space: nowrap; }
 .tab.active { color: var(--text); }
 .tab.active svg.i { color: var(--accent); }
-.tab-ink { position: absolute; bottom: -1px; left: 0; height: 3px; border-radius: 3px 3px 0 0; background: linear-gradient(90deg, var(--accent), var(--lime)); opacity: 0; pointer-events: none; }
+.tab-ink { position: absolute; bottom: -1px; left: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--accent); opacity: 0; pointer-events: none; }
+.tab-ink::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 30%; border-radius: inherit; background: var(--lime); }
 .tabbar.ready .tab-ink { transition: transform .32s var(--ease), width .32s var(--ease), opacity .2s; }
 .view { padding: 24px 30px 48px; }
 .view.enter { animation: rise .32s var(--ease); }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+.loading { display: grid; gap: 14px; } .loading .skel { height: 90px; } .loading .skel:first-child { height: 140px; }
 
-.empty { border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 40px 30px; text-align: center; color: var(--muted); background: color-mix(in srgb, var(--panel) 85%, transparent); }
-.empty svg.i { width: 34px; height: 34px; color: var(--accent); stroke-width: 1.4; margin-bottom: 8px; }
-.empty b { color: var(--text); display: block; margin-bottom: 4px; font-size: 15px; }
-.lbl { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; }
-.lbl + small.d { margin: 1px 0 8px; }
-
-/* status: icon + coloured text, no pill */
-.st { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: var(--faint); }
-.st svg.i { width: 15px; height: 15px; }
-.st.ok { color: var(--ok); } .st.warn { color: var(--warn); } .st.bad { color: var(--bad); } .st.go { color: var(--accent); }
-.tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
-.tag svg.i { width: 14px; height: 14px; color: var(--accent); }
-.spin { transform-box: fill-box; transform-origin: center; animation: spin 1.6s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.t { color: var(--faint); font-size: 12.5px; }
-.sep { color: var(--border-strong); }
+/* the newest items glow once when they arrive */
+.fresh { animation: fresh 2.6s var(--ease); }
+@keyframes fresh { 0%, 30% { box-shadow: 0 0 0 3px var(--lime), var(--shadow); } 100% { box-shadow: 0 0 0 0 transparent, var(--shadow); } }
 
 /* formatted agent text */
-.md { overflow-wrap: anywhere; }
+.md { overflow-wrap: anywhere; max-width: 78ch; }
 .md p { margin: 0 0 8px; }
 .md p:last-child, .md ul:last-child, .md ol:last-child { margin-bottom: 0; }
 .md ul, .md ol { margin: 2px 0 9px; padding-left: 20px; }
 .md li { margin: 3px 0; }
 .md li::marker { color: var(--accent); }
-.md h4 { margin: 13px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-text); font-weight: 700; }
+.md h4 { margin: 13px 0 4px; font-size: 13px; color: var(--accent-text); font-weight: 700; }
 .md h4:first-child { margin-top: 0; }
 .md code { background: var(--panel-2); border: 1px solid var(--border); border-radius: 5px; padding: 0 4px; font-size: 12px; }
 .clamp { max-height: 10em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 62%, transparent); mask-image: linear-gradient(#000 62%, transparent); }
-.more { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; padding: 4px 0 0; color: var(--accent-text); cursor: pointer; font-size: 13px; font-weight: 600; }
+.more { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; padding: 4px 0 0; color: var(--accent-text); cursor: pointer; font-size: 13px; font-weight: 600; border-radius: 6px; }
 .more svg.i { width: 14px; height: 14px; transition: transform .25s var(--ease); }
 .more.open svg.i { transform: rotate(180deg); }
 .more:hover { text-decoration: underline; text-underline-offset: 3px; }
-
-/* shared surface + hover life */
-.surface { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); transition: border-color .25s, box-shadow .3s var(--ease), transform .3s var(--ease); }
-.lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
+.meta { display: inline-flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
 
 /* agent cards */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-.card { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; }
+.card { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; box-shadow: none; }
 .card.dragging { opacity: .45; }
 .card.selected { border-color: var(--accent); }
 .card-h { display: flex; align-items: center; gap: 12px; }
-.avatar { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; flex: none; position: relative; letter-spacing: .02em; }
-.avatar .on { position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--panel); background: var(--faint); }
-.avatar .on.yes { background: var(--ok); }
-.avatar.busy::after { content: ""; position: absolute; inset: -4px; border-radius: 13px; border: 2px solid var(--lime); animation: breathe 2.4s ease-in-out infinite; }
-@keyframes breathe { 50% { opacity: .25; transform: scale(1.04); } }
 .who { min-width: 0; flex: 1; }
-.who .name { font-weight: 700; font-size: 15px; }
+.who .name { font-weight: 700; font-size: 15.5px; }
 .who .role { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .x { border: none; background: none; cursor: pointer; color: var(--faint); border-radius: 8px; width: 30px; height: 30px; display: grid; place-items: center; flex: none; transition: background-color .2s, color .2s, transform .2s var(--ease); }
 .x:hover { background: color-mix(in srgb, var(--bad) 12%, transparent); color: var(--bad); transform: rotate(90deg); }
 .purpose { color: var(--muted); font-size: 13.5px; }
-.doing { border-left: 3px solid var(--border-strong); padding: 2px 0 2px 11px; font-size: 14px; }
-.doing .lbl { margin-bottom: 1px; }
-.doing.busy { border-left-color: var(--lime); }
+.doing { background: var(--panel-2); border-radius: 9px; padding: 8px 11px; font-size: 14px; }
+.doing .val { display: flex; gap: 7px; align-items: flex-start; }
+.doing .val svg.i { margin-top: 3px; color: var(--accent); }
 .doing.idle .val { color: var(--faint); }
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 .stat { background: var(--panel); padding: 7px 8px 8px; text-align: center; }
-.stat b { display: block; font: 600 18px/1.2 var(--serif); font-variant-numeric: tabular-nums; }
+.stat b { display: block; font: 700 19px/1.2 var(--serif); font-variant-numeric: tabular-nums; }
 .stat span { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
 .stat small.d { font-size: 10.5px; }
 .stat.hot b { color: var(--warn); }
-.files { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--faint); }
+.files { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--faint); }
 .files .f { display: flex; gap: 6px; align-items: center; min-width: 0; color: var(--muted); }
 .files .f svg.i { width: 13px; height: 13px; color: var(--faint); }
-.files .mono { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.files .p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-f { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
 .card-f .t { margin-left: auto; }
+.card .go { color: var(--faint); transition: color .25s, transform .3s var(--ease); }
+.card:hover .go { color: var(--accent); transform: translateX(3px); }
 
 /* activity timeline */
 .filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 22px; }
@@ -201,10 +128,10 @@ main { overflow-y: auto; background:
 .chip .avatar { width: 20px; height: 20px; font-size: 8.5px; border-radius: 6px; }
 .chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }
 .session-h { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
-.session-h .when { font: 600 15px/1.2 var(--serif); }
+.session-h .when { font: 700 16px/1.2 var(--serif); }
 .session-h .faces { display: flex; padding-left: 4px; }
 .session-h .faces .avatar { width: 22px; height: 22px; font-size: 9px; border-radius: 7px; margin-left: -5px; box-shadow: 0 0 0 2px var(--bg); }
-.session-h .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-strong), transparent); }
+.session-h .line { flex: 1; height: 1px; background: var(--border-strong); opacity: .6; }
 .tl { margin-bottom: 34px; }
 .tl-item { display: grid; grid-template-columns: 72px 32px 1fr; }
 .tl-time { font-size: 12.5px; color: var(--faint); text-align: right; padding: 6px 10px 0 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -215,21 +142,19 @@ main { overflow-y: auto; background:
 .tl-rail .avatar { width: 26px; height: 26px; font-size: 9.5px; border-radius: 8px; margin-top: 2px; box-shadow: 0 0 0 4px var(--bg); }
 .tl-rail .mark { position: relative; margin-top: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; color: var(--faint); }
 .tl-rail .mark svg.i { width: 16px; height: 16px; }
-.tl-rail .mark.ok { color: var(--ok); } .tl-rail .mark.go { color: var(--accent); } .tl-rail .mark.bad { color: var(--bad); }
+.tl-rail .mark.go { color: var(--accent); }
 .tl-body { padding: 4px 0 18px 8px; min-width: 0; }
 .tl-head { font-size: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
 .tl-head b { color: var(--text); font-weight: 650; }
 .tl-head .q { color: var(--text); font-weight: 600; }
 .tl-item.minor .tl-head { font-size: 13px; }
-.tl-card { margin-top: 7px; padding: 12px 15px; }
-.tl-card.task { border-left: 3px solid var(--accent); }
-.tl-card.done { border-left: 3px solid var(--lime); }
-.tl-card.failed { border-left: 3px solid var(--bad); }
+.tl-card { margin-top: 7px; padding: 12px 15px; box-shadow: none; }
 .tl-card .title { font-weight: 700; margin-bottom: 5px; display: flex; gap: 7px; align-items: center; }
 .tl-card .title svg.i { color: var(--accent); }
+.tl-card.work { background: color-mix(in srgb, var(--lime-soft) 60%, var(--panel)); }
 
 /* board */
-.thread { margin-bottom: 16px; overflow: hidden; }
+.thread { margin-bottom: 16px; overflow: hidden; box-shadow: none; }
 .msg { display: flex; gap: 12px; padding: 14px 18px; }
 .msg + .msg { border-top: 1px solid var(--border); }
 .msg.reply { padding-left: 58px; background: var(--panel-2); }
@@ -238,40 +163,62 @@ main { overflow-y: auto; background:
 .msg-h { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .msg-h .name { font-weight: 700; }
 .msg .md { margin-top: 3px; }
+.kind { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; color: var(--accent-text); }
+.kind svg.i { width: 14px; height: 14px; color: var(--accent); }
 
 /* posting work */
 .composer-wrap { padding: 24px 30px 0; }
-.composer-wrap[hidden] { display: none; }
 .composer { padding: 16px 18px; display: grid; gap: 12px; }
 .composer-h { display: flex; gap: 10px; align-items: flex-start; }
 .composer-h svg.i { color: var(--accent); margin-top: 3px; }
-.composer input, .composer textarea, .composer select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); font: inherit; transition: border-color .2s, box-shadow .2s, background-color .2s; }
+.composer-h b { font: 700 17px/1.3 var(--serif); }
+.composer input, .composer textarea, .composer select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); transition: border-color .2s, box-shadow .2s, background-color .2s; }
 .composer textarea { resize: vertical; min-height: 64px; }
 .composer input:focus, .composer textarea:focus, .composer select:focus { outline: none; border-color: var(--accent); background: var(--panel); box-shadow: 0 0 0 3px var(--accent-soft); }
 .composer .title-in { font-weight: 600; font-size: 15px; }
 .composer-f { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
 .composer-f .lead { display: flex; align-items: center; gap: 10px; }
 .composer-f .lead > div { white-space: nowrap; }
-.composer select { width: auto; min-width: 230px; cursor: pointer; padding-right: 30px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c776e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9.5 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; background-size: 16px; }
+.composer select { width: auto; min-width: 230px; max-width: 100%; cursor: pointer; padding-right: 30px; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c776e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9.5 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; background-size: 16px; }
 .composer .note { flex: 1; min-width: 180px; font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
-.composer .note.warn { color: var(--warn); }
+.composer .note svg.i { color: var(--accent); }
+.composer .note.warn, .composer .note.warn svg.i { color: var(--warn); }
 .composer button.post { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 650; cursor: pointer; transition: transform .2s var(--ease), box-shadow .25s, background-color .2s; }
-.composer button.post svg.i { color: var(--lime); }
+:root[data-theme="dark"] .composer button.post { color: #11160f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .composer button.post { color: #11160f; } }
 .composer button.post:hover { transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 35%, transparent); }
 .composer button.post:active { transform: scale(.97); }
 .composer button.post:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
 .composer :disabled { cursor: not-allowed; }
-.work { border-left: 3px solid var(--lime); }
-.work .work-title { font-weight: 700; font-size: 15.5px; margin: 2px 0 4px; }
-.work .meta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 10px; font-size: 13px; color: var(--muted); }
+.attach { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.add-img { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border: 1px dashed var(--border-strong); border-radius: 10px; color: var(--accent-text); font-weight: 600; font-size: 13.5px; cursor: pointer; transition: border-color .2s, background-color .2s, transform .2s var(--ease); }
+.add-img:hover { border-color: var(--accent); background: var(--accent-soft); }
+.add-img:active { transform: scale(.97); }
+.add-img:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.composer.dropping { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.thumbs { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.thumbs:empty { display: none; }
+.thumb { margin: 0; position: relative; width: 84px; height: 64px; border-radius: 9px; overflow: hidden; border: 1px solid var(--border); background: var(--panel-2); animation: pop .25s var(--ease); }
+@keyframes pop { from { transform: scale(.85); opacity: 0; } }
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb button { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 6px; border: none; background: rgba(20,24,22,.75); color: #fff; display: grid; place-items: center; cursor: pointer; opacity: .85; transition: opacity .2s, transform .2s var(--ease); }
+.thumb button:hover { opacity: 1; transform: scale(1.08); }
+.thumb button svg.i { width: 13px; height: 13px; }
+.imgs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.imgs a { display: block; width: 132px; height: 96px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); background: var(--panel-2); transition: transform .25s var(--ease), border-color .2s; }
+.imgs a:hover { transform: translateY(-2px); border-color: var(--accent); }
+.imgs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.work .msg:first-child { background: color-mix(in srgb, var(--lime-soft) 60%, var(--panel)); }
+.work .work-title { font: 700 18px/1.3 var(--serif); margin: 2px 0 4px; }
+.work .meta { margin-top: 10px; font-size: 13px; color: var(--muted); }
 .work .meta .avatar { width: 20px; height: 20px; font-size: 8.5px; border-radius: 6px; }
 .work .meta .who-led { display: inline-flex; gap: 6px; align-items: center; }
-.readonly { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; font-size: 13px; color: var(--muted); }
+.readonly { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; font-size: 13.5px; color: var(--muted); }
 .readonly svg.i { color: var(--faint); }
 
 /* conversations */
 .convos { display: grid; grid-template-columns: 280px 1fr; gap: 16px; min-height: 420px; }
-.c-list { overflow: hidden; align-self: start; }
+.c-list { overflow: hidden; align-self: start; box-shadow: none; }
 .c-item { display: flex; gap: 11px; align-items: center; width: 100%; padding: 12px 15px; border: none; border-bottom: 1px solid var(--border); background: none; text-align: left; cursor: pointer; transition: background-color .2s; position: relative; }
 .c-item:last-child { border-bottom: none; }
 .c-item:hover { background: var(--panel-2); }
@@ -281,28 +228,26 @@ main { overflow-y: auto; background:
 .pair .avatar { width: 26px; height: 26px; font-size: 10px; border-radius: 8px; }
 .pair .avatar + .avatar { margin-left: -6px; box-shadow: 0 0 0 2px var(--panel); }
 .c-item .nm { font-weight: 650; }
-.chat { padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.chat { padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; box-shadow: none; }
 .bubble-row { display: flex; gap: 10px; align-items: flex-end; max-width: 80%; }
 .bubble-row.right { align-self: flex-end; flex-direction: row-reverse; }
 .bubble-row .avatar { width: 28px; height: 28px; font-size: 10px; border-radius: 8px; }
-.bubble { background: var(--panel-2); border-radius: 14px 14px 14px 4px; padding: 10px 14px; min-width: 0; transition: transform .25s var(--ease); }
+.bubble { background: var(--panel-2); border-radius: 14px 14px 14px 4px; padding: 10px 14px; min-width: 0; }
 .right .bubble { background: var(--accent-soft); border-radius: 14px 14px 4px 14px; }
 .bubble .msg-h { margin-bottom: 3px; }
 .bubble.task { border: 1px solid var(--border-strong); background: var(--panel); }
-.kind { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
-.kind svg.i { width: 14px; height: 14px; }
-.sys { align-self: center; font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
-.report { align-self: stretch; margin: 0 5%; padding: 12px 16px; border-left: 3px solid var(--lime); }
-.report.failed { border-left-color: var(--bad); }
-.report .head { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 7px; }
+.sys { align-self: center; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; }
+.report { align-self: stretch; margin: 0 5%; padding: 12px 16px; box-shadow: none; }
+.report .head { font-size: 13px; color: var(--muted); display: flex; gap: 6px 10px; align-items: center; flex-wrap: wrap; margin-bottom: 7px; }
 .report .head b { color: var(--text); font-weight: 650; }
 
 /* tasks */
 .summary { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 18px; align-items: center; }
-.summary .total { font: 600 15px/1.2 var(--serif); }
-.task { margin-bottom: 11px; }
+.summary .total { font: 700 17px/1.2 var(--serif); }
+.task { margin-bottom: 11px; box-shadow: none; }
+.task:hover { border-color: var(--border-strong); }
 .children { padding: 0 0 0 22px; border-left: 2px solid var(--border); margin: -2px 0 13px 24px; }
-.task summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 18px; }
+.task summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-radius: var(--radius); }
 .task summary::-webkit-details-marker { display: none; }
 .task summary .chev { color: var(--faint); transition: transform .25s var(--ease); }
 .task[open] summary .chev { transform: rotate(90deg); color: var(--accent); }
@@ -310,13 +255,14 @@ main { overflow-y: auto; background:
 .task summary .route { color: var(--muted); font-size: 13px; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
 .task summary .route .avatar { width: 22px; height: 22px; font-size: 8.5px; border-radius: 6px; }
 .task summary .route svg.i { color: var(--faint); width: 14px; height: 14px; }
+.task summary .route .took { margin-left: 8px; }
 .task .body { padding: 16px 18px 18px 46px; display: grid; gap: 16px; border-top: 1px solid var(--border); animation: rise .28s var(--ease); }
 .steps { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
 .steps svg.i { width: 14px; height: 14px; color: var(--faint); }
 .steps b { color: var(--text); font-weight: 650; }
 
-/* graph */
-.graph-wrap { overflow: hidden; }
+/* graph: the diamond grid is the canvas */
+.graph-wrap { overflow: hidden; box-shadow: none; }
 .graph-wrap svg.g { display: block; width: 100%; height: auto; background:
   repeating-linear-gradient(45deg, var(--diamond) 0 1px, transparent 1px 26px),
   repeating-linear-gradient(-45deg, var(--diamond) 0 1px, transparent 1px 26px),
@@ -341,52 +287,45 @@ main { overflow-y: auto; background:
 @keyframes slide { from { transform: translateX(28px); opacity: 0; } }
 .drawer-h { position: sticky; top: 0; background: var(--panel); padding: 20px 22px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 13px; align-items: center; z-index: 1; }
 .drawer-h .avatar { width: 46px; height: 46px; font-size: 16px; border-radius: 13px; }
-.drawer-h .name { font: 600 20px/1.2 var(--serif); }
+.drawer-h .name { font: 700 21px/1.2 var(--serif); }
 .drawer-b { padding: 18px 22px 34px; display: grid; gap: 22px; }
 .list { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 .list-row { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; font-size: 13.5px; transition: background-color .2s; }
 .list-row:hover { background: var(--panel-2); }
 .list-row + .list-row { border-top: 1px solid var(--border); }
 .list-row > svg.i { margin-top: 3px; color: var(--faint); }
-.list-row .grow { flex: 1; min-width: 0; }
+.list-row .grow { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .list-row .note { color: var(--faint); font-size: 12.5px; }
-.list-row .mono { overflow-wrap: anywhere; }
 .list-row .st { margin-top: 1px; }
 .mini { display: grid; gap: 2px; padding: 9px 12px; font-size: 13px; }
 .mini + .mini { border-top: 1px solid var(--border); }
+.mini svg.i { width: 14px; height: 14px; color: var(--faint); }
 .mini .snip { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-#toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 10px); background: var(--side); color: var(--side-text); padding: 10px 16px; border-radius: 10px; font-size: 13.5px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .3s var(--ease); z-index: 20; display: flex; gap: 8px; align-items: center; }
-#toast svg.i { color: var(--lime); }
-#toast.show { opacity: 1; transform: translate(-50%, 0); }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
 @media (max-width: 780px) {
   .layout { grid-template-columns: 1fr; height: auto; }
   .side { padding-bottom: 14px; }
-  .main-h, .view { padding-left: 16px; padding-right: 16px; }
+  .main-h, .view, .composer-wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .tab small.d { display: none; }
   .convos { grid-template-columns: 1fr; }
   .tl-item { grid-template-columns: 62px 30px 1fr; }
   .report { margin: 0; }
   .task .body { padding-left: 18px; }
   .task summary { flex-wrap: wrap; }
-  .project { display: none; }
 }
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="brand"><div class="logo" id="logo"></div>Session Hub</div>
-  <div class="project" id="project"></div>
+<header class="top camo-side">
+  <a class="brand" href="/" title="All projects"><span class="logo" id="logo"></span>Session Hub</a>
+  <nav class="crumb" id="crumb" aria-label="Breadcrumb"></nav>
   <div class="spacer"></div>
   <div class="conn wait" id="conn"><svg class="live" viewBox="0 0 14 14"><circle class="ring" cx="7" cy="7" r="4"/><circle cx="7" cy="7" r="4"/></svg><span id="connText">Connecting</span></div>
+  <button class="icon-btn" id="themeBtn" type="button"></button>
 </header>
 
 <div class="layout">
-  <aside class="side" id="side">
+  <aside class="side camo-side" id="side">
     <span class="side-ink" id="sideInk"></span>
     <div class="cat">
       <div class="cat-h" id="hubsHead"></div>
@@ -402,7 +341,7 @@ main { overflow-y: auto; background:
     </div>
     <p class="hint">Drag an agent card onto a hub to add it. Open a hub and press × on a card to remove it. Click a card to see its history.</p>
   </aside>
-  <main id="main">
+  <main id="main" class="camo">
     <div class="main-h">
       <h1 id="title"></h1>
       <div class="sub" id="subtitle"></div>
@@ -413,6 +352,11 @@ main { overflow-y: auto; background:
         <div class="composer-h" id="composerHead"></div>
         <input class="title-in" id="workTitle" placeholder="What needs doing, in one line" maxlength="200" aria-label="Work title">
         <textarea id="workBody" rows="3" placeholder="Details: what it should do, constraints, what done looks like (optional)" aria-label="Work details"></textarea>
+        <div class="attach" id="attach">
+          <label class="add-img" id="addImg"><input type="file" id="imgInput" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden><span id="addImgLabel"></span></label>
+          <span class="t" id="attachHint">or paste from your clipboard, or drop images here. Up to 6, 8 MB each.</span>
+          <div class="thumbs" id="thumbs"></div>
+        </div>
         <div class="composer-f">
           <label class="lead"><div id="leadTerm"></div><select id="workLead" aria-label="Lead agent"></select></label>
           <span class="note" id="leadNote"></span>
@@ -420,14 +364,17 @@ main { overflow-y: auto; background:
         </div>
       </form>
     </section>
-    <section class="view" id="view"></section>
+    <section class="view" id="view"><div class="loading"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div></section>
   </main>
 </div>
 <div id="drawer"></div>
 <div id="toast"></div>
 
+<script src="/ui/base.js"></script>
 <script>
 'use strict';
+const SLUG = (/^\/p\/([a-z0-9-]+)/.exec(location.pathname) || [])[1] || '';
+const BASE = `/api/p/${SLUG}`;
 let S = null; // latest state from the server
 const DEFAULT_SEL = { scope: 'hub:main', tab: 'activity', convo: null, agent: null, who: null };
 let sel = { ...DEFAULT_SEL };
@@ -436,87 +383,25 @@ function readHash() {
 }
 readHash();
 const expanded = new Set(); // long texts the user chose to read in full
+const fresh = new Map(); // event id -> time it stops glowing
+let seenIds = null;
 
-const $ = (id) => document.getElementById(id);
-const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-// Replace markup only when it changed, so hover states and running animations survive live updates.
-function setHTML(el, html) { if (el._html === html) return false; el.innerHTML = html; el._html = html; return true; }
-
-// ---------- icons (24px line set) ----------
-const P = {
-  sprout: '<path d="M12 20v-7"/><path d="M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z"/><path d="M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z"/>',
-  leaf: '<path d="M5 19c0-8.5 5.2-14 15-14 0 9.8-5.5 15-14 15"/><path d="M5 19c3.2-4.2 6.4-6.9 10.5-9"/>',
-  lock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
-  hubs: '<circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="20" r="2"/><path d="m6.6 7.3 3.1 2.6M17.4 7.3l-3.1 2.6M12 15v3"/>',
-  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .6 3.2 2.3 3.6 5.2"/>',
-  userOut: '<circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.2 1.4M16 18h6"/>',
-  activity: '<path d="M3 12h4l3-7.5 4 15 3-7.5h4"/>',
-  board: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7.5 9.5h9M7.5 13.5h6"/>',
-  chat: '<path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.4A7.5 7.5 0 1 1 20 12.5z"/>',
-  tasks: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5.1"/>',
-  graph: '<circle cx="6" cy="6.5" r="2.5"/><circle cx="18" cy="7.5" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="m8.5 6.7 7 .6M7.2 8.8l3.6 6.9M16.8 9.8l-3.6 6"/>',
-  plus: '<path d="M12 5.5v13M5.5 12h13"/>',
-  x: '<path d="m7 7 10 10M17 7 7 17"/>',
-  check: '<circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.4 2.5 2.5 5-5.3"/>',
-  fail: '<circle cx="12" cy="12" r="8.5"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>',
-  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
-  spin: '<circle cx="12" cy="12" r="8.5" opacity=".25"/><path class="spin" d="M20.5 12A8.5 8.5 0 0 0 12 3.5"/>',
-  alert: '<path d="M12 4.5 3 19.5h18z"/><path d="M12 10.5v4M12 17.3v.2"/>',
-  dot: '<circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>',
-  ring: '<circle cx="12" cy="12" r="4.5"/>',
-  out: '<path d="M14 4.5h4a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-4M10 16l-4-4 4-4M6 12h10"/>',
-  file: '<path d="M6.5 3.5h7.5l4 4v12.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4"/>',
-  arrow: '<path d="M5 12h14M13.5 6.5 19 12l-5.5 5.5"/>',
-  chev: '<path d="m9.5 6 6 6-6 6"/>',
-  down: '<path d="m6 9.5 6 6 6-6"/>',
-  clip: '<rect x="5" y="4.5" width="14" height="16" rx="2.5"/><path d="M9 3.5h6v3H9zM8.5 11h7M8.5 15h5"/>',
-  msg: '<path d="M4 5.5h16v10.5H9.5L4 20z"/>',
-  post: '<path d="M4 10v4l11 4.5V5.5L4 10zM15 9h3a2 2 0 0 1 0 6h-3M7 14.5 8.5 20"/>',
-  flag: '<path d="M5 21V4.5M5 5h11.5l-2 4 2 4H5"/>',
-  me: '<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c.9-3.9 3.8-6 7.5-6s6.6 2.1 7.5 6"/>',
-  send: '<path d="M4 12 20 4l-6 16-3-7z"/><path d="m11 13 9-9"/>',
-  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
-  crown: '<path d="m4 8 4 4 4-6 4 6 4-4-1.5 10h-13z"/>',
-};
-const ic = (n, cls = '') => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
-
-// Earthy, distinct avatar colours.
-const EARTH = ['#3f7d4e', '#6b7f2a', '#2c7a74', '#8a6a3a', '#a8643a', '#4f7591', '#5f8a3c', '#7d5a74', '#99502f', '#37698a'];
-function hash(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
-// Colours go by position among the known agents so no two share one (up to 10), with a hash fallback.
-function color(name) {
-  if (name === 'user') return '#6c776e';
-  const i = S ? S.agents.map((a) => a.name).sort().indexOf(name) : -1;
-  return EARTH[(i >= 0 ? i : hash(name)) % EARTH.length];
-}
-function initials(name) { const p = name.split('-'); return (p.length > 1 ? p[0][0] + p[1][0] : name.slice(0, 2)).toUpperCase(); }
 const who = (name) => (name === 'user' ? 'You' : name);
+function color(name) {
+  if (name === 'user') return 'var(--side)';
+  const i = S ? S.agents.map((a) => a.name).sort().indexOf(name) : -1;
+  return EARTH[(i >= 0 ? i : nameHash(name)) % EARTH.length];
+}
 function avatar(name, a) {
   if (name === 'user') return `<span class="avatar" style="background:var(--side);color:var(--lime)" title="You">${ic('me')}</span>`;
   const on = a ? `<span class="on ${a.online ? 'yes' : ''}"></span>` : '';
   return `<span class="avatar ${a && isBusy(a) ? 'busy' : ''}" style="background:${color(name)}" title="${esc(name)}">${esc(initials(name))}${on}</span>`;
 }
-const tsOf = (ts) => (typeof ts === 'number' ? ts : Date.parse(ts));
-function ago(ts) {
-  const s = Math.max(0, Math.round((Date.now() - tsOf(ts)) / 1000));
-  if (s < 60) return s < 10 ? 'just now' : `${s}s ago`;
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
-  return `${Math.floor(s / 86400)}d ago`;
-}
-function dur(ms) {
-  const s = Math.max(0, Math.round(ms / 1000));
-  if (s < 60) return `${s}s`;
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m}m`;
-  return `${Math.floor(m / 60)}h ${m % 60}m`;
-}
-const clock = (ts) => new Date(tsOf(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 const when = (ts) => `<span class="t" title="${esc(new Date(tsOf(ts)).toLocaleString())}">${ago(ts)}</span>`;
 const agent = (name) => S.agents.find((a) => a.name === name);
-const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
 const isBusy = (a) => a.online && a.doing && a.doing !== 'Idle';
-const term = (name, desc) => `<b>${name}</b><small class="d">${desc}</small>`;
+const isFresh = (id) => (fresh.get(id) || 0) > Date.now();
+const freshCls = (id) => (isFresh(id) ? 'fresh' : '');
 
 // Light formatting for agent text: paragraphs, lists, ALL-CAPS headings, `code`, **bold**, links.
 // Everything is escaped first, so agent text can never inject markup.
@@ -560,15 +445,10 @@ function rich(text, key) {
   return `<div class="md ${open ? '' : 'clamp'}">${md(text)}</div><button class="more ${open ? 'open' : ''}" data-more="${esc(key)}">${open ? 'Show less' : 'Read all'}${ic('down')}</button>`;
 }
 
-function toast(msg) {
-  const t = $('toast'); t.innerHTML = `${ic('sprout')}<span>${esc(msg)}</span>`; t.classList.add('show');
-  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 2600);
-}
-
 async function api(path, body) {
-  const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const r = await fetch(`${BASE}/${path}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+  if (!r.ok) throw new Error(j.error || `Request failed (${r.status})`);
 }
 
 function go(patch, inPlace) {
@@ -661,15 +541,15 @@ document.addEventListener('click', (ev) => {
   const rm = ev.target.closest('[data-remove]');
   if (rm) {
     const [name, h] = rm.dataset.remove.split('|');
-    api('/api/membership', { agent: name, hub: h, action: 'remove' })
+    api('membership', { agent: name, hub: h, action: 'remove' })
       .then(() => toast(`Removed ${name} from ${h}`)).catch((e) => toast(e.message));
     return;
   }
   if (ev.target.closest('[data-close]')) { go({ agent: null }, true); return; }
   const open = ev.target.closest('[data-open-agent]');
   if (open) { go({ agent: open.dataset.openAgent }, true); return; }
-  const who = ev.target.closest('[data-who]');
-  if (who) { go({ who: who.dataset.who || null }, true); return; }
+  const whoBtn = ev.target.closest('[data-who]');
+  if (whoBtn) { go({ who: whoBtn.dataset.who || null }, true); return; }
   const nav = ev.target.closest('[data-scope]');
   if (nav) { go({ scope: nav.dataset.scope, tab: nav.dataset.scope.startsWith('hub:') ? sel.tab : 'agents', convo: null, who: null }); return; }
   const tab = ev.target.closest('[data-tab]');
@@ -708,7 +588,7 @@ document.addEventListener('drop', (ev) => {
   const h = t.dataset.drop;
   if (!name) return;
   if (agent(name)?.hubs.includes(h)) { toast(`${name} is already in ${h}`); return; }
-  api('/api/membership', { agent: name, hub: h, action: 'add' })
+  api('membership', { agent: name, hub: h, action: 'add' })
     .then(() => toast(`Added ${name} to ${h}`)).catch((e) => toast(e.message));
 });
 
@@ -717,7 +597,7 @@ $('newHub').addEventListener('submit', (ev) => {
   const name = $('newHubName').value.trim().toLowerCase().replace(/\s+/g, '-');
   if (!name) return;
   if (S?.hubs.includes(name)) { toast(`A hub named ${name} already exists`); $('newHubName').select(); return; }
-  api('/api/hubs', { name }).then(() => { $('newHubName').value = ''; toast(`Created hub ${name}`); go({ scope: 'hub:' + name, tab: 'agents' }); })
+  api('hubs', { name }).then(() => { $('newHubName').value = ''; toast(`Created hub ${name}`); go({ scope: 'hub:' + name, tab: 'agents' }); })
     .catch((e) => toast(e.message));
 });
 
@@ -725,10 +605,11 @@ const emptyBox = (title, text) => `<div class="empty">${ic('sprout')}<b>${title}
 
 // ---------- agents ----------
 
-function statsRow(st, long) {
-  const cell = (n, name, desc, hot) => `<div class="stat ${hot ? 'hot' : ''}"><b>${n}</b><span>${name}</span>${long ? `<small class="d">${desc}</small>` : ''}</div>`;
+function statsRow(st) {
+  const cell = (n, name, desc, hot) => `<div class="stat ${hot ? 'hot' : ''}"><b>${n}</b><span>${name}</span><small class="d">${desc}</small></div>`;
   return `<div class="stats">${cell(st.led.length, 'Led', 'tasks handed out')}${cell(st.done, 'Done', 'tasks finished')}${cell(st.open, 'Open', 'still on its plate', st.open)}${cell(st.files.length, 'Files', 'it owns')}</div>`;
 }
+const doingBox = (a) => `<div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${isBusy(a) ? ic('spin') : ''}${esc(a.doing || 'Idle')}</span></div>`;
 
 function agentCard(a, h) {
   const st = agentStats(a.name);
@@ -741,16 +622,16 @@ function agentCard(a, h) {
       ${h ? `<button class="x" title="Remove from ${esc(h)}" aria-label="Remove ${esc(a.name)} from ${esc(h)}" data-remove="${esc(a.name)}|${esc(h)}">${ic('x')}</button>` : ''}
     </div>
     <div class="purpose">${esc(a.purpose)}</div>
-    <div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${esc(a.doing || 'Idle')}</span></div>
-    ${statsRow(st, true)}
-    ${shown.length ? `<div class="files">${shown.map((c) => `<span class="f" title="${esc(c.note || '')}">${ic('file')}<span class="mono">${esc(c.path)}</span></span>`).join('')}${st.files.length > 3 ? `<span>and ${st.files.length - 3} more</span>` : ''}</div>` : ''}
-    <div class="card-f">${agentStatus(a)}${a.hubs.length ? a.hubs.map(hubTag).join('') : `<span class="tag">${ic('userOut')}no hub</span>`}<span class="t">seen ${ago(a.lastSeen)}</span></div>
+    ${doingBox(a)}
+    ${statsRow(st)}
+    ${shown.length ? `<div class="files">${shown.map((c) => `<span class="f" title="${esc(c.note || '')}">${ic('file')}<span class="p">${esc(c.path)}</span></span>`).join('')}${st.files.length > 3 ? `<span>and ${st.files.length - 3} more</span>` : ''}</div>` : ''}
+    <div class="card-f">${agentStatus(a)}${a.hubs.length ? a.hubs.map(hubTag).join('') : `<span class="tag">${ic('userOut')}no hub</span>`}<span class="t">seen ${ago(a.lastSeen)}</span>${ic('chev', 'go')}</div>
   </article>`;
 }
 
 function viewAgents(list, h) {
   if (!list.length) {
-    return h ? emptyBox(`No agents in ${esc(h)} yet`, `Drag agents here from <i>All agents</i>, or run <span class="mono">/hub ${h === 'main' ? '' : esc(h)}</span> in a session.`)
+    return h ? emptyBox(`No agents in ${esc(h)} yet`, `Drag agents here from All agents, or run <span class="mono">/hub${h === 'main' ? '' : ' ' + esc(h)}</span> in a session.`)
       : emptyBox('Nothing here', 'Run <span class="mono">/hub</span> in a Claude Code session to register it.');
   }
   const order = (a) => (a.online ? 0 : a.left ? 2 : 1);
@@ -758,16 +639,16 @@ function viewAgents(list, h) {
 }
 
 function snippet(e) {
-  const s = e.type === 'task' ? e.title : e.type === 'task-update' ? e.title : e.text || '';
+  const s = e.type === 'task' || e.type === 'task-update' ? e.title : e.text || '';
   return s.replace(/\s+/g, ' ');
 }
 function eventLine(e, me) {
   if (e.from === me) {
     if (e.type === 'task') return `${ic('clip')} Gave <b>${esc(who(e.to))}</b> a task`;
-    if (e.type === 'task-update') return `${ic(TASK_ST[e.status]?.[1] === 'spin' ? 'clock' : TASK_ST[e.status]?.[1] || 'ring')} ${e.status === 'accepted' ? 'Accepted' : e.status === 'done' ? 'Finished' : 'Failed'} a task from <b>${esc(who(e.to))}</b>`;
+    if (e.type === 'task-update') return `${ic(e.status === 'failed' ? 'fail' : 'check')} ${e.status === 'accepted' ? 'Accepted' : e.status === 'done' ? 'Finished' : 'Failed'} a task from <b>${esc(who(e.to))}</b>`;
     return e.to === '*' ? `${ic('post')} Posted to the board` : `${ic('msg')} Messaged <b>${esc(who(e.to))}</b>`;
   }
-  if (e.type === 'task') return `${ic('clip')} <b>${esc(who(e.from))}</b> gave it a task`;
+  if (e.type === 'task') return `${ic(e.work ? 'flag' : 'clip')} <b>${esc(who(e.from))}</b> ${e.work ? 'asked it to lead work' : 'gave it a task'}`;
   if (e.type === 'task-update') return `${ic('check')} <b>${esc(who(e.from))}</b> reported ${esc(e.status)}`;
   return `${ic('msg')} <b>${esc(who(e.from))}</b> messaged it`;
 }
@@ -784,17 +665,17 @@ function drawerBody(a) {
     <div class="drawer-b">
       <section><div class="card-f" style="border:0;padding:0;margin-bottom:10px">${agentStatus(a)}${a.hubs.map(hubTag).join('')}<span class="t">seen ${ago(a.lastSeen)}</span></div>
         <div class="purpose">${esc(a.purpose)}</div></section>
-      <div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${esc(a.doing || 'Idle')}</span></div>
-      ${statsRow(st, true)}
+      ${doingBox(a)}
+      ${statsRow(st)}
       <section>${head('Tasks', 'Work it was given, and work it handed out as a lead')}${tasks.length ? `<div class="list">${tasks.map(({ t, dir, other }) => {
         const info = taskInfo(t);
         return `<div class="list-row">${taskStatus(t.status)}<span class="grow">${esc(t.title)}<div class="note">${dir} ${esc(other === 'user' ? 'you' : other)}, ${info.took !== null ? 'took ' + dur(info.took) : 'open for ' + dur(info.open)}</div></span></div>`;
       }).join('')}</div>` : '<div class="t">No tasks yet.</div>'}</section>
       <section>${head('Files it owns', 'Claimed when it creates or edits them. Others ask before touching these.')}${st.files.length ? `<div class="list">${st.files.map((c) =>
-        `<div class="list-row">${ic('file')}<span class="grow"><span class="mono">${esc(c.path)}</span>${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}</span></div>`).join('')}</div>`
+        `<div class="list-row">${ic('file')}<span class="grow">${esc(c.path)}${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}</span></div>`).join('')}</div>`
         : '<div class="t">No files claimed yet.</div>'}</section>
       <section>${head('Recent activity', 'The last 25 things it sent or received')}${recent.length ? `<div class="list">${recent.map((e) => `<div class="mini">
-        <div>${eventLine(e, a.name)} <span class="t">· ${ago(e.ts)}</span></div>
+        <div class="meta">${eventLine(e, a.name)}<span class="t">${ago(e.ts)}</span></div>
         <div class="snip">${esc(snippet(e))}</div></div>`).join('')}</div>` : '<div class="t">Nothing yet.</div>'}</section>
     </div>`;
 }
@@ -820,14 +701,15 @@ function tlItem(e) {
   const face = avatar(e.from);
   const time = `<div class="tl-time" title="${esc(new Date(tsOf(e.ts)).toLocaleString())}">${clock(e.ts)}</div>`;
   const row = (rail, body, minor) => `<div class="tl-item ${minor ? 'minor' : ''}">${time}<div class="tl-rail">${rail}</div><div class="tl-body">${body}</div></div>`;
+  const cardCls = `tl-card surface ${freshCls(e.id)}`;
   switch (e.type) {
     case 'membership':
       return row(`<span class="mark">${ic(e.hub === 'main' ? 'leaf' : 'lock')}</span>`, `<div class="tl-head">${e.from === 'user' ? 'You' : `<b>${esc(e.from)}</b>`} ${esc(e.action)} <b>${esc(e.to)}</b> ${e.action === 'added' ? 'to' : 'from'} ${esc(e.hub)}</div>`, true);
     case 'task':
       if (e.work) return row(face, `<div class="tl-head"><b>You</b> posted work on the board for <b>${esc(e.to)}</b> to lead</div>
-        <div class="tl-card surface work"><div class="title">${ic('flag')}${esc(e.title)}</div>${rich(e.body, k)}</div>`);
+        <div class="${cardCls} work"><div class="title">${ic('flag')}${esc(e.title)}</div>${rich(e.body, k)}${imagesOf(e)}</div>`);
       return row(face, `<div class="tl-head"><b>${esc(e.from)}</b> handed <b>${esc(e.to)}</b> a task</div>
-        <div class="tl-card surface task"><div class="title">${ic('clip')}${esc(e.title)}</div>${rich(e.body, k)}</div>`);
+        <div class="${cardCls}"><div class="title">${ic('clip')}${esc(e.title)}</div>${rich(e.body, k)}</div>`);
     case 'task-update': {
       const t = S.tasks.find((x) => x.id === e.taskId);
       if (e.status === 'accepted') {
@@ -836,11 +718,11 @@ function tlItem(e) {
       }
       const took = t ? `<span class="t">took ${dur(tsOf(e.ts) - tsOf(t.ts))}</span>` : '';
       return row(face, `<div class="tl-head"><b>${esc(e.from)}</b> ${e.status === 'done' ? 'finished' : 'could not finish'} <span class="q">${esc(e.title)}</span>${taskStatus(e.status)}${took}</div>
-        ${e.report ? `<div class="tl-card surface ${e.status}">${rich(e.report, k)}</div>` : ''}`);
+        ${e.report ? `<div class="${cardCls}">${rich(e.report, k)}</div>` : ''}`);
     }
     case 'message': {
       const head = e.to === '*' ? `<b>${esc(e.from)}</b> ${e.replyTo ? 'replied on' : 'posted to'} the board` : `<b>${esc(e.from)}</b> ${ic('arrow')} <b>${esc(e.to)}</b>`;
-      return row(face, `<div class="tl-head">${head}</div><div class="tl-card surface">${rich(e.text, k)}</div>`);
+      return row(face, `<div class="tl-head">${head}</div><div class="${cardCls}">${rich(e.text, k)}</div>`);
     }
     default:
       return '';
@@ -849,7 +731,7 @@ function tlItem(e) {
 
 function viewActivity(h) {
   const all = hubEvents(h).slice().sort((a, b) => tsOf(a.ts) - tsOf(b.ts));
-  if (!all.length) return emptyBox(`Nothing has happened in ${esc(h)} yet`, 'Give an agent a feature and ask it to collaborate. Plans, tasks, reports and messages show up here as they happen.');
+  if (!all.length) return emptyBox(`Nothing has happened in ${esc(h)} yet`, 'Post work on the Board, or give an agent a feature and ask it to collaborate. Plans, tasks, reports and messages show up here as they happen.');
   const people = [...new Set(all.filter((e) => e.type !== 'membership').flatMap((e) => [e.from, e.to]).filter((n) => n && n !== '*' && n !== 'user'))].sort();
   if (sel.who && !people.includes(sel.who)) sel.who = null;
   const evs = sel.who ? all.filter((e) => e.from === sel.who || e.to === sel.who) : all;
@@ -863,7 +745,7 @@ function viewActivity(h) {
   }
   return filters + sessions.reverse().map((s) => {
     const first = tsOf(s[0].ts), last = tsOf(s[s.length - 1].ts);
-    const faces = [...new Set(s.map((e) => e.from).filter((n) => n !== 'user'))];
+    const faces = [...new Set(s.map((e) => e.from))];
     const tasks = s.filter((e) => e.type === 'task').length;
     const day = new Date(first).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
     return `<div class="session-h"><div><div class="when">${day}, ${clock(first)}${last - first > 60000 ? ` to ${clock(last)}` : ''}</div>
@@ -877,11 +759,13 @@ function viewActivity(h) {
 
 function msgRow(e, reply) {
   return `<div class="msg ${reply ? 'reply' : ''}">${avatar(e.from)}<div class="msg-b">
-    <div class="msg-h"><span class="name">${esc(e.from)}</span>${when(e.ts)}<span class="t mono">#${e.id}</span></div>
+    <div class="msg-h"><span class="name">${esc(e.from)}</span>${when(e.ts)}</div>
     ${rich(e.text, `b:${e.id}`)}</div></div>`;
 }
 
 const hubWork = (h) => S.tasks.filter((t) => t.hub === h && t.work);
+const imagesOf = (t) => (t.images?.length ? `<div class="imgs">${t.images.map((im) =>
+  `<a href="${BASE}/attachments/${encodeURIComponent(im.file)}" target="_blank" rel="noopener" title="${esc(im.name)}"><img src="${BASE}/attachments/${encodeURIComponent(im.file)}" alt="${esc(im.name)}" loading="lazy"></a>`).join('')}</div>` : '');
 
 // Work the user posted: the request, who leads it, progress of the parts it was split into, and the final report.
 function workThread(t) {
@@ -889,14 +773,15 @@ function workThread(t) {
   const subs = S.tasks.filter((x) => x.parent === t.id);
   const n = (s) => subs.filter((x) => x.status === s).length;
   const progress = subs.length
-    ? `<span>${ic('tasks')} Split into ${plural(subs.length, 'part')}${n('done') ? `, ${n('done')} done` : ''}${n('accepted') ? `, ${n('accepted')} in progress` : ''}${n('assigned') ? `, ${n('assigned')} waiting` : ''}</span>`
-    : t.status === 'assigned' ? `<span>Waiting for ${esc(t.to)} to pick it up</span>` : '';
+    ? `<span class="st">${ic('tasks')}Split into ${plural(subs.length, 'part')}${n('done') ? `, ${n('done')} done` : ''}${n('accepted') ? `, ${n('accepted')} in progress` : ''}${n('assigned') ? `, ${n('assigned')} waiting` : ''}</span>`
+    : t.status === 'assigned' ? `<span class="t">Waiting for ${esc(t.to)} to pick it up</span>` : '';
   const end = info.end;
-  return `<div class="thread surface work">
+  const fr = isFresh(t.id) || (end && isFresh(end.id));
+  return `<div class="thread surface work ${fr ? 'fresh' : ''}">
     <div class="msg">${avatar('user')}<div class="msg-b">
       <div class="msg-h"><span class="name">You</span><span class="kind">${ic('flag')}Work</span>${when(t.ts)}</div>
-      <div class="work-title">${esc(t.title)}</div>${rich(t.body, `w:${t.id}`)}
-      <div class="meta"><span class="who-led">${ic('crown')} Led by ${avatar(t.to)}<b>${esc(t.to)}</b></span>${taskStatus(t.status)}${progress}
+      <div class="work-title">${esc(t.title)}</div>${rich(t.body, `w:${t.id}`)}${imagesOf(t)}
+      <div class="meta"><span class="who-led">${ic('crown')}Led by ${avatar(t.to)}<b>${esc(t.to)}</b></span>${taskStatus(t.status)}${progress}
         <span class="t">${info.took !== null ? `took ${dur(info.took)}` : `open ${dur(info.open)}`}</span></div>
     </div></div>
     ${end ? `<div class="msg reply">${avatar(end.from)}<div class="msg-b">
@@ -913,10 +798,13 @@ function viewBoard(h) {
   const threads = new Map();
   for (const p of posts) { const r = rootOf(p); if (!threads.has(r.id)) threads.set(r.id, []); if (p !== r) threads.get(r.id).push(p); }
   const items = [
-    ...[...threads.keys()].map((id) => ({
-      at: Math.max(tsOf(byId[id].ts), ...threads.get(id).map((x) => tsOf(x.ts))),
-      html: `<div class="thread surface">${msgRow(byId[id])}${threads.get(id).map((x) => msgRow(x, true)).join('')}</div>`,
-    })),
+    ...[...threads.keys()].map((id) => {
+      const all = [byId[id], ...threads.get(id)];
+      return {
+        at: Math.max(...all.map((x) => tsOf(x.ts))),
+        html: `<div class="thread surface ${all.some((x) => isFresh(x.id)) ? 'fresh' : ''}">${msgRow(byId[id])}${threads.get(id).map((x) => msgRow(x, true)).join('')}</div>`,
+      };
+    }),
     ...work.map((t) => ({ at: Math.max(tsOf(t.ts), ...S.events.filter((e) => e.taskId === t.id).map((e) => tsOf(e.ts))), html: workThread(t) })),
   ];
   return items.sort((a, b) => b.at - a.at).map((i) => i.html).join('');
@@ -948,10 +836,66 @@ function leadNote(h, none) {
   else if (!a) html = `The lead plans the work, hands parts to the others in ${esc(h)} and reports back here.`;
   else if (!a.online || a.left) { cls += ' warn'; html = `${ic('alert')}${esc(a.name)} is offline. It sees this when its session runs again.`; }
   else if (!a.listening) { cls += ' warn'; html = `${ic('alert')}${esc(a.name)} isn’t listening, so it sees this the next time it works.`; }
-  else html = isBusy(a) ? `${ic('spin')}${esc(a.name)} is busy with: ${esc(a.doing)}. It will queue this.` : `${ic('dot')}${esc(a.name)} is free and will start right away.`;
+  else html = isBusy(a) ? `${ic('spin')}${esc(a.name)} is busy with ${esc(a.doing)}. It will queue this.` : `${ic('dot')}${esc(a.name)} is free and will start right away.`;
   note.className = cls;
   setHTML(note, html);
 }
+
+// ---------- images for posted work: upload, paste or drop ----------
+
+const IMG_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+const MAX_IMGS = 6, MAX_IMG_BYTES = 8 * 1024 * 1024;
+let pendingImgs = []; // { name, type, data (base64), url (preview) }
+
+function renderThumbs() {
+  $('thumbs').innerHTML = pendingImgs.map((im, i) =>
+    `<figure class="thumb" title="${esc(im.name)}"><img src="${im.url}" alt="${esc(im.name)}"><button type="button" data-unimg="${i}" aria-label="Remove ${esc(im.name)}">${ic('x')}</button></figure>`).join('');
+  $('attachHint').textContent = pendingImgs.length
+    ? `${plural(pendingImgs.length, 'image')} attached. ${MAX_IMGS - pendingImgs.length ? 'Paste or drop more.' : 'That is the most one post can carry.'}`
+    : 'or paste from your clipboard, or drop images here. Up to 6, 8 MB each.';
+}
+
+function addImages(files) {
+  const list = [...files].filter((f) => f && f.type && f.type.startsWith('image/'));
+  if (!list.length) return;
+  for (const f of list) {
+    if (pendingImgs.length >= MAX_IMGS) { toast(`One post can carry ${MAX_IMGS} images`); break; }
+    if (!IMG_TYPES.includes(f.type)) { toast(`${f.name || 'That image'} isn’t a PNG, JPEG, GIF or WebP`); continue; }
+    if (f.size > MAX_IMG_BYTES) { toast(`${f.name || 'That image'} is over 8 MB`); continue; }
+    const entry = { name: f.name || `pasted-${pendingImgs.length + 1}.${f.type.split('/')[1]}`, type: f.type, url: URL.createObjectURL(f), data: null };
+    pendingImgs.push(entry);
+    const reader = new FileReader();
+    reader.onload = () => { entry.data = String(reader.result).split(',')[1]; };
+    reader.readAsDataURL(f);
+  }
+  renderThumbs();
+}
+
+$('imgInput').addEventListener('change', (ev) => { addImages(ev.target.files); ev.target.value = ''; });
+document.addEventListener('paste', (ev) => {
+  if ($('composerWrap').hidden || $('postBtn').disabled) return;
+  const inComposer = ev.target.closest?.('#composer') || ev.target === document.body;
+  const files = [...(ev.clipboardData?.items || [])].filter((i) => i.kind === 'file').map((i) => i.getAsFile());
+  if (!inComposer || !files.length) return;
+  ev.preventDefault();
+  addImages(files);
+});
+const composer = $('composer');
+composer.addEventListener('dragover', (ev) => { if ([...ev.dataTransfer.types].includes('Files')) { ev.preventDefault(); composer.classList.add('dropping'); } });
+composer.addEventListener('dragleave', (ev) => { if (!composer.contains(ev.relatedTarget)) composer.classList.remove('dropping'); });
+composer.addEventListener('drop', (ev) => {
+  if (!ev.dataTransfer.files.length) return;
+  ev.preventDefault(); ev.stopPropagation();
+  composer.classList.remove('dropping');
+  addImages(ev.dataTransfer.files);
+});
+composer.addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-unimg]');
+  if (!b) return;
+  const [gone] = pendingImgs.splice(Number(b.dataset.unimg), 1);
+  if (gone) URL.revokeObjectURL(gone.url);
+  renderThumbs();
+});
 
 $('workLead').addEventListener('change', () => leadNote(scopeHub()));
 $('composer').addEventListener('submit', (ev) => {
@@ -961,9 +905,15 @@ $('composer').addEventListener('submit', (ev) => {
   const lead = $('workLead').value;
   if (!title) { toast('Describe the work first'); $('workTitle').focus(); return; }
   if (!lead) { toast('Choose who leads it'); $('workLead').focus(); return; }
+  if (pendingImgs.some((im) => !im.data)) { toast('Still reading an image. Try again in a moment.'); return; }
   $('postBtn').disabled = true;
-  api('/api/work', { hub: h, lead, title, body: $('workBody').value })
-    .then(() => { $('workTitle').value = ''; $('workBody').value = ''; toast(`Posted. ${lead} is leading it.`); })
+  const images = pendingImgs.map(({ name, type, data }) => ({ name, type, data }));
+  api('work', { hub: h, lead, title, body: $('workBody').value, images })
+    .then(() => {
+      $('workTitle').value = ''; $('workBody').value = '';
+      pendingImgs.forEach((im) => URL.revokeObjectURL(im.url)); pendingImgs = []; renderThumbs();
+      toast(`Posted. ${lead} is leading it.`);
+    })
     .catch((e) => toast(e.message))
     .finally(() => { $('postBtn').disabled = false; });
 });
@@ -985,10 +935,10 @@ function conversations(h) {
 
 function bubble(e, left) {
   if (e.type === 'task-update') {
-    if (e.status === 'accepted') return `<div class="sys">${taskStatus('accepted')}<b>${esc(e.from)}</b> accepted ${esc(e.title)}<span class="t">· ${ago(e.ts)}</span></div>`;
+    if (e.status === 'accepted') return `<div class="sys">${taskStatus('accepted')}<span><b>${esc(e.from)}</b> accepted ${esc(e.title)}</span><span class="t">${ago(e.ts)}</span></div>`;
     const t = S.tasks.find((x) => x.id === e.taskId);
-    return `<div class="report surface ${e.status === 'failed' ? 'failed' : ''}"><div class="head">${taskStatus(e.status)}<b>${esc(e.from)}</b> reported on ${esc(e.title)}
-      ${t ? `<span class="t">· took ${dur(tsOf(e.ts) - tsOf(t.ts))}</span>` : ''}<span class="t">· ${ago(e.ts)}</span></div>${rich(e.report, `c:${e.id}`)}</div>`;
+    return `<div class="report surface ${freshCls(e.id)}"><div class="head">${taskStatus(e.status)}<span><b>${esc(e.from)}</b> reported on ${esc(e.title)}</span>
+      ${t ? `<span class="t">took ${dur(tsOf(e.ts) - tsOf(t.ts))}</span>` : ''}<span class="t">${ago(e.ts)}</span></div>${rich(e.report, `c:${e.id}`)}</div>`;
   }
   const side = e.from === left ? '' : 'right';
   const isTask = e.type === 'task';
@@ -1018,7 +968,7 @@ function viewConversations(h) {
 
 function viewTasks(h) {
   const tasks = S.tasks.filter((t) => t.hub === h);
-  if (!tasks.length) return emptyBox('No tasks yet', 'When an agent leads a feature, the tasks it hands out appear here as a tree.');
+  if (!tasks.length) return emptyBox('No tasks yet', 'When an agent leads a feature, or you post work on the Board, the tasks appear here as a tree.');
   const ids = new Set(tasks.map((t) => t.id));
   const kids = (id) => tasks.filter((t) => t.parent === id);
   const n = (s) => tasks.filter((t) => t.status === s).length;
@@ -1031,12 +981,12 @@ function viewTasks(h) {
     if (info.accepted) steps.push(`accepted <b>${clock(info.accepted.ts)}</b>`);
     if (info.end) steps.push(`${info.end.status} <b>${clock(info.end.ts)}</b>`);
     return `<div class="task-node"><details class="task surface" data-id="${t.id}">
-    <summary>${ic('chev', 'chev')}${taskStatus(t.status)}<span class="title">${esc(t.title)}</span>
-      <span class="route">${avatar(t.from)}${esc(t.from)} ${ic('arrow')} ${avatar(t.to)}${esc(t.to)}<span class="sep">|</span>${info.took !== null ? `took ${dur(info.took)}` : `open ${dur(info.open)}`}</span></summary>
+    <summary>${ic('chev', 'chev')}${taskStatus(t.status)}<span class="title">${t.work ? `${ic('flag')} ` : ''}${esc(t.title)}</span>
+      <span class="route">${avatar(t.from)}${esc(who(t.from))} ${ic('arrow')} ${avatar(t.to)}${esc(t.to)}<span class="took t">${info.took !== null ? `took ${dur(info.took)}` : `open ${dur(info.open)}`}</span></span></summary>
     <div class="body">
-      <div class="steps">${steps.join(ic('arrow'))}<span class="t mono">#${t.id}</span></div>
-      ${t.body ? `<div><span class="lbl">Spec</span><small class="d">What the lead asked for</small>${rich(t.body, `t:${t.id}:s`)}</div>` : ''}
-      ${t.report ? `<div><span class="lbl">Report</span><small class="d">What ${esc(t.to)} did and what the lead should know</small>${rich(t.report, `t:${t.id}:r`)}</div>` : ''}
+      <div class="steps">${steps.join(ic('arrow'))}</div>
+      ${t.body || t.images?.length ? `<div><span class="lbl">Spec</span><small class="d">What ${t.work ? 'you' : 'the lead'} asked for</small>${rich(t.body, `t:${t.id}:s`)}${imagesOf(t)}</div>` : ''}
+      ${t.report ? `<div><span class="lbl">Report</span><small class="d">What ${esc(t.to)} did and what ${t.work ? 'you' : 'the lead'} should know</small>${rich(t.report, `t:${t.id}:r`)}</div>` : ''}
     </div>
   </details>${kids(t.id).length ? `<div class="children">${kids(t.id).map(node).join('')}</div>` : ''}</div>`;
   };
@@ -1132,8 +1082,8 @@ function render(navigated) {
   if (!S) return;
   if (sel.scope.startsWith('hub:') && !S.hubs.includes(scopeHub())) sel.scope = 'hub:main';
   if (sel.agent && !agent(sel.agent)) sel.agent = null;
-  $('project').textContent = S.project;
-  $('project').title = S.root;
+  document.title = `${S.project} | Session Hub`;
+  setHTML($('crumb'), `${ic('chev')}<a href="/">All projects</a>${ic('chev')}<b title="${esc(S.root)}">${esc(S.project)}</b>`);
   renderSide();
 
   const h = scopeHub();
@@ -1154,7 +1104,7 @@ function render(navigated) {
     tabs = Object.entries(TABS).map(([k, [i, name, desc]]) =>
       `<button class="tab ${sel.tab === k ? 'active' : ''}" data-tab="${k}">${ic(i)}<span>${term(`${name}${counts[k] !== undefined ? `<span class="n">${counts[k]}</span>` : ''}`, desc)}</span></button>`).join('');
     title = `${ic(h === 'main' ? 'leaf' : 'lock')}${esc(h)}`;
-    subtitle = h === 'main' ? 'The default hub. Sessions that run /hub without a keyword join here.' : 'A private hub. Only agents in it can talk to each other.';
+    subtitle = h === 'main' ? 'The default hub. Sessions that run /hub without a name join here.' : 'A private hub. Only agents in it can talk to each other.';
     body = { activity: () => viewActivity(h), agents: () => viewAgents(inHub(h), h), board: () => viewBoard(h), conversations: () => viewConversations(h), tasks: () => viewTasks(h), graph: () => viewGraph(h) }[sel.tab]();
   } else if (sel.scope === 'unassigned') {
     title = `${ic('userOut')}Unassigned`;
@@ -1179,33 +1129,67 @@ function render(navigated) {
   placeInks();
 }
 
+// The project's hub is gone (wiped, or never set up): say so and point home.
+function renderGone() {
+  $('conn').className = 'conn bad'; $('connText').textContent = 'Not found';
+  setHTML($('crumb'), `${ic('chev')}<a href="/">All projects</a>`);
+  setHTML($('title'), `${ic('sprout')}No hub here`);
+  setHTML($('subtitle'), '');
+  setHTML($('tabs'), '');
+  $('composerWrap').hidden = true;
+  setHTML($('view'), emptyBox('This project has no Session Hub', 'It may have been wiped with /hub-wipe. Run /hub in a session in the project to start a new one, or <a href="/">see all projects</a>.'));
+}
+
+// New events glow briefly when they arrive (not on first load).
+function noteFresh(next) {
+  const ids = new Set(next.events.map((e) => e.id));
+  if (seenIds) for (const id of ids) if (!seenIds.has(id)) fresh.set(id, Date.now() + 2600);
+  seenIds = ids;
+  for (const [id, until] of fresh) if (until < Date.now()) fresh.delete(id);
+}
+
 // Don't redraw under the user's pointer mid-drag.
 let dragging = false;
 let pending = null;
 document.addEventListener('dragstart', () => { dragging = true; });
 document.addEventListener('dragend', () => { dragging = false; if (pending) { S = pending; pending = null; render(); } });
 
+function accept(next) {
+  noteFresh(next);
+  if (dragging) { pending = next; return; }
+  const firstLoad = !S;
+  S = next;
+  render(firstLoad);
+}
+
 function connect() {
-  const es = new EventSource('/api/stream');
+  const es = new EventSource(`${BASE}/stream`);
   es.onopen = () => { $('conn').className = 'conn'; $('connText').textContent = 'Live'; };
-  es.onmessage = (m) => {
-    const next = JSON.parse(m.data);
-    if (dragging) { pending = next; return; }
-    S = next; render();
+  es.onmessage = (m) => accept(JSON.parse(m.data));
+  es.addEventListener('gone', () => { es.close(); renderGone(); });
+  es.onerror = () => {
+    $('conn').className = 'conn bad'; $('connText').textContent = 'Reconnecting';
+    fetch(`${BASE}/state`).then((r) => { if (r.status === 404) { es.close(); renderGone(); } }).catch(() => {});
   };
-  es.onerror = () => { $('conn').className = 'conn bad'; $('connText').textContent = 'Reconnecting'; };
 }
 
 $('logo').innerHTML = ic('sprout');
 $('newHubBtn').innerHTML = ic('plus');
+$('hubsHead').innerHTML = `${ic('hubs')}<div>${term('Hubs', 'Groups of agents that can talk to each other')}</div>`;
+$('agentsHead').innerHTML = `${ic('users')}<div>${term('Agents', 'Sessions registered with /hub')}</div>`;
 $('composerHead').innerHTML = `${ic('flag')}<div>${term('Post work', 'Describe a feature or job. Only the lead you choose is woken; it splits the work across this hub and reports back here.')}</div>`;
 $('leadTerm').innerHTML = term('Lead', 'Plans and delegates');
 $('postBtn').innerHTML = `${ic('send')}Post to board`;
-$('hubsHead').innerHTML = `${ic('hubs')}<div>${term('Hubs', 'Groups of agents that can talk to each other')}</div>`;
-$('agentsHead').innerHTML = `${ic('users')}<div>${term('Agents', 'Sessions registered with /hub')}</div>`;
-fetch('/api/state').then((r) => r.json()).then((s) => { if (!S) { S = s; render(true); } }).catch(() => {});
+$('addImgLabel').innerHTML = `${ic('plus')}Add images`;
+initTheme();
+fetch(`${BASE}/state`).then((r) => (r.status === 404 ? null : r.json())).then((s) => { if (!s) renderGone(); else if (!S) accept(s); }).catch(() => {});
 connect();
 setInterval(() => { if (S && !dragging) render(); }, 15000); // refresh "x ago" labels
+setInterval(() => { // let glows fade out, then stop
+  if (!S || dragging || !fresh.size) return;
+  for (const [id, until] of fresh) if (until < Date.now()) fresh.delete(id);
+  render();
+}, 1000);
 if (document.fonts) document.fonts.ready.then(placeInks);
 </script>
 </body>
