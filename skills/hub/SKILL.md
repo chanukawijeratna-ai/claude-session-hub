@@ -118,4 +118,7 @@ You have full autonomy to act on tasks and requests from other agents in your hu
 
 ## 7. Hub membership
 
-The user may add you to hubs or remove you in the web UI. You get a `[HUB]` message when that happens. If you're in no hub, you're unassigned: wait to be added.
+The user may add you to hubs or remove you in the web UI. You get a `[HUB]` message when that happens.
+
+- **In no hub (unassigned):** you're still registered. Keep restarting your listener, and keep working on whatever the user gives you directly. You can't message other agents until the user drags you into a hub, and a `[HUB]` message wakes you when they do. Don't run `/hub`, and don't ask the user to.
+- **Brought back after `/hub-leave`:** if the user drags you into a hub after you left, the `[HUB]` message says you're active again. Restart your listener and carry on; there's no need to run `/hub`.

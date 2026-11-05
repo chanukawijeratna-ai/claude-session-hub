@@ -116,6 +116,8 @@ main { overflow-y: auto; }
 .files .p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-f { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
 .card-f .t { margin-left: auto; }
+.left-note { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--warn); background: color-mix(in srgb, var(--warn) 9%, var(--panel)); border-radius: 9px; padding: 8px 11px; }
+.left-note svg.i { margin-top: 2px; }
 .card .go { color: var(--faint); transition: color .25s, transform .3s var(--ease); }
 .card:hover .go { color: var(--accent); transform: translateX(3px); }
 
@@ -587,9 +589,14 @@ document.addEventListener('drop', (ev) => {
   const name = ev.dataTransfer.getData('text/plain');
   const h = t.dataset.drop;
   if (!name) return;
-  if (agent(name)?.hubs.includes(h)) { toast(`${name} is already in ${h}`); return; }
+  const a = agent(name);
+  if (a?.hubs.includes(h)) { toast(`${name} is already in ${h}`); return; }
+  // Say when the agent will actually notice: a session with no listener only hears about it on its next turn.
+  const later = !a ? '' : a.left ? ' It had left, so it comes back the next time you type in its session.'
+    : !a.online ? ' It is offline, so it sees this when its session runs again.'
+    : !a.listening ? ' It isn’t listening, so it sees this the next time it works.' : '';
   api('membership', { agent: name, hub: h, action: 'add' })
-    .then(() => toast(`Added ${name} to ${h}`)).catch((e) => toast(e.message));
+    .then(() => toast(`Added ${name} to ${h}.${later}`)).catch((e) => toast(e.message));
 });
 
 $('newHub').addEventListener('submit', (ev) => {
@@ -622,6 +629,7 @@ function agentCard(a, h) {
       ${h ? `<button class="x" title="Remove from ${esc(h)}" aria-label="Remove ${esc(a.name)} from ${esc(h)}" data-remove="${esc(a.name)}|${esc(h)}">${ic('x')}</button>` : ''}
     </div>
     <div class="purpose">${esc(a.purpose)}</div>
+    ${a.left ? `<div class="left-note">${ic('out')}<span>Left the hub. Drag it onto a hub to bring it back; it rejoins the next time you type in its session.</span></div>` : ''}
     ${doingBox(a)}
     ${statsRow(st)}
     ${shown.length ? `<div class="files">${shown.map((c) => `<span class="f" title="${esc(c.note || '')}">${ic('file')}<span class="p">${esc(c.path)}</span></span>`).join('')}${st.files.length > 3 ? `<span>and ${st.files.length - 3} more</span>` : ''}</div>` : ''}
@@ -1108,7 +1116,7 @@ function render(navigated) {
     body = { activity: () => viewActivity(h), agents: () => viewAgents(inHub(h), h), board: () => viewBoard(h), conversations: () => viewConversations(h), tasks: () => viewTasks(h), graph: () => viewGraph(h) }[sel.tab]();
   } else if (sel.scope === 'unassigned') {
     title = `${ic('userOut')}Unassigned`;
-    subtitle = 'Agents in no hub. They can’t send or receive messages until you drag them into one.';
+    subtitle = 'Agents in no hub. They keep running but can’t message other agents until you drag them into a hub.';
     body = viewAgents(S.agents.filter((a) => !a.hubs.length));
   } else {
     title = `${ic('users')}All agents`;

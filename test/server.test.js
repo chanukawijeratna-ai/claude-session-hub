@@ -101,7 +101,7 @@ test('creating a hub and moving an agent notifies the agent', async () => {
 
   await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'remove' });
   await json('POST', api('membership'), { agent: 'frontend', hub: 'lab', action: 'remove' });
-  assert.match(hub('inbox', '--as', 'frontend'), /unassigned/);
+  assert.match(hub('inbox', '--as', 'frontend'), /in no hub/);
   assert.match(hub('hubs'), /unassigned: frontend/);
 });
 
@@ -198,6 +198,20 @@ test('quit takes an agent out of every hub and stops its listener', async () => 
   assert.strictEqual(b.online, false);
   hub('join', 'backend');
   assert.match(hub('hubs'), /main: backend/);
+});
+
+test('an unassigned agent is told to keep listening, and dragging a left agent back reactivates it', async () => {
+  await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'remove' });
+  const out = hub('inbox', '--as', 'frontend');
+  assert.match(out, /no hub[\s\S]*keep restarting your listener[\s\S]*Do not run \/hub/);
+
+  hub('quit', '--as', 'frontend'); // like /hub-leave
+  assert.strictEqual((await json('GET', api('state'))).json.agents.find((a) => a.name === 'frontend').left !== undefined, true);
+  await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'add' });
+  const back = (await json('GET', api('state'))).json.agents.find((a) => a.name === 'frontend');
+  assert.strictEqual(back.left, undefined);
+  assert.deepStrictEqual(back.hubs, ['main']);
+  assert.match(hub('inbox', '--as', 'frontend'), /active again[\s\S]*hub wait --as frontend/);
 });
 
 test('wipe needs the user to type the slug, then deletes everything', async () => {
