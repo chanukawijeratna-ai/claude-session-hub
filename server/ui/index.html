@@ -827,7 +827,7 @@ function viewActivity(h) {
   const evs = sel.who ? all.filter((e) => e.from === sel.who || e.to === sel.who) : all;
   const filters = people.length > 1 ? `<div class="filters"><span class="lbl">Show</span><button class="chip plain ${sel.who ? '' : 'on'}" data-who="">Everyone</button>${people.map((p) =>
     `<button class="chip ${sel.who === p ? 'on' : ''}" data-who="${esc(p)}">${avatar(p)}${esc(p)}</button>`).join('')}</div>` : '';
-  // Split into work sessions wherever nothing happened for a while. Newest session first.
+  // Split into work sessions wherever nothing happened for a while. Newest first, sessions and events alike.
   const sessions = [];
   for (const e of evs) {
     const cur = sessions[sessions.length - 1];
@@ -840,7 +840,7 @@ function viewActivity(h) {
     const day = new Date(first).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
     return `<div class="session-h"><div><div class="when">${day}, ${clock(first)}${last - first > 60000 ? ` to ${clock(last)}` : ''}</div></div>
       <span class="faces">${faces.map((n) => avatar(n)).join('')}</span><span class="line"></span></div>
-      <div class="tl">${s.map(tlItem).join('')}</div>`;
+      <div class="tl">${[...s].reverse().map(tlItem).join('')}</div>`;
   }).join('');
 }
 

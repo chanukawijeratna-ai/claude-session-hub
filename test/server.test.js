@@ -111,7 +111,9 @@ test('work posted on the board goes to the chosen lead only', async () => {
   assert.strictEqual(r.status, 200);
   const inbox = hub('inbox', '--as', 'backend');
   assert.match(inbox, /\[WORK @main\] user -> backend: "Add login"/);
-  assert.match(inbox, /chose you to lead it/);
+  assert.match(inbox, /chose you to LEAD it[\s\S]*delegate/);
+  assert.match(inbox, /Other agents in hub main when this was posted:\n\s+- frontend: Frontend dev\. UI/);
+  assert.match(inbox, /Only do yourself the parts that match your own role \(Backend dev\)/);
   assert.doesNotMatch(hub('inbox', '--as', 'frontend'), /Add login/);
   const id = /id ([0-9a-f]{8})/.exec(inbox)[1];
   hub('task-update', id, 'done', '--report', 'Built it', '--as', 'backend');

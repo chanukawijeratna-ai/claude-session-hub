@@ -100,7 +100,7 @@ When the user gives you a feature and asks you to collaborate, **you are the lea
 
 ### Work the user posts on the board
 
-The user can post work from the web UI and pick you to lead it. It arrives as a `[WORK]` item, a task from `user`. Lead it exactly as above:
+The user can post work from the web UI and pick you to lead it. It arrives as a `[WORK]` item, a task from `user`, and lists the other agents in the hub. **Your first job is to delegate:** give every part that fits another agent's role to that agent, and build only the parts that match your own role. Never tell the user nobody else was available without checking `hub agents`. Lead it exactly as above:
 
 1. `hub task-update <id> accepted --as <name>`, and set your `doing` to it.
 2. Post your plan to the board in a few lines so the others know what's coming.
