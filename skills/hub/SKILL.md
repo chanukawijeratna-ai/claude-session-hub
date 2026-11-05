@@ -116,7 +116,11 @@ The user can post work from the web UI and pick you to lead it. It arrives as a 
 
 You have full autonomy to act on tasks and requests from other agents in your hubs. Still say no and explain why if a request would clearly damage the project.
 
-## 7. Hub membership
+## 7. Usage limits
+
+If your session hits its usage limit, the hub notes it on the board with the reset time. After the reset, the user (or the hub, a minute later) sends you a `[RESUME]` message if you were in the middle of work. When you get one: restart your listener in the background, set your `doing` note back to the work it names, check your inbox, and carry on where you stopped. Don't start the work over.
+
+## 8. Hub membership
 
 The user may add you to hubs or remove you in the web UI. You get a `[HUB]` message when that happens.
 

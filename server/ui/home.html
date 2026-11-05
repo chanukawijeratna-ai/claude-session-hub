@@ -43,6 +43,7 @@ body { display: grid; grid-template-rows: 56px 1fr; min-height: 100%; }
 .now svg.i { margin-top: 2px; color: var(--accent); }
 .now b { color: var(--text); font-weight: 650; }
 .now.quiet { color: var(--faint); }
+.now.warn, .now.warn svg.i, .now.warn b { color: var(--warn); }
 .proj-f { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
 .proj-f span { display: inline-flex; align-items: center; gap: 5px; }
 .proj-f svg.i { width: 14px; height: 14px; color: var(--faint); }
@@ -95,7 +96,11 @@ function card(p, i) {
   const online = p.agents.filter((a) => a.online);
   const busy = online.filter((a) => a.doing && a.doing !== 'Idle');
   const shown = [...p.agents].sort((a, b) => Number(b.online) - Number(a.online)).slice(0, 7);
-  const now = busy.length
+  const limited = p.agents.filter((a) => a.limitedUntil !== null && a.limitedUntil !== undefined);
+  const resetAt = Math.max(0, ...limited.map((a) => a.limitedUntil));
+  const now = limited.length
+    ? `<div class="now warn">${ic('clock')}<span><b>${plural(limited.length, 'agent')}</b> paused by the usage limit${resetAt ? `, resets ${clock(resetAt)}` : ''}</span></div>`
+    : busy.length
     ? `<div class="now">${ic('spin')}<span><b>${esc(busy[0].name)}</b> is working on ${esc(busy[0].doing)}${busy.length > 1 ? `, and ${busy.length - 1} more` : ''}</span></div>`
     : `<div class="now quiet">${ic('ring')}<span>${online.length ? 'Everyone online is idle' : p.agents.length ? 'No agent is online' : 'No agents yet. Run /hub in a session here.'}</span></div>`;
   return `<a class="proj surface lift ${first ? 'enter' : ''}" style="${first ? `animation-delay:${i * 60}ms` : ''}" href="/p/${encodeURIComponent(p.slug)}/" aria-label="Open ${esc(p.name)}">

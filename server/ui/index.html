@@ -166,6 +166,22 @@ main { overflow-y: auto; }
 .kind { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: 650; color: var(--accent-text); }
 .kind svg.i { width: 14px; height: 14px; color: var(--accent); }
 
+/* usage limit banner */
+.limit-slot:empty { display: none; }
+.limit-slot { padding: 24px 30px 0; }
+.limit { padding: 14px 18px; display: grid; gap: 8px; justify-items: start; border-color: color-mix(in srgb, var(--warn) 45%, var(--border)); background: color-mix(in srgb, var(--warn) 7%, var(--panel)); }
+.limit-h { display: flex; gap: 8px; align-items: center; color: var(--warn); }
+.limit-h b { text-transform: uppercase; letter-spacing: .05em; font-size: 13px; }
+.limit p { margin: 0; color: var(--muted); }
+.limit p b { color: var(--text); }
+.post { display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 650; cursor: pointer; transition: transform .2s var(--ease), box-shadow .25s; }
+.post:hover { transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 35%, transparent); }
+.post:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.doing.paused { background: color-mix(in srgb, var(--warn) 9%, var(--panel)); }
+.doing.paused .val { color: var(--warn); }
+.doing.paused .val svg.i { color: var(--warn); }
+.tl-rail .mark.warn { color: var(--warn); }
+
 /* posting work */
 .composer-wrap { padding: 24px 30px 0; }
 .composer { padding: 16px 18px; display: grid; gap: 12px; }
@@ -328,7 +344,7 @@ main { overflow-y: auto; }
 @media (max-width: 780px) {
   .layout { grid-template-columns: 1fr; height: auto; }
   .side { padding-bottom: 14px; }
-  .main-h, .view, .composer-wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .main-h, .view, .composer-wrap, .limit-slot { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .tab small.d { display: none; }
   .convos { grid-template-columns: 1fr; }
   .tl-item { grid-template-columns: 62px 30px 1fr; }
@@ -370,6 +386,7 @@ main { overflow-y: auto; }
       
       <div class="tabbar" id="tabbar"><div class="tabs" id="tabs"></div><span class="tab-ink" id="tabInk"></span></div>
     </div>
+    <div class="limit-slot" id="limitSlot"></div>
     <section class="composer-wrap" id="composerWrap" hidden>
       <form class="composer surface" id="composer" autocomplete="off">
         <div class="composer-h" id="composerHead"></div>
@@ -488,7 +505,10 @@ const hubEvents = (h) => S.events.filter((e) => e.hub === h);
 
 // ---------- statuses (icon + text) ----------
 
+const limited = (a) => Boolean(a.limit && !a.limit.resumed);
+const resetText = (l) => (l.resetsAt ? `resets ${clock(l.resetsAt)}` : 'reset time unknown');
 function agentStatus(a) {
+  if (limited(a)) return `<span class="st warn" title="Usage limit reached, ${resetText(a.limit)}">${ic('clock')}Limit reached</span>`;
   if (a.left) return `<span class="st">${ic('out')}Left</span>`;
   if (!a.online) return `<span class="st">${ic('ring')}Offline</span>`;
   if (!a.listening) return `<span class="st warn" title="Its listener is not running, so messages reach it only while it works">${ic('alert')}Not listening</span>`;
@@ -673,7 +693,9 @@ function statsRow(st) {
   const cell = (n, name, desc, hot) => `<div class="stat ${hot ? 'hot' : ''}" title="${n} ${desc}"><b>${n}</b><span>${name}</span></div>`;
   return `<div class="stats">${cell(st.led.length, 'Led', 'tasks handed out')}${cell(st.done, 'Done', 'tasks finished')}${cell(st.open, 'Open', 'still on its plate', st.open)}${cell(st.files.length, 'Files', 'it owns')}</div>`;
 }
-const doingBox = (a) => `<div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${isBusy(a) ? ic('spin') : ''}${esc(a.doing || 'Idle')}</span></div>`;
+const doingBox = (a) => limited(a)
+  ? `<div class="doing paused"><span class="lbl">Paused by usage limit</span><span class="val">${ic('clock')}${esc(a.limit.doing || a.doing || 'Idle')}, ${resetText(a.limit)}</span></div>`
+  : `<div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${isBusy(a) ? ic('spin') : ''}${esc(a.doing || 'Idle')}</span></div>`;
 
 function agentCard(a, h) {
   const st = agentStats(a.name);
@@ -767,6 +789,10 @@ function tlItem(e) {
   const row = (rail, body, minor) => `<div class="tl-item ${minor ? 'minor' : ''}">${time}<div class="tl-rail">${rail}</div><div class="tl-body">${body}</div></div>`;
   const cardCls = `tl-card surface ${freshCls(e.id)}`;
   switch (e.type) {
+    case 'limit':
+      return row(`<span class="mark warn">${ic('clock')}</span>`, `<div class="tl-head"><b>${esc(e.from)}</b> hit the usage limit${e.resetsAt ? `, resets ${clock(e.resetsAt)}` : ''}${e.interrupted ? ' while working' : ''}</div>`, true);
+    case 'resume':
+      return row(`<span class="mark go">${ic('arrow')}</span>`, `<div class="tl-head">${e.auto ? 'The hub' : '<b>You</b>'} told <b>${esc(e.to)}</b> to carry on after the usage limit</div>`, true);
     case 'membership':
       return row(`<span class="mark">${ic(e.hub === 'main' ? 'home' : 'lock')}</span>`, `<div class="tl-head">${e.from === 'user' ? 'You' : `<b>${esc(e.from)}</b>`} ${esc(e.action)} <b>${esc(e.to)}</b> ${e.action === 'added' ? 'to' : 'from'} ${HN(e.hub)}</div>`, true);
     case 'task':
@@ -817,6 +843,35 @@ function viewActivity(h) {
       <div class="tl">${s.map(tlItem).join('')}</div>`;
   }).join('');
 }
+
+// ---------- usage limits ----------
+
+function limitBanner(h) {
+  const hit = inHub(h).filter(limited);
+  if (!hit.length) return '';
+  const waiting = hit.filter((a) => a.limit.interrupted);
+  const resets = hit.map((a) => a.limit.resetsAt).filter(Boolean);
+  const latest = resets.length ? Math.max(...resets) : null;
+  const names = (list) => list.map((a) => `<b>${esc(a.name)}</b>`).join(', ');
+  const when = latest
+    ? (Date.now() < latest ? `It resets at <b>${clock(latest)}</b>, in ${dur(latest - Date.now())}.` : `It reset at <b>${clock(latest)}</b>.`)
+    : 'The reset time is unknown.';
+  const auto = latest && waiting.length ? ` If you don't resume them, the hub does at ${clock(latest + 60000)}.` : '';
+  return `<section class="limit surface" role="status">
+    <div class="limit-h">${ic('clock')}<b>Usage limit reached</b></div>
+    <p>${names(hit)} hit the usage limit. ${when}${waiting.length ? ` ${names(waiting)} ${waiting.length === 1 ? 'was' : 'were'} in the middle of work.${auto}` : ' Nobody was in the middle of work.'}</p>
+    ${waiting.length ? `<button class="post resume" type="button" data-resume="${esc(h)}">${ic('arrow')}Resume ${waiting.length === 1 ? esc(waiting[0].name) : 'interrupted agents'}</button>` : ''}
+  </section>`;
+}
+
+document.addEventListener('click', (ev) => {
+  const b = ev.target.closest('[data-resume]');
+  if (!b) return;
+  b.disabled = true;
+  api('resume', { hub: b.dataset.resume })
+    .then(() => toast('Told the interrupted agents to carry on'))
+    .catch((e) => { b.disabled = false; toast(e.message); });
+});
 
 // ---------- board ----------
 
@@ -1187,6 +1242,8 @@ function render(navigated) {
     main.scrollTop = keepScroll;
   }
   renderComposer(h);
+  // The usage-limit notice sits above everything else on the Board and Activity tabs.
+  setHTML($('limitSlot'), h && (sel.tab === 'board' || sel.tab === 'activity') ? limitBanner(h) : '');
   if (navigated) { view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter'); main.scrollTop = 0; }
   renderDrawer();
   placeInks();

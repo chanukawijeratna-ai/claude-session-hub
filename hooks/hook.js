@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { createHub, findRoot, formatEvent, formatAgent } = require('../lib/core');
+const { createHub, findRoot, formatEvent, formatAgent, parseLimitReset } = require('../lib/core');
 const registry = require('../lib/registry');
 
 const HUB_CLI = path.join(__dirname, '..', 'bin', 'hub.js').split(path.sep).join('/');
@@ -126,6 +126,16 @@ function asFlag(command) {
   return m ? m[1] : null;
 }
 
+// The turn ended on an API error. A usage limit goes on the board with its reset time, so the
+// user (or the hub, a minute after the reset) can tell the agent to carry on.
+function onStopFailure(hub, input, me) {
+  if (!me) return;
+  const text = [input.last_assistant_message, input.error_details].filter(Boolean).join(' ');
+  const isLimit = input.error === 'rate_limit' || /(session|weekly|usage|5-hour|five-hour) limit/i.test(text);
+  if (!isLimit) return;
+  hub.recordLimit(me, { resetsAt: parseLimitReset(text), message: text });
+}
+
 function onPostToolUse(hub, input, me) {
   const ti = input.tool_input || {};
   // Link this session to the agent it just joined as.
@@ -135,6 +145,7 @@ function onPostToolUse(hub, input, me) {
   }
   if (!me) return;
   hub.touch(me);
+  hub.clearLimitIfPast(me); // it's running tools, so a past usage limit is over
 
   if (EDIT_TOOLS.includes(input.tool_name)) {
     const file = ti.file_path || ti.notebook_path;
@@ -184,6 +195,7 @@ function main(raw) {
       }
       if (me) {
         hub.touch(me);
+        hub.clearLimitIfPast(me); // it's running a turn, so a past usage limit is over
         const items = hub.takeUnread(me);
         // A standing rule on every user turn, so the hub stays in mind even after compaction.
         context('UserPromptSubmit', standingRule(me) + (items.length ? `\n\n${inboxText(items, me)}` : ''));
@@ -197,6 +209,9 @@ function main(raw) {
       break;
     case 'Stop':
       onStop(hub, input, me);
+      break;
+    case 'StopFailure':
+      onStopFailure(hub, input, me);
       break;
     case 'SessionEnd':
       if (me) hub.endSession(me);

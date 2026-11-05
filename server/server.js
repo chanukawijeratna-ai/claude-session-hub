@@ -19,6 +19,19 @@ const STATIC = { 'index.html': 'text/html; charset=utf-8', 'home.html': 'text/ht
 const FIRST_PORT = Number(process.env.HUB_PORT) || 4747;
 const PUSH_MS = 1000;
 const IDLE_MS = 5 * 60 * 1000;
+const AUTO_RESUME_AFTER_MS = 60 * 1000; // a minute after a usage limit resets
+const AUTO_RESUME_CHECK_MS = Number(process.env.HUB_AUTO_RESUME_MS) || 30 * 1000; // tests make it faster
+
+// Resume agents whose usage limit has reset, in every project, if the user hasn't already.
+function autoResume() {
+  for (const p of registry.list()) {
+    try {
+      const hub = createHub(p.root);
+      const due = hub.activeAgents().filter((a) => a.limit && !a.limit.resumed && a.limit.resetsAt && Date.now() > a.limit.resetsAt + AUTO_RESUME_AFTER_MS);
+      if (due.length) { hub.resumeLimited({ names: due.map((a) => a.name), by: 'auto' }); push(p.slug); }
+    } catch { /* a project that can't be read is skipped */ }
+  }
+}
 
 const hubs = new Map(); // slug -> { root, hub }
 function projectHub(slug) {
@@ -51,7 +64,7 @@ function summary(p) {
     const hub = createHub(p.root);
     const events = hub.listEvents();
     const tasks = hub.listTasks(events);
-    const agents = hub.activeAgents().map((a) => ({ name: a.name, role: a.role, doing: a.doing, online: hub.isOnline(a), left: Boolean(a.left) }));
+    const agents = hub.activeAgents().map((a) => ({ name: a.name, role: a.role, doing: a.doing, online: hub.isOnline(a), left: Boolean(a.left), limitedUntil: a.limit && !a.limit.resumed ? (a.limit.resetsAt || 0) : null }));
     return {
       slug: p.slug, name: p.name, root: p.root, registered: p.registered,
       hubs: hub.listHubs().length,
@@ -151,13 +164,18 @@ async function handle(req, res, port) {
     req.on('close', () => { const s = streams.get(slug); if (s) { s.clients.delete(res); if (!s.clients.size) streams.delete(slug); } });
     return undefined;
   }
-  if (req.method === 'POST' && ['hubs', 'membership', 'work', 'deletehub'].includes(action)) {
+  if (req.method === 'POST' && ['hubs', 'membership', 'work', 'deletehub', 'resume'].includes(action)) {
     if (!trustedWrite(req, port)) return send(res, 403, { error: 'forbidden' });
     const ph = projectHub(slug);
     if (!ph) return send(res, 404, { error: 'no such project' });
     const { hub } = ph;
     try {
       const body = await readBody(req, action === 'work' ? 70 * 1024 * 1024 : 20000);
+      if (action === 'resume') {
+        const names = hub.resumeLimited({ hub: body.hub ? String(body.hub) : null, by: 'user' });
+        push(slug);
+        return send(res, 200, { ok: true, resumed: names });
+      }
       if (action === 'deletehub') {
         const name = String(body.name || '');
         // The page asks the user to type the hub's name; the server checks it too.
@@ -195,6 +213,7 @@ function listen(port, triesLeft) {
     fs.writeFileSync(registry.serverFile(), JSON.stringify(info, null, 2));
     process.stdout.write(`Session Hub UI: ${info.url}\n`);
     setInterval(() => { for (const slug of streams.keys()) push(slug); }, PUSH_MS);
+    setInterval(autoResume, AUTO_RESUME_CHECK_MS);
     setInterval(() => { for (const s of streams.values()) for (const res of s.clients) res.write(': keep-alive\n\n'); }, 15000);
     // Forget cached project handles nobody is watching.
     setInterval(() => { for (const slug of hubs.keys()) if (!streams.has(slug)) hubs.delete(slug); }, IDLE_MS);

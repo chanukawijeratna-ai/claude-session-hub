@@ -79,6 +79,37 @@ test('every user turn carries the standing rule to ask before touching unfamilia
   assert.doesNotMatch(r.hookSpecificOutput.additionalContext, /new item/); // nothing unread this time
 });
 
+test('StopFailure records a usage limit with the reset time from the message; other errors are ignored', () => {
+  const core = require('../lib/core');
+  hook({ hook_event_name: 'StopFailure', session_id: 'S-backend', error: 'server_error', last_assistant_message: 'API Error: 500' });
+  assert.ok(!core.createHub(root).getAgent('backend').limit);
+
+  hook({ hook_event_name: 'StopFailure', session_id: 'S-backend', error: 'rate_limit', last_assistant_message: 'You’ve hit your session limit · resets 3:45pm' });
+  const l = core.createHub(root).getAgent('backend').limit;
+  assert.ok(l, 'limit recorded');
+  const at = new Date(l.resetsAt);
+  assert.strictEqual(`${at.getHours()}:${at.getMinutes()}`, '15:45');
+  assert.ok(l.resetsAt > Date.now() && l.resetsAt - Date.now() <= 24 * 3600 * 1000);
+
+  // Once the reset has passed, the agent's next turn clears it.
+  const h = core.createHub(root);
+  const a = h.getAgent('backend'); a.limit.resetsAt = Date.now() - 1000;
+  require('fs').writeFileSync(require('path').join(root, '.claude-hub', 'agents', 'backend.json'), JSON.stringify(a));
+  hook({ hook_event_name: 'UserPromptSubmit', session_id: 'S-backend' });
+  assert.ok(core.createHub(root).getAgent('backend').limit.resumed);
+});
+
+test('the reset parser reads times, weekdays and epochs', () => {
+  const { parseLimitReset: p } = require('../lib/core');
+  const now = new Date(2026, 10, 5, 14, 0).getTime(); // a Thursday, 2 pm
+  const hm = (t) => { const d = new Date(p(t, now)); return [d.getDate(), d.getHours(), d.getMinutes()]; };
+  assert.deepStrictEqual(hm('resets 3:45pm'), [5, 15, 45]);
+  assert.deepStrictEqual(hm('resets 1pm'), [6, 13, 0]); // already past today, so tomorrow
+  assert.deepStrictEqual(hm('resets Mon 12:00am'), [9, 0, 0]);
+  assert.strictEqual(p('usage limit reached|1793869200', now), 1793869200000);
+  assert.strictEqual(p('429 Too Many Requests', now), null);
+});
+
 test('a session that left goes quiet and cannot be added back except by /hub', () => {
   link('S-tmp', 'tmpagent');
   hub('quit', '--as', 'tmpagent');

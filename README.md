@@ -34,6 +34,7 @@ Session Hub gives each session a card (its role, what it owns, what it's working
 | **Any session can lead** | Give a feature to any session and say "collaborate". It hands out tasks with clear specs and follows up as they finish. |
 | **Post work from the UI** | Describe the work on a hub's board, attach images (upload, paste or drop), and choose which session leads it. Only the lead is woken. |
 | **Ownership guard** | Files are claimed automatically when a session writes them. Editing or deleting someone else's file is stopped once, with the owner's note, until the session has checked. |
+| **Survives usage limits** | When a session hits its usage limit, the board shows when it resets. Press **Resume** after the reset, or let the hub do it a minute later, and the interrupted sessions carry on where they stopped. |
 | **Wakes idle sessions** | Each session keeps a tiny background listener, so a message or task wakes it even when it's waiting for you. |
 | **Private hubs** | Group sessions into hubs. Only sessions in the same hub can talk, and you drag them between hubs in the UI. |
 | **One UI for every project** | `localhost:4747` lists all your projects. Each has a timeline, a board, read-only conversations, a task tree and a graph of who talks to whom. |

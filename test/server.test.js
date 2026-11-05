@@ -13,7 +13,7 @@ const SERVER = path.join(__dirname, '..', 'server', 'server.js');
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-server-'));
 const home = fs.mkdtempSync(path.join(os.tmpdir(), 'hub-home-'));
 const port = 5100 + Math.floor(Math.random() * 400);
-const env = { ...process.env, HUB_ROOT: root, HUB_HOME: home, HUB_PORT: String(port) };
+const env = { ...process.env, HUB_ROOT: root, HUB_HOME: home, HUB_PORT: String(port), HUB_AUTO_RESUME_MS: '300' };
 let server;
 let slug;
 const api = (p) => `/api/p/${slug}/${p}`;
@@ -241,6 +241,39 @@ test('deleting a hub needs its name typed, wipes its data and takes its agents o
   assert.match(hub('inbox', '--as', 'frontend'), /\[HUB\] user deleted hub "temp"/);
   await json('POST', api('hubs'), { name: 'temp' }); // a new hub with the same name starts empty
   assert.ok(!(await json('GET', api('state'))).json.events.some((e) => e.hub === 'temp'));
+});
+
+test('usage limits: the board shows them, Resume wakes only interrupted agents, and the hub resumes after the reset', async () => {
+  const core = require('../lib/core').createHub(root);
+  hub('tag', '--doing', 'Building the login API', '--as', 'backend');
+  hub('tag', '--doing', 'Idle', '--as', 'frontend');
+  hub('inbox', '--as', 'backend'); hub('inbox', '--as', 'frontend');
+  const soon = Date.now() + 60 * 60 * 1000;
+  core.recordLimit('backend', { resetsAt: soon });
+  core.recordLimit('frontend', { resetsAt: soon });
+  core.recordLimit('backend', { resetsAt: soon }); // a repeat in the same window adds nothing
+
+  let s = (await json('GET', api('state'))).json;
+  const limits = s.events.filter((e) => e.type === 'limit');
+  assert.deepStrictEqual(limits.map((e) => e.from).sort(), ['backend', 'frontend']);
+  assert.strictEqual(s.agents.find((a) => a.name === 'backend').limit.interrupted, true);
+  assert.strictEqual(s.agents.find((a) => a.name === 'frontend').limit.interrupted, false);
+  assert.doesNotMatch(hub('inbox', '--peek', '--as', 'frontend'), /LIMIT/); // notices are for the user, not agents
+
+  const r = await json('POST', api('resume'), { hub: 'main' });
+  assert.deepStrictEqual(r.json.resumed, ['backend']);
+  assert.match(hub('inbox', '--as', 'backend'), /\[RESUME @main\] The user says your usage limit has reset[\s\S]*Building the login API[\s\S]*carry on/);
+  assert.match(hub('inbox', '--as', 'frontend'), /Inbox empty/);
+
+  // A limit whose reset passed is resumed by the hub itself.
+  core.recordLimit('backend', { resetsAt: Date.now() - 2 * 60 * 1000 });
+  const deadline = Date.now() + 5000;
+  let out = '';
+  while (Date.now() < deadline && !/RESUME/.test(out)) { await new Promise((res) => setTimeout(res, 250)); out = hub('inbox', '--as', 'backend'); }
+  assert.match(out, /\[RESUME @main\] The hub says your usage limit has reset/);
+  s = (await json('GET', api('state'))).json;
+  assert.ok(s.agents.find((a) => a.name === 'backend').limit.resumed);
+  hub('tag', '--doing', 'Idle', '--as', 'backend');
 });
 
 test('wipe needs the user to type the slug, then deletes everything', async () => {
