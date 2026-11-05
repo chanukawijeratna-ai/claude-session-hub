@@ -29,8 +29,20 @@ The user watches all of this in a local web UI.
 | Packaging | Claude Code plugin: skill + hooks + CLI + server |
 | Autonomy | Full. An agent acts on another agent's request, including code changes |
 | Collaboration | The agent that receives a feature is its lead and delegates to the others |
-| UI | Read-only in v1 |
+| UI | Shows everything; the user can create hubs and drag agents between them |
 | Closed sessions | Listed as offline; their tag and file claims are kept |
+| Hubs | `main` plus private hubs named by a keyword. An agent can be in several. Only agents sharing a hub can talk |
+| Removed from last hub | Agent becomes unassigned: it can't message anyone until added to a hub again |
+| Ownership guard | Project-wide, across all hubs, because all hubs share the same files |
+| Card note (`doing`) | Names the current task in general terms; changes per task, not per step. Ask the agent for detail |
+
+## Hubs
+
+- `hub join <name> ... --hub <keyword>` joins a private hub; without `--hub`, a new agent joins `main`.
+- Board posts belong to one hub. An agent in several hubs names the hub with `--hub`.
+- Direct messages and tasks travel through a hub both agents are in (`main` first if shared), and are refused if they share none.
+- `hub agents --as <me>` only lists agents I share a hub with.
+- When the user adds or removes an agent in the UI, the agent gets a `[HUB]` membership message, which also wakes it.
 
 ## Concepts
 

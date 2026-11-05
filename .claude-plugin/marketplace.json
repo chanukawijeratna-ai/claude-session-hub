@@ -1,0 +1,11 @@
+{
+  "name": "session-hub",
+  "owner": { "name": "chanukawijeratna-ai" },
+  "plugins": [
+    {
+      "name": "session-hub",
+      "source": "./",
+      "description": "Lets Claude Code sessions in the same project join a hub, message each other, delegate tasks and protect each other's files."
+    }
+  ]
+}
