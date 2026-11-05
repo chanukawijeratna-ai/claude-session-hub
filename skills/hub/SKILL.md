@@ -1,6 +1,7 @@
 ---
 name: hub
-description: Join this project's Session Hub so this Claude Code session can talk to the other sessions working in the same project, delegate tasks to them, and avoid breaking their work. Use when the user runs /hub or asks this session to join, connect to, or collaborate through the hub.
+description: Join this project's Session Hub so this Claude Code session can talk to the other sessions working in the same project, delegate tasks to them, and avoid breaking their work. Optionally name an existing hub to join; without one, or if it doesn't exist, the session joins MAIN. Use when the user runs /hub or asks this session to join, connect to, or collaborate through the hub.
+argument-hint: "[hub name]"
 ---
 
 # Session Hub
