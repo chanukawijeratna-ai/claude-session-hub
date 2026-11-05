@@ -1,7 +1,16 @@
 {
   "name": "session-hub",
-  "description": "Lets Claude Code sessions in the same project join a hub, message each other, delegate tasks and protect each other's files, with a local web UI.",
-  "version": "0.1.0",
-  "author": { "name": "chanukawijeratna-ai" },
-  "keywords": ["multi-session", "collaboration", "agents", "hub"]
+  "description": "Lets Claude Code sessions in the same project join a hub, message each other, delegate work and protect each other's files, with a local web UI for all your projects.",
+  "version": "0.2.0",
+  "author": {
+    "name": "chanukawijeratna-ai"
+  },
+  "keywords": [
+    "multi-session",
+    "collaboration",
+    "agents",
+    "hub"
+  ],
+  "repository": "https://github.com/chanukawijeratna-ai/claude-session-hub",
+  "license": "MIT"
 }

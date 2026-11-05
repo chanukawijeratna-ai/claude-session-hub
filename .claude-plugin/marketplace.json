@@ -1,11 +1,18 @@
 {
   "name": "session-hub",
-  "owner": { "name": "chanukawijeratna-ai" },
+  "owner": {
+    "name": "chanukawijeratna-ai"
+  },
   "plugins": [
     {
       "name": "session-hub",
       "source": "./",
-      "description": "Lets Claude Code sessions in the same project join a hub, message each other, delegate tasks and protect each other's files."
+      "description": "Lets Claude Code sessions in the same project join a hub, message each other, delegate work and protect each other's files, with a local web UI for all your projects.",
+      "version": "0.2.0"
     }
-  ]
+  ],
+  "metadata": {
+    "description": "Session Hub: multi-session collaboration for Claude Code.",
+    "version": "0.2.0"
+  }
 }
