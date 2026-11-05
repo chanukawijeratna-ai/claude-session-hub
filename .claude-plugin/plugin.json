@@ -1,7 +1,7 @@
 {
   "name": "session-hub",
   "description": "Lets Claude Code sessions in the same project join a hub, message each other, delegate work and protect each other's files, with a local web UI for all your projects.",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": {
     "name": "chanukawijeratna-ai"
   },

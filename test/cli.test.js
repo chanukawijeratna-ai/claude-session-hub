@@ -31,6 +31,21 @@ before(() => {
   ok('join', 'beta', '--role', 'Prototype dev', '--purpose', 'Spike B', '--hub', 'lab');
 });
 
+test('/hub with an existing hub name joins only that hub, not MAIN', () => {
+  ok('join', 'delta', '--role', 'r', '--purpose', 'p', '--hub', 'lab');
+  const hubs = ok('hubs');
+  assert.match(hubs, /lab: [^\n]*delta/);
+  assert.doesNotMatch(hubs, /main: [^\n]*delta/);
+  ok('quit', '--as', 'delta');
+});
+
+test('agents cannot create hubs: entering a hub that does not exist fails', () => {
+  const r = hub('enter', 'brand-new', '--as', 'security');
+  assert.notStrictEqual(r.code, 0);
+  assert.match(r.err, /no hub named "brand-new"[\s\S]*web UI/);
+  assert.doesNotMatch(ok('hubs'), /brand-new/);
+});
+
 test('/hub with a hub name that does not exist joins main', () => {
   const out = ok('join', 'gamma', '--role', 'r', '--purpose', 'p', '--hub', 'nowhere');
   assert.match(out, /no hub named "nowhere", so you joined "main"/);

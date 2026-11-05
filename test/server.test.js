@@ -124,6 +124,7 @@ test('work posted on the board goes to the chosen lead only', async () => {
 
   assert.match((await json('POST', api('work'), { hub: 'main', lead: '', title: 'x' })).json.error, /choose an agent/);
   assert.match((await json('POST', api('work'), { hub: 'main', lead: 'backend', title: '  ' })).json.error, /title/);
+  await json('POST', api('hubs'), { name: 'lab2' }); // hubs are made in the UI
   hub('enter', 'lab2', '--as', 'frontend');
   assert.match((await json('POST', api('work'), { hub: 'lab2', lead: 'backend', title: 'x' })).json.error, /not in hub/);
   hub('leave', 'lab2', '--as', 'frontend');
