@@ -86,6 +86,9 @@ test('bad input is a 400 with a reason', async () => {
   assert.strictEqual(r.status, 400);
   assert.match(r.json.error, /bad hub name/);
   assert.strictEqual((await json('POST', '/api/membership', { agent: 'ghost', hub: 'main', action: 'add' })).status, 400);
+  const dup = await json('POST', '/api/hubs', { name: 'main' });
+  assert.strictEqual(dup.status, 400);
+  assert.match(dup.json.error, /already exists/);
 });
 
 test('writes from other origins are refused', async () => {

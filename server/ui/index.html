@@ -4,225 +4,515 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Session Hub</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231f2522'/%3E%3Cg fill='none' stroke='%23c6e05a' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-7'/%3E%3Cpath d='M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z'/%3E%3Cpath d='M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #f6f7f9; --panel: #ffffff; --panel-2: #f1f3f6; --border: #e3e6eb; --border-strong: #cfd4dc;
-  --text: #16181d; --muted: #5d6573; --faint: #8a92a0;
-  --accent: #4f46e5; --accent-soft: #eef0ff; --accent-text: #3730a3;
-  --ok: #15803d; --ok-soft: #e7f6ec; --warn: #b45309; --warn-soft: #fdf3e2; --bad: #b91c1c; --bad-soft: #fdecec;
-  --shadow: 0 1px 2px rgba(16,24,40,.05), 0 1px 3px rgba(16,24,40,.06);
-  --radius: 10px;
+  --bg: #eef2e8; --panel: #fbfcf8; --panel-2: #f0f4ea; --border: #dbe3d1; --border-strong: #c2ceb6;
+  --text: #1f2522; --muted: #515d53; --faint: #6c776e;
+  --accent: #2f6b3a; --accent-soft: #e2eedb; --accent-text: #24572e;
+  --lime: #b5d43f; --lime-soft: #eef6cf; --lime-text: #4a5a0c;
+  --ok: #2f7d3e; --warn: #a3621a; --bad: #a8412c;
+  --diamond: rgba(47,107,58,.075); --glow-1: rgba(181,212,63,.30); --glow-2: rgba(47,107,58,.13);
+  --side: #1f2522; --side-2: #2a312d; --side-3: #343c37; --side-text: #e9eee6; --side-muted: #a3aea4; --side-faint: #7d897f; --side-line: #2f3732;
+  --shadow: 0 1px 2px rgba(31,37,34,.05), 0 2px 8px rgba(31,37,34,.05);
+  --shadow-lg: 0 14px 34px rgba(31,37,34,.13), 0 2px 6px rgba(31,37,34,.06);
+  --radius: 12px;
+  --ease: cubic-bezier(.22,.7,.2,1);
+  --font: "Figtree", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --serif: "Fraunces", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0e1015; --panel: #161920; --panel-2: #1c2029; --border: #262b36; --border-strong: #353b48;
-    --text: #e8eaef; --muted: #a0a7b4; --faint: #6f7786;
-    --accent: #818cf8; --accent-soft: #23264a; --accent-text: #c7cbff;
-    --ok: #4ade80; --ok-soft: #13291c; --warn: #fbbf24; --warn-soft: #2d2412; --bad: #f87171; --bad-soft: #2f1717;
-    --shadow: 0 1px 2px rgba(0,0,0,.4);
+    --bg: #141816; --panel: #1b201d; --panel-2: #222824; --border: #2c3430; --border-strong: #3b4540;
+    --text: #e6ebe3; --muted: #aab4aa; --faint: #87938a;
+    --accent: #8acb70; --accent-soft: #233320; --accent-text: #bfe5ad;
+    --lime: #cfe86a; --lime-soft: #2c3417; --lime-text: #dcef8c;
+    --ok: #85d179; --warn: #e2b05a; --bad: #ec8f78;
+    --diamond: rgba(207,232,106,.05); --glow-1: rgba(207,232,106,.08); --glow-2: rgba(138,203,112,.08);
+    --side: #0f1210; --side-2: #1a1f1c; --side-3: #242a26; --side-line: #1f2522;
+    --shadow: 0 1px 2px rgba(0,0,0,.35);
+    --shadow-lg: 0 14px 34px rgba(0,0,0,.5);
     color-scheme: dark;
   }
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
-body { background: var(--bg); color: var(--text); font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+body { background: var(--bg); color: var(--text); font: 14.5px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
 button, input { font: inherit; color: inherit; }
-.mono { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12.5px; }
+a { color: var(--accent-text); text-underline-offset: 2px; }
+.mono, code { font-family: var(--mono); font-size: 12.5px; }
+svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -3px; }
+small.d { display: block; color: var(--faint); font-size: 12px; font-weight: 400; line-height: 1.35; letter-spacing: 0; text-transform: none; }
 
-/* top bar */
-.top { height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 20px; background: var(--panel); border-bottom: 1px solid var(--border); }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; letter-spacing: -.01em; }
-.logo { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); display: grid; place-items: center; }
-.project { color: var(--muted); font-weight: 450; padding-left: 12px; border-left: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* ---------- top bar + sidebar (dark) ---------- */
+.top { height: 56px; display: flex; align-items: center; gap: 14px; padding: 0 20px; background: var(--side); color: var(--side-text); }
+.brand { display: flex; align-items: center; gap: 10px; font: 600 17px/1 var(--serif); letter-spacing: -.01em; }
+.logo { width: 30px; height: 30px; border-radius: 9px; background: var(--side-3); display: grid; place-items: center; color: var(--lime); }
+.logo svg.i { width: 19px; height: 19px; stroke-width: 1.9; }
+.project { color: var(--side-muted); padding-left: 14px; border-left: 1px solid var(--side-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; }
 .spacer { flex: 1; }
-.conn { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--faint); flex: none; }
-.dot.ok { background: var(--ok); box-shadow: 0 0 0 3px var(--ok-soft); }
-.dot.bad { background: var(--bad); }
+.conn { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--side-muted); white-space: nowrap; }
+.live { width: 14px; height: 14px; overflow: visible; }
+.live circle { fill: var(--lime); }
+.live .ring { fill: none; stroke: var(--lime); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: ring 2.4s var(--ease) infinite; }
+.conn.bad .live circle { fill: var(--bad); } .conn.bad .live .ring { display: none; }
+.conn.wait .live circle { fill: var(--side-faint); } .conn.wait .live .ring { display: none; }
+@keyframes ring { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
 
-/* layout */
-.layout { display: grid; grid-template-columns: 248px 1fr; height: calc(100% - 52px); }
-.side { background: var(--panel); border-right: 1px solid var(--border); padding: 16px 10px; overflow-y: auto; }
-.side-h { font-size: 11px; font-weight: 650; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); padding: 6px 10px; margin-top: 8px; }
-.nav-item { display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: 1px dashed transparent; border-radius: 8px; background: none; cursor: pointer; text-align: left; color: var(--muted); }
-.nav-item:hover { background: var(--panel-2); color: var(--text); }
-.nav-item.active { background: var(--accent-soft); color: var(--accent-text); font-weight: 560; }
-.nav-item.drop { border-color: var(--accent); background: var(--accent-soft); }
-.nav-item .count { margin-left: auto; font-size: 12px; color: var(--faint); background: var(--panel-2); border-radius: 99px; padding: 0 7px; min-width: 22px; text-align: center; }
-.nav-item.active .count { background: var(--panel); }
-.hub-ico { width: 16px; height: 16px; flex: none; opacity: .8; }
-.new-hub { display: flex; gap: 6px; padding: 8px 4px 4px; }
-.new-hub input { flex: 1; min-width: 0; padding: 6px 9px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); }
-.new-hub input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
-.btn { padding: 6px 11px; border-radius: 7px; border: 1px solid var(--border-strong); background: var(--panel); cursor: pointer; font-weight: 550; }
-.btn:hover { background: var(--panel-2); }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.hint { font-size: 12px; color: var(--faint); padding: 10px; line-height: 1.45; }
+.layout { display: grid; grid-template-columns: 264px 1fr; height: calc(100% - 56px); }
+.side { position: relative; background: var(--side); color: var(--side-text); padding: 8px 12px 20px; overflow-y: auto; }
+.cat { margin-top: 16px; }
+.cat-h { display: flex; gap: 10px; align-items: flex-start; padding: 0 8px 8px; }
+.cat-h svg.i { color: var(--lime); margin-top: 2px; }
+.cat-h b { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--side-text); }
+.cat-h small.d { color: var(--side-faint); }
+.side-ink { position: absolute; left: 0; top: 0; border-radius: 10px; background: var(--side-2); pointer-events: none; opacity: 0; }
+.side-ink::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--lime); }
+.side.ready .side-ink { transition: transform .32s var(--ease), height .32s var(--ease), width .32s var(--ease), opacity .2s; }
+.nav-item { position: relative; z-index: 1; display: flex; align-items: center; gap: 11px; width: 100%; padding: 8px 10px; margin: 1px 0; border: 1px dashed transparent; border-radius: 10px; background: none; cursor: pointer; text-align: left; color: var(--side-muted); transition: color .2s, background-color .2s, border-color .2s; }
+.nav-item:hover { color: var(--side-text); background: rgba(255,255,255,.035); }
+.nav-item.active { color: var(--side-text); background: none; }
+.nav-item .tile { width: 30px; height: 30px; border-radius: 8px; background: var(--side-2); display: grid; place-items: center; flex: none; transition: background-color .25s, color .25s, transform .25s var(--ease); }
+.nav-item:hover .tile { transform: translateY(-1px); }
+.nav-item.active .tile { background: var(--lime); color: #1f2522; }
+.nav-item .txt { min-width: 0; flex: 1; }
+.nav-item .txt b { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-item .txt small.d { color: var(--side-faint); font-size: 11.5px; }
+.nav-item .count { font-size: 12px; color: var(--side-faint); font-variant-numeric: tabular-nums; min-width: 18px; text-align: right; }
+.nav-item.active .count { color: var(--lime); }
+.nav-item.drop { border-color: var(--lime); background: rgba(207,232,106,.08); }
+.new-hub { display: flex; gap: 6px; padding: 8px 2px 2px; }
+.new-hub input { flex: 1; min-width: 0; padding: 7px 10px; border: 1px solid var(--side-3); border-radius: 9px; background: var(--side-2); color: var(--side-text); transition: border-color .2s; }
+.new-hub input::placeholder { color: var(--side-faint); }
+.new-hub input:focus { outline: none; border-color: var(--lime); }
+.new-hub button { width: 34px; border-radius: 9px; border: 1px solid var(--side-3); background: var(--side-2); color: var(--lime); cursor: pointer; display: grid; place-items: center; transition: background-color .2s, transform .15s; }
+.new-hub button:hover { background: var(--side-3); }
+.new-hub button:active { transform: scale(.94); }
+.side .hint { font-size: 12px; color: var(--side-faint); padding: 14px 8px 0; margin: 16px 0 0; border-top: 1px solid var(--side-line); line-height: 1.5; }
 
-main { overflow-y: auto; }
-.main-h { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 20px 28px 0; border-bottom: 1px solid var(--border); }
-.main-h h1 { margin: 0 0 2px; font-size: 20px; letter-spacing: -.015em; display: flex; align-items: center; gap: 10px; }
-.sub { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
-.tabs { display: flex; gap: 2px; }
-.tab { padding: 8px 14px; border: none; background: none; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 520; }
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--text); border-bottom-color: var(--accent); }
-.tab .n { font-size: 11.5px; color: var(--faint); margin-left: 4px; }
-.view { padding: 22px 28px 40px; }
-.empty { border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 36px; text-align: center; color: var(--muted); background: var(--panel); }
-.empty b { color: var(--text); display: block; margin-bottom: 4px; }
-.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 560; padding: 1px 8px; border-radius: 99px; background: var(--panel-2); color: var(--muted); white-space: nowrap; }
-.pill.ok { background: var(--ok-soft); color: var(--ok); }
-.pill.warn { background: var(--warn-soft); color: var(--warn); }
-.pill.bad { background: var(--bad-soft); color: var(--bad); }
-.pill.accent { background: var(--accent-soft); color: var(--accent-text); }
+/* ---------- main area: gradient + diamond lattice ---------- */
+main { overflow-y: auto; background:
+  repeating-linear-gradient(45deg, var(--diamond) 0 1px, transparent 1px 26px),
+  repeating-linear-gradient(-45deg, var(--diamond) 0 1px, transparent 1px 26px),
+  radial-gradient(1100px 620px at 0% 0%, var(--glow-1), transparent 62%),
+  radial-gradient(900px 640px at 100% 100%, var(--glow-2), transparent 60%),
+  var(--bg); }
+.main-h { position: sticky; top: 0; z-index: 3; background: color-mix(in srgb, var(--bg) 93%, transparent); padding: 22px 30px 0; border-bottom: 1px solid var(--border); }
+.main-h h1 { margin: 0 0 3px; font: 600 24px/1.2 var(--serif); letter-spacing: -.015em; display: flex; align-items: center; gap: 10px; }
+.main-h h1 svg.i { width: 20px; height: 20px; color: var(--accent); }
+.sub { color: var(--muted); font-size: 13.5px; margin-bottom: 14px; }
+.tabbar { position: relative; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.tab { display: flex; gap: 9px; align-items: flex-start; padding: 8px 14px 11px 10px; border: none; background: none; cursor: pointer; color: var(--muted); text-align: left; border-radius: 9px 9px 0 0; transition: color .2s, background-color .2s; }
+.tab svg.i { margin-top: 2px; transition: transform .25s var(--ease); }
+.tab:hover { color: var(--text); background: color-mix(in srgb, var(--panel) 60%, transparent); }
+.tab:hover svg.i { transform: translateY(-1px); }
+.tab b { font-weight: 600; white-space: nowrap; }
+.tab .n { font-size: 12px; color: var(--faint); margin-left: 3px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.tab small.d { font-size: 11.5px; white-space: nowrap; }
+.tab.active { color: var(--text); }
+.tab.active svg.i { color: var(--accent); }
+.tab-ink { position: absolute; bottom: -1px; left: 0; height: 3px; border-radius: 3px 3px 0 0; background: linear-gradient(90deg, var(--accent), var(--lime)); opacity: 0; pointer-events: none; }
+.tabbar.ready .tab-ink { transition: transform .32s var(--ease), width .32s var(--ease), opacity .2s; }
+.view { padding: 24px 30px 48px; }
+.view.enter { animation: rise .32s var(--ease); }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+
+.empty { border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 40px 30px; text-align: center; color: var(--muted); background: color-mix(in srgb, var(--panel) 85%, transparent); }
+.empty svg.i { width: 34px; height: 34px; color: var(--accent); stroke-width: 1.4; margin-bottom: 8px; }
+.empty b { color: var(--text); display: block; margin-bottom: 4px; font-size: 15px; }
+.lbl { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); font-weight: 700; }
+.lbl + small.d { margin: 1px 0 8px; }
+
+/* status: icon + coloured text, no pill */
+.st { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: var(--faint); }
+.st svg.i { width: 15px; height: 15px; }
+.st.ok { color: var(--ok); } .st.warn { color: var(--warn); } .st.bad { color: var(--bad); } .st.go { color: var(--accent); }
+.tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.tag svg.i { width: 14px; height: 14px; color: var(--accent); }
+.spin { transform-box: fill-box; transform-origin: center; animation: spin 1.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.t { color: var(--faint); font-size: 12.5px; }
+.sep { color: var(--border-strong); }
+
+/* formatted agent text */
+.md { overflow-wrap: anywhere; }
+.md p { margin: 0 0 8px; }
+.md p:last-child, .md ul:last-child, .md ol:last-child { margin-bottom: 0; }
+.md ul, .md ol { margin: 2px 0 9px; padding-left: 20px; }
+.md li { margin: 3px 0; }
+.md li::marker { color: var(--accent); }
+.md h4 { margin: 13px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-text); font-weight: 700; }
+.md h4:first-child { margin-top: 0; }
+.md code { background: var(--panel-2); border: 1px solid var(--border); border-radius: 5px; padding: 0 4px; font-size: 12px; }
+.clamp { max-height: 10em; overflow: hidden; -webkit-mask-image: linear-gradient(#000 62%, transparent); mask-image: linear-gradient(#000 62%, transparent); }
+.more { display: inline-flex; align-items: center; gap: 4px; border: none; background: none; padding: 4px 0 0; color: var(--accent-text); cursor: pointer; font-size: 13px; font-weight: 600; }
+.more svg.i { width: 14px; height: 14px; transition: transform .25s var(--ease); }
+.more.open svg.i { transform: rotate(180deg); }
+.more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* shared surface + hover life */
+.surface { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); transition: border-color .25s, box-shadow .3s var(--ease), transform .3s var(--ease); }
+.lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
 
 /* agent cards */
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; cursor: grab; }
-.card:active { cursor: grabbing; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.card { padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; cursor: pointer; }
 .card.dragging { opacity: .45; }
-.card-h { display: flex; align-items: center; gap: 11px; }
-.avatar { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: #fff; font-weight: 650; font-size: 13px; flex: none; position: relative; }
-.avatar .st { position: absolute; right: -3px; bottom: -3px; width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--panel); background: var(--faint); }
-.avatar .st.on { background: var(--ok); }
+.card.selected { border-color: var(--accent); }
+.card-h { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 13px; flex: none; position: relative; letter-spacing: .02em; }
+.avatar .on { position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; border: 2.5px solid var(--panel); background: var(--faint); }
+.avatar .on.yes { background: var(--ok); }
+.avatar.busy::after { content: ""; position: absolute; inset: -4px; border-radius: 13px; border: 2px solid var(--lime); animation: breathe 2.4s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: .25; transform: scale(1.04); } }
 .who { min-width: 0; flex: 1; }
-.who .name { font-weight: 640; }
-.who .role { color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.x { border: none; background: none; cursor: pointer; color: var(--faint); border-radius: 6px; width: 26px; height: 26px; display: grid; place-items: center; }
-.x:hover { background: var(--bad-soft); color: var(--bad); }
-.purpose { color: var(--muted); font-size: 13px; }
-.doing { background: var(--panel-2); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
-.doing .lbl { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); font-weight: 650; margin-bottom: 1px; }
-.doing.idle { color: var(--faint); }
-.card-f { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; color: var(--faint); }
-.card-f .ago { margin-left: auto; }
+.who .name { font-weight: 700; font-size: 15px; }
+.who .role { color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.x { border: none; background: none; cursor: pointer; color: var(--faint); border-radius: 8px; width: 30px; height: 30px; display: grid; place-items: center; flex: none; transition: background-color .2s, color .2s, transform .2s var(--ease); }
+.x:hover { background: color-mix(in srgb, var(--bad) 12%, transparent); color: var(--bad); transform: rotate(90deg); }
+.purpose { color: var(--muted); font-size: 13.5px; }
+.doing { border-left: 3px solid var(--border-strong); padding: 2px 0 2px 11px; font-size: 14px; }
+.doing .lbl { margin-bottom: 1px; }
+.doing.busy { border-left-color: var(--lime); }
+.doing.idle .val { color: var(--faint); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.stat { background: var(--panel); padding: 7px 8px 8px; text-align: center; }
+.stat b { display: block; font: 600 18px/1.2 var(--serif); font-variant-numeric: tabular-nums; }
+.stat span { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
+.stat small.d { font-size: 10.5px; }
+.stat.hot b { color: var(--warn); }
+.files { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--faint); }
+.files .f { display: flex; gap: 6px; align-items: center; min-width: 0; color: var(--muted); }
+.files .f svg.i { width: 13px; height: 13px; color: var(--faint); }
+.files .mono { font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card-f { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
+.card-f .t { margin-left: auto; }
+
+/* activity timeline */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 22px; }
+.filters .lbl { margin-right: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px 4px 5px; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); cursor: pointer; font-size: 13px; color: var(--muted); transition: border-color .2s, color .2s, transform .2s var(--ease), background-color .2s; }
+.chip:hover { transform: translateY(-1px); border-color: var(--border-strong); color: var(--text); }
+.chip.plain { padding-left: 11px; }
+.chip .avatar { width: 20px; height: 20px; font-size: 8.5px; border-radius: 6px; }
+.chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }
+.session-h { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
+.session-h .when { font: 600 15px/1.2 var(--serif); }
+.session-h .faces { display: flex; padding-left: 4px; }
+.session-h .faces .avatar { width: 22px; height: 22px; font-size: 9px; border-radius: 7px; margin-left: -5px; box-shadow: 0 0 0 2px var(--bg); }
+.session-h .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-strong), transparent); }
+.tl { margin-bottom: 34px; }
+.tl-item { display: grid; grid-template-columns: 72px 32px 1fr; }
+.tl-time { font-size: 12.5px; color: var(--faint); text-align: right; padding: 6px 10px 0 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tl-rail { position: relative; display: flex; justify-content: center; }
+.tl-rail::before { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--border); }
+.tl-item:first-child .tl-rail::before { top: 16px; }
+.tl-item:last-child .tl-rail::before { bottom: calc(100% - 16px); }
+.tl-rail .avatar { width: 26px; height: 26px; font-size: 9.5px; border-radius: 8px; margin-top: 2px; box-shadow: 0 0 0 4px var(--bg); }
+.tl-rail .mark { position: relative; margin-top: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; color: var(--faint); }
+.tl-rail .mark svg.i { width: 16px; height: 16px; }
+.tl-rail .mark.ok { color: var(--ok); } .tl-rail .mark.go { color: var(--accent); } .tl-rail .mark.bad { color: var(--bad); }
+.tl-body { padding: 4px 0 18px 8px; min-width: 0; }
+.tl-head { font-size: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+.tl-head b { color: var(--text); font-weight: 650; }
+.tl-head .q { color: var(--text); font-weight: 600; }
+.tl-item.minor .tl-head { font-size: 13px; }
+.tl-card { margin-top: 7px; padding: 12px 15px; }
+.tl-card.task { border-left: 3px solid var(--accent); }
+.tl-card.done { border-left: 3px solid var(--lime); }
+.tl-card.failed { border-left: 3px solid var(--bad); }
+.tl-card .title { font-weight: 700; margin-bottom: 5px; display: flex; gap: 7px; align-items: center; }
+.tl-card .title svg.i { color: var(--accent); }
 
 /* board */
-.thread { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 14px; overflow: hidden; }
-.msg { display: flex; gap: 11px; padding: 13px 16px; }
+.thread { margin-bottom: 16px; overflow: hidden; }
+.msg { display: flex; gap: 12px; padding: 14px 18px; }
 .msg + .msg { border-top: 1px solid var(--border); }
-.msg.reply { padding-left: 52px; background: var(--panel-2); }
-.msg .avatar { width: 28px; height: 28px; font-size: 11px; border-radius: 7px; }
+.msg.reply { padding-left: 58px; background: var(--panel-2); }
+.msg .avatar { width: 30px; height: 30px; font-size: 11px; border-radius: 9px; }
 .msg-b { min-width: 0; flex: 1; }
 .msg-h { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.msg-h .name { font-weight: 620; }
-.msg-h .t { color: var(--faint); font-size: 12px; }
-.text { white-space: pre-wrap; word-wrap: break-word; margin-top: 2px; }
+.msg-h .name { font-weight: 700; }
+.msg .md { margin-top: 3px; }
 
 /* conversations */
-.convos { display: grid; grid-template-columns: 270px 1fr; gap: 14px; min-height: 420px; }
-.c-list { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; align-self: start; }
-.c-item { display: flex; gap: 10px; align-items: center; width: 100%; padding: 11px 14px; border: none; border-bottom: 1px solid var(--border); background: none; text-align: left; cursor: pointer; }
+.convos { display: grid; grid-template-columns: 280px 1fr; gap: 16px; min-height: 420px; }
+.c-list { overflow: hidden; align-self: start; }
+.c-item { display: flex; gap: 11px; align-items: center; width: 100%; padding: 12px 15px; border: none; border-bottom: 1px solid var(--border); background: none; text-align: left; cursor: pointer; transition: background-color .2s; position: relative; }
 .c-item:last-child { border-bottom: none; }
 .c-item:hover { background: var(--panel-2); }
 .c-item.active { background: var(--accent-soft); }
-.pair { display: flex; gap: 3px; }
-.pair .avatar { width: 24px; height: 24px; font-size: 10px; border-radius: 6px; }
-.c-item .meta { font-size: 12px; color: var(--faint); }
-.chat { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-.bubble-row { display: flex; gap: 9px; align-items: flex-end; max-width: 78%; }
+.c-item.active::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); }
+.pair { display: flex; }
+.pair .avatar { width: 26px; height: 26px; font-size: 10px; border-radius: 8px; }
+.pair .avatar + .avatar { margin-left: -6px; box-shadow: 0 0 0 2px var(--panel); }
+.c-item .nm { font-weight: 650; }
+.chat { padding: 20px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.bubble-row { display: flex; gap: 10px; align-items: flex-end; max-width: 80%; }
 .bubble-row.right { align-self: flex-end; flex-direction: row-reverse; }
-.bubble-row .avatar { width: 26px; height: 26px; font-size: 10px; border-radius: 7px; }
-.bubble { background: var(--panel-2); border-radius: 12px 12px 12px 4px; padding: 9px 13px; }
-.right .bubble { background: var(--accent-soft); border-radius: 12px 12px 4px 12px; }
-.bubble .msg-h { margin-bottom: 1px; }
+.bubble-row .avatar { width: 28px; height: 28px; font-size: 10px; border-radius: 8px; }
+.bubble { background: var(--panel-2); border-radius: 14px 14px 14px 4px; padding: 10px 14px; min-width: 0; transition: transform .25s var(--ease); }
+.right .bubble { background: var(--accent-soft); border-radius: 14px 14px 4px 14px; }
+.bubble .msg-h { margin-bottom: 3px; }
 .bubble.task { border: 1px solid var(--border-strong); background: var(--panel); }
-.sys { align-self: center; font-size: 12px; color: var(--faint); }
+.kind { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
+.kind svg.i { width: 14px; height: 14px; }
+.sys { align-self: center; font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+.report { align-self: stretch; margin: 0 5%; padding: 12px 16px; border-left: 3px solid var(--lime); }
+.report.failed { border-left-color: var(--bad); }
+.report .head { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 7px; }
+.report .head b { color: var(--text); font-weight: 650; }
 
 /* tasks */
-.task { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; box-shadow: var(--shadow); }
-.children { padding: 0 0 0 22px; border-left: 2px solid var(--border); margin: -2px 0 12px 22px; }
-.children .task { box-shadow: none; }
-.task summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 16px; }
+.summary { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 18px; align-items: center; }
+.summary .total { font: 600 15px/1.2 var(--serif); }
+.task { margin-bottom: 11px; }
+.children { padding: 0 0 0 22px; border-left: 2px solid var(--border); margin: -2px 0 13px 24px; }
+.task summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 13px 18px; }
 .task summary::-webkit-details-marker { display: none; }
-.task summary .title { font-weight: 600; flex: 1; min-width: 0; }
-.task summary .route { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
-.task .body { padding: 0 16px 14px; display: grid; gap: 10px; }
-.task .body .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--faint); font-weight: 650; }
+.task summary .chev { color: var(--faint); transition: transform .25s var(--ease); }
+.task[open] summary .chev { transform: rotate(90deg); color: var(--accent); }
+.task summary .title { font-weight: 650; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.task summary .route { color: var(--muted); font-size: 13px; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.task summary .route .avatar { width: 22px; height: 22px; font-size: 8.5px; border-radius: 6px; }
+.task summary .route svg.i { color: var(--faint); width: 14px; height: 14px; }
+.task .body { padding: 16px 18px 18px 46px; display: grid; gap: 16px; border-top: 1px solid var(--border); animation: rise .28s var(--ease); }
+.steps { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.steps svg.i { width: 14px; height: 14px; color: var(--faint); }
+.steps b { color: var(--text); font-weight: 650; }
 
 /* graph */
-.graph-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
-.graph-wrap svg { display: block; width: 100%; height: auto; }
-.graph-wrap .legend { display: flex; gap: 18px; padding: 10px 16px; border-top: 1px solid var(--border); font-size: 12px; color: var(--muted); }
-.edge { cursor: pointer; }
-.edge:hover line { stroke: var(--accent); }
+.graph-wrap { overflow: hidden; }
+.graph-wrap svg.g { display: block; width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px 26px; padding: 12px 18px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; gap: 7px; align-items: center; }
+.legend svg.k { width: 26px; height: 10px; }
+.edge, .node { cursor: pointer; }
+.edge .ln { transition: stroke-opacity .25s; }
+.edge:hover .ln { stroke-opacity: 1; }
+.flow { stroke-dasharray: 2 14; animation: flow 1.6s linear infinite; }
+@keyframes flow { to { stroke-dashoffset: -16; } }
+.node .body { transform-box: fill-box; transform-origin: center; transition: transform .3s var(--ease); }
+.node:hover .body { transform: scale(1.07); }
+.halo { transform-box: fill-box; transform-origin: center; animation: halo 2.4s var(--ease) infinite; }
+@keyframes halo { from { transform: scale(1); opacity: .55; } to { transform: scale(1.7); opacity: 0; } }
 
-#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--panel); padding: 9px 16px; border-radius: 8px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s; }
-#toast.show { opacity: 1; }
+/* agent drawer */
+.scrim { position: fixed; inset: 56px 0 0 0; background: rgba(15,18,16,.28); z-index: 9; animation: fade .2s; }
+@keyframes fade { from { opacity: 0; } }
+.drawer { position: fixed; top: 56px; right: 0; bottom: 0; width: min(470px, 100%); background: var(--panel); border-left: 1px solid var(--border); box-shadow: var(--shadow-lg); z-index: 10; overflow-y: auto; animation: slide .3s var(--ease); }
+@keyframes slide { from { transform: translateX(28px); opacity: 0; } }
+.drawer-h { position: sticky; top: 0; background: var(--panel); padding: 20px 22px 16px; border-bottom: 1px solid var(--border); display: flex; gap: 13px; align-items: center; z-index: 1; }
+.drawer-h .avatar { width: 46px; height: 46px; font-size: 16px; border-radius: 13px; }
+.drawer-h .name { font: 600 20px/1.2 var(--serif); }
+.drawer-b { padding: 18px 22px 34px; display: grid; gap: 22px; }
+.list { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+.list-row { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; font-size: 13.5px; transition: background-color .2s; }
+.list-row:hover { background: var(--panel-2); }
+.list-row + .list-row { border-top: 1px solid var(--border); }
+.list-row > svg.i { margin-top: 3px; color: var(--faint); }
+.list-row .grow { flex: 1; min-width: 0; }
+.list-row .note { color: var(--faint); font-size: 12.5px; }
+.list-row .mono { overflow-wrap: anywhere; }
+.list-row .st { margin-top: 1px; }
+.mini { display: grid; gap: 2px; padding: 9px 12px; font-size: 13px; }
+.mini + .mini { border-top: 1px solid var(--border); }
+.mini .snip { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-@media (max-width: 760px) {
+#toast { position: fixed; bottom: 22px; left: 50%; transform: translate(-50%, 10px); background: var(--side); color: var(--side-text); padding: 10px 16px; border-radius: 10px; font-size: 13.5px; opacity: 0; pointer-events: none; transition: opacity .25s, transform .3s var(--ease); z-index: 20; display: flex; gap: 8px; align-items: center; }
+#toast svg.i { color: var(--lime); }
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 780px) {
   .layout { grid-template-columns: 1fr; height: auto; }
-  .side { border-right: none; border-bottom: 1px solid var(--border); }
+  .side { padding-bottom: 14px; }
   .main-h, .view { padding-left: 16px; padding-right: 16px; }
+  .tab small.d { display: none; }
   .convos { grid-template-columns: 1fr; }
-  .tabs { overflow-x: auto; }
+  .tl-item { grid-template-columns: 62px 30px 1fr; }
+  .report { margin: 0; }
+  .task .body { padding-left: 18px; }
+  .task summary { flex-wrap: wrap; }
+  .project { display: none; }
 }
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand">
-    <div class="logo"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="8" cy="8" r="2.2"/><circle cx="3" cy="3.5" r="1.4"/><circle cx="13" cy="3.5" r="1.4"/><circle cx="8" cy="13.5" r="1.4"/><path d="M4.1 4.5 6.4 6.6M11.9 4.5 9.6 6.6M8 10.2v2"/></svg></div>
-    Session Hub
-  </div>
+  <div class="brand"><div class="logo" id="logo"></div>Session Hub</div>
   <div class="project" id="project"></div>
   <div class="spacer"></div>
-  <div class="conn"><span class="dot" id="connDot"></span><span id="connText">Connecting…</span></div>
+  <div class="conn wait" id="conn"><svg class="live" viewBox="0 0 14 14"><circle class="ring" cx="7" cy="7" r="4"/><circle cx="7" cy="7" r="4"/></svg><span id="connText">Connecting</span></div>
 </header>
 
 <div class="layout">
-  <aside class="side">
-    <div class="side-h">Hubs</div>
-    <nav id="hubNav"></nav>
-    <form class="new-hub" id="newHub" autocomplete="off">
-      <input id="newHubName" placeholder="New private hub" maxlength="40" aria-label="New hub name">
-      <button class="btn" type="submit">Add</button>
-    </form>
-    <div class="side-h">Agents</div>
-    <nav id="agentNav"></nav>
-    <p class="hint">Drag an agent card onto a hub to add it. Open a hub and press × on a card to remove it.</p>
+  <aside class="side" id="side">
+    <span class="side-ink" id="sideInk"></span>
+    <div class="cat">
+      <div class="cat-h" id="hubsHead"></div>
+      <nav id="hubNav"></nav>
+      <form class="new-hub" id="newHub" autocomplete="off">
+        <input id="newHubName" placeholder="New private hub" maxlength="40" aria-label="New hub name">
+        <button type="submit" aria-label="Create hub" id="newHubBtn"></button>
+      </form>
+    </div>
+    <div class="cat">
+      <div class="cat-h" id="agentsHead"></div>
+      <nav id="agentNav"></nav>
+    </div>
+    <p class="hint">Drag an agent card onto a hub to add it. Open a hub and press × on a card to remove it. Click a card to see its history.</p>
   </aside>
   <main id="main">
     <div class="main-h">
       <h1 id="title"></h1>
       <div class="sub" id="subtitle"></div>
-      <div class="tabs" id="tabs"></div>
+      <div class="tabbar" id="tabbar"><div class="tabs" id="tabs"></div><span class="tab-ink" id="tabInk"></span></div>
     </div>
     <section class="view" id="view"></section>
   </main>
 </div>
+<div id="drawer"></div>
 <div id="toast"></div>
 
 <script>
 'use strict';
 let S = null; // latest state from the server
-let sel = { scope: 'hub:main', tab: 'agents', convo: null };
-try { Object.assign(sel, JSON.parse(decodeURIComponent(location.hash.slice(1)) || '{}')); } catch {}
+const DEFAULT_SEL = { scope: 'hub:main', tab: 'activity', convo: null, agent: null, who: null };
+let sel = { ...DEFAULT_SEL };
+function readHash() {
+  try { sel = { ...DEFAULT_SEL, ...JSON.parse(decodeURIComponent(location.hash.slice(1)) || '{}') }; } catch { sel = { ...DEFAULT_SEL }; }
+}
+readHash();
+const expanded = new Set(); // long texts the user chose to read in full
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Replace markup only when it changed, so hover states and running animations survive live updates.
+function setHTML(el, html) { if (el._html === html) return false; el.innerHTML = html; el._html = html; return true; }
 
-function hue(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
-function color(name) { return `hsl(${hue(name)} 52% 46%)`; }
-function initials(name) { const p = name.split('-'); return (p.length > 1 ? p[0][0] + p[1][0] : name.slice(0, 2)).toUpperCase(); }
-function avatar(name, online) {
-  const st = online === undefined ? '' : `<span class="st ${online ? 'on' : ''}"></span>`;
-  return `<span class="avatar" style="background:${color(name)}" title="${esc(name)}">${esc(initials(name))}${st}</span>`;
+// ---------- icons (24px line set) ----------
+const P = {
+  sprout: '<path d="M12 20v-7"/><path d="M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z"/><path d="M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z"/>',
+  leaf: '<path d="M5 19c0-8.5 5.2-14 15-14 0 9.8-5.5 15-14 15"/><path d="M5 19c3.2-4.2 6.4-6.9 10.5-9"/>',
+  lock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
+  hubs: '<circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="20" r="2"/><path d="m6.6 7.3 3.1 2.6M17.4 7.3l-3.1 2.6M12 15v3"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .6 3.2 2.3 3.6 5.2"/>',
+  userOut: '<circle cx="10" cy="8" r="3.5"/><path d="M3.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.2 1.4M16 18h6"/>',
+  activity: '<path d="M3 12h4l3-7.5 4 15 3-7.5h4"/>',
+  board: '<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7.5 9.5h9M7.5 13.5h6"/>',
+  chat: '<path d="M20 12.5a7.5 7.5 0 0 1-11 6.6L4 20l1-4.4A7.5 7.5 0 1 1 20 12.5z"/>',
+  tasks: '<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5.1"/>',
+  graph: '<circle cx="6" cy="6.5" r="2.5"/><circle cx="18" cy="7.5" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="m8.5 6.7 7 .6M7.2 8.8l3.6 6.9M16.8 9.8l-3.6 6"/>',
+  plus: '<path d="M12 5.5v13M5.5 12h13"/>',
+  x: '<path d="m7 7 10 10M17 7 7 17"/>',
+  check: '<circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.4 2.5 2.5 5-5.3"/>',
+  fail: '<circle cx="12" cy="12" r="8.5"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  spin: '<circle cx="12" cy="12" r="8.5" opacity=".25"/><path class="spin" d="M20.5 12A8.5 8.5 0 0 0 12 3.5"/>',
+  alert: '<path d="M12 4.5 3 19.5h18z"/><path d="M12 10.5v4M12 17.3v.2"/>',
+  dot: '<circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/>',
+  ring: '<circle cx="12" cy="12" r="4.5"/>',
+  out: '<path d="M14 4.5h4a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-4M10 16l-4-4 4-4M6 12h10"/>',
+  file: '<path d="M6.5 3.5h7.5l4 4v12.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4"/>',
+  arrow: '<path d="M5 12h14M13.5 6.5 19 12l-5.5 5.5"/>',
+  chev: '<path d="m9.5 6 6 6-6 6"/>',
+  down: '<path d="m6 9.5 6 6 6-6"/>',
+  clip: '<rect x="5" y="4.5" width="14" height="16" rx="2.5"/><path d="M9 3.5h6v3H9zM8.5 11h7M8.5 15h5"/>',
+  msg: '<path d="M4 5.5h16v10.5H9.5L4 20z"/>',
+  post: '<path d="M4 10v4l11 4.5V5.5L4 10zM15 9h3a2 2 0 0 1 0 6h-3M7 14.5 8.5 20"/>',
+  flag: '<path d="M5 21V4.5M5 5h11.5l-2 4 2 4H5"/>',
+};
+const ic = (n, cls = '') => `<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
+
+// Earthy, distinct avatar colours.
+const EARTH = ['#3f7d4e', '#6b7f2a', '#2c7a74', '#8a6a3a', '#a8643a', '#4f7591', '#5f8a3c', '#7d5a74', '#99502f', '#37698a'];
+function hash(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
+// Colours go by position among the known agents so no two share one (up to 10), with a hash fallback.
+function color(name) {
+  if (name === 'user') return '#6c776e';
+  const i = S ? S.agents.map((a) => a.name).sort().indexOf(name) : -1;
+  return EARTH[(i >= 0 ? i : hash(name)) % EARTH.length];
 }
+function initials(name) { const p = name.split('-'); return (p.length > 1 ? p[0][0] + p[1][0] : name.slice(0, 2)).toUpperCase(); }
+function avatar(name, a) {
+  const on = a ? `<span class="on ${a.online ? 'yes' : ''}"></span>` : '';
+  return `<span class="avatar ${a && isBusy(a) ? 'busy' : ''}" style="background:${color(name)}" title="${esc(name)}">${esc(initials(name))}${on}</span>`;
+}
+const tsOf = (ts) => (typeof ts === 'number' ? ts : Date.parse(ts));
 function ago(ts) {
-  const s = Math.max(0, Math.round((Date.now() - (typeof ts === 'number' ? ts : Date.parse(ts))) / 1000));
-  if (s < 60) return `${s}s ago`;
+  const s = Math.max(0, Math.round((Date.now() - tsOf(ts)) / 1000));
+  if (s < 60) return s < 10 ? 'just now' : `${s}s ago`;
   if (s < 3600) return `${Math.floor(s / 60)}m ago`;
   if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
   return `${Math.floor(s / 86400)}d ago`;
 }
-const when = (ts) => `<span class="t" title="${esc(new Date(ts).toLocaleString())}">${ago(ts)}</span>`;
+function dur(ms) {
+  const s = Math.max(0, Math.round(ms / 1000));
+  if (s < 60) return `${s}s`;
+  const m = Math.round(s / 60);
+  if (m < 60) return `${m}m`;
+  return `${Math.floor(m / 60)}h ${m % 60}m`;
+}
+const clock = (ts) => new Date(tsOf(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+const when = (ts) => `<span class="t" title="${esc(new Date(tsOf(ts)).toLocaleString())}">${ago(ts)}</span>`;
 const agent = (name) => S.agents.find((a) => a.name === name);
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const isBusy = (a) => a.online && a.doing && a.doing !== 'Idle';
+const term = (name, desc) => `<b>${name}</b><small class="d">${desc}</small>`;
+
+// Light formatting for agent text: paragraphs, lists, ALL-CAPS headings, `code`, **bold**, links.
+// Everything is escaped first, so agent text can never inject markup.
+function md(src) {
+  const out = [];
+  let list = null, para = [];
+  const inline = (s) => s
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\bhttps?:\/\/[^\s<&]+[^\s<&.,;:)\]]/g, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+  const flushPara = () => { if (para.length) out.push(`<p>${para.map(inline).join('<br>')}</p>`); para = []; };
+  const flushList = () => { if (list) out.push(`<${list.tag}>${list.items.map((i) => `<li>${inline(i)}</li>`).join('')}</${list.tag}>`); list = null; };
+  for (const raw of esc(src).replace(/\r/g, '').split('\n')) {
+    const line = raw.trimEnd();
+    let m;
+    if (!line.trim()) { flushPara(); flushList(); continue; }
+    if ((m = /^#{1,4}\s+(.+)$/.exec(line)) || (m = /^([A-Z][A-Z0-9 ,/&;#'()-]{2,}):\s*$/.exec(line))) {
+      flushPara(); flushList(); out.push(`<h4>${inline(m[1])}</h4>`); continue;
+    }
+    if ((m = /^\s*[-*•]\s+(.*)$/.exec(line)) || (m = /^\s*(?:\d+|[a-z])[.)]\s+(.*)$/.exec(line))) {
+      const tag = /^\s*[-*•]/.test(line) ? 'ul' : 'ol';
+      flushPara();
+      if (list && list.tag !== tag) flushList();
+      if (!list) list = { tag, items: [] };
+      list.items.push(m[1]);
+      continue;
+    }
+    if (list && /^\s{2,}\S/.test(raw)) { list.items[list.items.length - 1] += ' ' + line.trim(); continue; }
+    flushList();
+    para.push(line);
+  }
+  flushPara(); flushList();
+  return out.join('');
+}
+
+function rich(text, key) {
+  if (!text) return '';
+  const long = text.length > 480 || text.split('\n').length > 8;
+  if (!long) return `<div class="md">${md(text)}</div>`;
+  const open = expanded.has(key);
+  return `<div class="md ${open ? '' : 'clamp'}">${md(text)}</div><button class="more ${open ? 'open' : ''}" data-more="${esc(key)}">${open ? 'Show less' : 'Read all'}${ic('down')}</button>`;
+}
 
 function toast(msg) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  const t = $('toast'); t.innerHTML = `${ic('sprout')}<span>${esc(msg)}</span>`; t.classList.add('show');
   clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
@@ -232,47 +522,115 @@ async function api(path, body) {
   if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
 }
 
-function go(patch) {
+function go(patch, inPlace) {
   Object.assign(sel, patch);
   history.replaceState(null, '', '#' + encodeURIComponent(JSON.stringify(sel)));
-  render(true);
+  render(!inPlace);
 }
+window.addEventListener('hashchange', () => { readHash(); render(true); });
 
 const scopeHub = () => (sel.scope.startsWith('hub:') ? sel.scope.slice(4) : null);
 const inHub = (h) => S.agents.filter((a) => a.hubs.includes(h));
 const hubEvents = (h) => S.events.filter((e) => e.hub === h);
 
-// ---------- sidebar ----------
+// ---------- statuses (icon + text) ----------
 
-const HUB_ICON = '<svg class="hub-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="3"/><path d="M5.5 8h5M8 5.5v5"/></svg>';
-const LOCK_ICON = '<svg class="hub-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>';
-const ALL_ICON = '<svg class="hub-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="11.5" cy="7" r="2"/><path d="M1.5 13.5c.6-2.3 2.3-3.5 4.5-3.5s3.9 1.2 4.5 3.5M10.5 10.2c1.8-.2 3.3.9 4 3.3"/></svg>';
-const OUT_ICON = '<svg class="hub-ico" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8h6"/></svg>';
+function agentStatus(a) {
+  if (a.left) return `<span class="st">${ic('out')}Left</span>`;
+  if (!a.online) return `<span class="st">${ic('ring')}Offline</span>`;
+  if (!a.listening) return `<span class="st warn" title="Its listener is not running, so messages reach it only while it works">${ic('alert')}Not listening</span>`;
+  return `<span class="st ok">${ic('dot')}Online</span>`;
+}
+const TASK_ST = {
+  assigned: ['warn', 'clock', 'Waiting'],
+  accepted: ['go', 'spin', 'In progress'],
+  done: ['ok', 'check', 'Done'],
+  failed: ['bad', 'fail', 'Failed'],
+};
+function taskStatus(s) { const [c, i, l] = TASK_ST[s] || ['', 'ring', s]; return `<span class="st ${c}">${ic(i)}${esc(l)}</span>`; }
+const hubTag = (h) => `<span class="tag">${ic(h === 'main' ? 'leaf' : 'lock')}${esc(h)}</span>`;
 
-function renderSide() {
-  $('hubNav').innerHTML = S.hubs.map((h) => `
-    <button class="nav-item ${sel.scope === 'hub:' + h ? 'active' : ''}" data-scope="hub:${esc(h)}" data-drop="${esc(h)}">
-      ${h === 'main' ? HUB_ICON : LOCK_ICON}<span>${esc(h)}</span><span class="count">${inHub(h).length}</span>
-    </button>`).join('');
-  const loose = S.agents.filter((a) => !a.hubs.length).length;
-  $('agentNav').innerHTML = `
-    <button class="nav-item ${sel.scope === 'all' ? 'active' : ''}" data-scope="all">${ALL_ICON}<span>All agents</span><span class="count">${S.agents.length}</span></button>
-    <button class="nav-item ${sel.scope === 'unassigned' ? 'active' : ''}" data-scope="unassigned">${OUT_ICON}<span>Unassigned</span><span class="count">${loose}</span></button>`;
+// ---------- derived data ----------
+
+function taskInfo(t) {
+  const ups = S.events.filter((e) => e.type === 'task-update' && e.taskId === t.id);
+  const accepted = ups.find((e) => e.status === 'accepted');
+  const end = [...ups].reverse().find((e) => e.status === 'done' || e.status === 'failed');
+  return { accepted, end, took: end ? tsOf(end.ts) - tsOf(t.ts) : null, open: end ? null : Date.now() - tsOf(t.ts) };
 }
 
+function agentStats(name) {
+  const got = S.tasks.filter((t) => t.to === name);
+  return {
+    led: S.tasks.filter((t) => t.from === name),
+    got,
+    done: got.filter((t) => t.status === 'done').length,
+    open: got.filter((t) => t.status !== 'done' && t.status !== 'failed').length,
+    files: S.claims.filter((c) => c.agent === name).sort((a, b) => a.path.localeCompare(b.path)),
+  };
+}
+
+// ---------- sidebar ----------
+
+function navItem({ scope, icon, name, desc, count, drop }) {
+  return `<button class="nav-item ${sel.scope === scope ? 'active' : ''}" data-scope="${esc(scope)}" ${drop ? `data-drop="${esc(drop)}"` : ''}>
+    <span class="tile">${ic(icon)}</span><span class="txt">${term(esc(name), desc)}</span><span class="count">${count}</span></button>`;
+}
+
+function renderSide() {
+  setHTML($('hubNav'), S.hubs.map((h) => navItem({
+    scope: 'hub:' + h, icon: h === 'main' ? 'leaf' : 'lock', name: h, drop: h, count: inHub(h).length,
+    desc: h === 'main' ? 'Default for every session' : 'Private, members only',
+  })).join(''));
+  const loose = S.agents.filter((a) => !a.hubs.length).length;
+  setHTML($('agentNav'),
+    navItem({ scope: 'all', icon: 'users', name: 'All agents', desc: 'Every session that ran /hub', count: S.agents.length }) +
+    navItem({ scope: 'unassigned', icon: 'userOut', name: 'Unassigned', desc: 'In no hub, can’t talk yet', count: loose }));
+}
+
+function placeInks() {
+  const side = $('side'), ink = $('sideInk'), a = side.querySelector('.nav-item.active');
+  if (a) {
+    ink.style.opacity = 1;
+    ink.style.transform = `translate(${a.offsetLeft}px, ${a.offsetTop}px)`;
+    ink.style.width = a.offsetWidth + 'px'; ink.style.height = a.offsetHeight + 'px';
+  } else ink.style.opacity = 0;
+  const bar = $('tabbar'), tInk = $('tabInk'), t = bar.querySelector('.tab.active');
+  if (t) {
+    tInk.style.opacity = 1;
+    tInk.style.transform = `translateX(${t.offsetLeft - $('tabs').scrollLeft + 8}px)`;
+    tInk.style.width = Math.max(0, t.offsetWidth - 16) + 'px';
+  } else tInk.style.opacity = 0;
+  requestAnimationFrame(() => { side.classList.add('ready'); bar.classList.add('ready'); });
+}
+window.addEventListener('resize', placeInks);
+$('tabs').addEventListener('scroll', placeInks);
+
 document.addEventListener('click', (ev) => {
-  const nav = ev.target.closest('[data-scope]');
-  if (nav) { go({ scope: nav.dataset.scope, tab: nav.dataset.scope.startsWith('hub:') ? sel.tab : 'agents', convo: null }); return; }
-  const tab = ev.target.closest('[data-tab]');
-  if (tab) { go({ tab: tab.dataset.tab }); return; }
-  const convo = ev.target.closest('[data-convo]');
-  if (convo) { go({ tab: 'conversations', convo: convo.dataset.convo }); return; }
+  const more = ev.target.closest('[data-more]');
+  if (more) { const k = more.dataset.more; expanded.has(k) ? expanded.delete(k) : expanded.add(k); render(); return; }
   const rm = ev.target.closest('[data-remove]');
   if (rm) {
     const [name, h] = rm.dataset.remove.split('|');
     api('/api/membership', { agent: name, hub: h, action: 'remove' })
       .then(() => toast(`Removed ${name} from ${h}`)).catch((e) => toast(e.message));
+    return;
   }
+  if (ev.target.closest('[data-close]')) { go({ agent: null }, true); return; }
+  const open = ev.target.closest('[data-open-agent]');
+  if (open) { go({ agent: open.dataset.openAgent }, true); return; }
+  const who = ev.target.closest('[data-who]');
+  if (who) { go({ who: who.dataset.who || null }, true); return; }
+  const nav = ev.target.closest('[data-scope]');
+  if (nav) { go({ scope: nav.dataset.scope, tab: nav.dataset.scope.startsWith('hub:') ? sel.tab : 'agents', convo: null, who: null }); return; }
+  const tab = ev.target.closest('[data-tab]');
+  if (tab) { go({ tab: tab.dataset.tab }); return; }
+  const convo = ev.target.closest('[data-convo]');
+  if (convo) { go({ tab: 'conversations', convo: convo.dataset.convo, agent: null }); return; }
+});
+document.addEventListener('keydown', (ev) => {
+  if (ev.key === 'Escape' && sel.agent) go({ agent: null }, true);
+  if (ev.key === 'Enter' && ev.target.matches?.('[data-open-agent]')) go({ agent: ev.target.dataset.openAgent }, true);
 });
 
 // drag & drop agents onto hubs
@@ -309,57 +667,182 @@ $('newHub').addEventListener('submit', (ev) => {
   ev.preventDefault();
   const name = $('newHubName').value.trim().toLowerCase().replace(/\s+/g, '-');
   if (!name) return;
+  if (S?.hubs.includes(name)) { toast(`A hub named ${name} already exists`); $('newHubName').select(); return; }
   api('/api/hubs', { name }).then(() => { $('newHubName').value = ''; toast(`Created hub ${name}`); go({ scope: 'hub:' + name, tab: 'agents' }); })
     .catch((e) => toast(e.message));
 });
 
-// ---------- views ----------
+const emptyBox = (title, text) => `<div class="empty">${ic('sprout')}<b>${title}</b>${text}</div>`;
+
+// ---------- agents ----------
+
+function statsRow(st, long) {
+  const cell = (n, name, desc, hot) => `<div class="stat ${hot ? 'hot' : ''}"><b>${n}</b><span>${name}</span>${long ? `<small class="d">${desc}</small>` : ''}</div>`;
+  return `<div class="stats">${cell(st.led.length, 'Led', 'tasks handed out')}${cell(st.done, 'Done', 'tasks finished')}${cell(st.open, 'Open', 'still on its plate', st.open)}${cell(st.files.length, 'Files', 'it owns')}</div>`;
+}
 
 function agentCard(a, h) {
-  const status = a.left ? '<span class="pill">Left</span>'
-    : a.online ? (a.listening ? '<span class="pill ok">Online</span>' : '<span class="pill warn" title="Its listener is not running, so messages reach it only while it works">Online · not listening</span>')
-    : '<span class="pill">Offline</span>';
-  const hubs = a.hubs.length ? a.hubs.map((x) => `<span class="pill accent">${esc(x)}</span>`).join('') : '<span class="pill">no hub</span>';
+  const st = agentStats(a.name);
+  const shown = st.files.slice(0, 3);
   return `
-  <article class="card" draggable="true" data-agent="${esc(a.name)}">
+  <article class="card surface lift ${sel.agent === a.name ? 'selected' : ''}" draggable="true" data-agent="${esc(a.name)}" data-open-agent="${esc(a.name)}" tabindex="0" aria-label="${esc(a.name)}, open details">
     <div class="card-h">
-      ${avatar(a.name, a.online)}
+      ${avatar(a.name, a)}
       <div class="who"><div class="name">${esc(a.name)}</div><div class="role">${esc(a.role)}</div></div>
-      ${h ? `<button class="x" title="Remove from ${esc(h)}" aria-label="Remove ${esc(a.name)} from ${esc(h)}" data-remove="${esc(a.name)}|${esc(h)}">
-        <svg width="14" height="14" viewBox="0 0 14 14" stroke="currentColor" stroke-width="1.7"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7"/></svg></button>` : ''}
+      ${h ? `<button class="x" title="Remove from ${esc(h)}" aria-label="Remove ${esc(a.name)} from ${esc(h)}" data-remove="${esc(a.name)}|${esc(h)}">${ic('x')}</button>` : ''}
     </div>
     <div class="purpose">${esc(a.purpose)}</div>
-    <div class="doing ${a.doing && a.doing !== 'Idle' ? '' : 'idle'}"><span class="lbl">Working on</span>${esc(a.doing || 'Idle')}</div>
-    <div class="card-f">${status}${hubs}<span class="ago">seen ${ago(a.lastSeen)}</span></div>
+    <div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${esc(a.doing || 'Idle')}</span></div>
+    ${statsRow(st, true)}
+    ${shown.length ? `<div class="files">${shown.map((c) => `<span class="f" title="${esc(c.note || '')}">${ic('file')}<span class="mono">${esc(c.path)}</span></span>`).join('')}${st.files.length > 3 ? `<span>and ${st.files.length - 3} more</span>` : ''}</div>` : ''}
+    <div class="card-f">${agentStatus(a)}${a.hubs.length ? a.hubs.map(hubTag).join('') : `<span class="tag">${ic('userOut')}no hub</span>`}<span class="t">seen ${ago(a.lastSeen)}</span></div>
   </article>`;
 }
 
 function viewAgents(list, h) {
   if (!list.length) {
-    return h ? `<div class="empty"><b>No agents in ${esc(h)} yet</b>Drag agents here from <i>All agents</i>, or run <span class="mono">/hub ${h === 'main' ? '' : esc(h)}</span> in a session.</div>`
-      : `<div class="empty"><b>Nothing here</b>Run <span class="mono">/hub</span> in a Claude Code session to register it.</div>`;
+    return h ? emptyBox(`No agents in ${esc(h)} yet`, `Drag agents here from <i>All agents</i>, or run <span class="mono">/hub ${h === 'main' ? '' : esc(h)}</span> in a session.`)
+      : emptyBox('Nothing here', 'Run <span class="mono">/hub</span> in a Claude Code session to register it.');
   }
   const order = (a) => (a.online ? 0 : a.left ? 2 : 1);
   return `<div class="grid">${[...list].sort((x, y) => order(x) - order(y) || x.name.localeCompare(y.name)).map((a) => agentCard(a, h)).join('')}</div>`;
 }
 
+function snippet(e) {
+  const s = e.type === 'task' ? e.title : e.type === 'task-update' ? e.title : e.text || '';
+  return s.replace(/\s+/g, ' ');
+}
+function eventLine(e, me) {
+  if (e.from === me) {
+    if (e.type === 'task') return `${ic('clip')} Gave <b>${esc(e.to)}</b> a task`;
+    if (e.type === 'task-update') return `${ic(TASK_ST[e.status]?.[1] === 'spin' ? 'clock' : TASK_ST[e.status]?.[1] || 'ring')} ${e.status === 'accepted' ? 'Accepted' : e.status === 'done' ? 'Finished' : 'Failed'} a task from <b>${esc(e.to)}</b>`;
+    return e.to === '*' ? `${ic('post')} Posted to the board` : `${ic('msg')} Messaged <b>${esc(e.to)}</b>`;
+  }
+  if (e.type === 'task') return `${ic('clip')} <b>${esc(e.from)}</b> gave it a task`;
+  if (e.type === 'task-update') return `${ic('check')} <b>${esc(e.from)}</b> reported ${esc(e.status)}`;
+  return `${ic('msg')} <b>${esc(e.from)}</b> messaged it`;
+}
+
+function drawerBody(a) {
+  const st = agentStats(a.name);
+  const tasks = [...st.got.map((t) => ({ t, dir: 'From', other: t.from })), ...st.led.map((t) => ({ t, dir: 'Given to', other: t.to }))]
+    .sort((x, y) => tsOf(y.t.ts) - tsOf(x.t.ts));
+  const recent = S.events.filter((e) => e.type !== 'membership' && (e.from === a.name || e.to === a.name)).slice(-25).reverse();
+  const head = (name, desc) => `<span class="lbl">${name}</span><small class="d">${desc}</small>`;
+  return `<div class="drawer-h">${avatar(a.name, a)}
+      <div class="who"><div class="name">${esc(a.name)}</div><div class="role">${esc(a.role)}</div></div>
+      <button class="x" data-close aria-label="Close">${ic('x')}</button></div>
+    <div class="drawer-b">
+      <section><div class="card-f" style="border:0;padding:0;margin-bottom:10px">${agentStatus(a)}${a.hubs.map(hubTag).join('')}<span class="t">seen ${ago(a.lastSeen)}</span></div>
+        <div class="purpose">${esc(a.purpose)}</div></section>
+      <div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${esc(a.doing || 'Idle')}</span></div>
+      ${statsRow(st, true)}
+      <section>${head('Tasks', 'Work it was given, and work it handed out as a lead')}${tasks.length ? `<div class="list">${tasks.map(({ t, dir, other }) => {
+        const info = taskInfo(t);
+        return `<div class="list-row">${taskStatus(t.status)}<span class="grow">${esc(t.title)}<div class="note">${dir} ${esc(other)}, ${info.took !== null ? 'took ' + dur(info.took) : 'open for ' + dur(info.open)}</div></span></div>`;
+      }).join('')}</div>` : '<div class="t">No tasks yet.</div>'}</section>
+      <section>${head('Files it owns', 'Claimed when it creates or edits them. Others ask before touching these.')}${st.files.length ? `<div class="list">${st.files.map((c) =>
+        `<div class="list-row">${ic('file')}<span class="grow"><span class="mono">${esc(c.path)}</span>${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}</span></div>`).join('')}</div>`
+        : '<div class="t">No files claimed yet.</div>'}</section>
+      <section>${head('Recent activity', 'The last 25 things it sent or received')}${recent.length ? `<div class="list">${recent.map((e) => `<div class="mini">
+        <div>${eventLine(e, a.name)} <span class="t">· ${ago(e.ts)}</span></div>
+        <div class="snip">${esc(snippet(e))}</div></div>`).join('')}</div>` : '<div class="t">Nothing yet.</div>'}</section>
+    </div>`;
+}
+
+// The drawer's shell is created once per opening, so its slide-in runs once; only the body updates live.
+function renderDrawer() {
+  const box = $('drawer');
+  const a = sel.agent && agent(sel.agent);
+  if (!a) { box.innerHTML = ''; box._for = null; return; }
+  if (box._for !== a.name) {
+    box.innerHTML = `<div class="scrim" data-close></div><aside class="drawer" role="dialog" aria-label="${esc(a.name)} details"><div id="drawerBody"></div></aside>`;
+    box._for = a.name;
+  }
+  setHTML($('drawerBody'), drawerBody(a));
+}
+
+// ---------- activity ----------
+
+const SESSION_GAP = 45 * 60 * 1000;
+
+function tlItem(e) {
+  const k = `a:${e.id}`;
+  const face = avatar(e.from);
+  const time = `<div class="tl-time" title="${esc(new Date(tsOf(e.ts)).toLocaleString())}">${clock(e.ts)}</div>`;
+  const row = (rail, body, minor) => `<div class="tl-item ${minor ? 'minor' : ''}">${time}<div class="tl-rail">${rail}</div><div class="tl-body">${body}</div></div>`;
+  switch (e.type) {
+    case 'membership':
+      return row(`<span class="mark">${ic(e.hub === 'main' ? 'leaf' : 'lock')}</span>`, `<div class="tl-head">${e.from === 'user' ? 'You' : `<b>${esc(e.from)}</b>`} ${esc(e.action)} <b>${esc(e.to)}</b> ${e.action === 'added' ? 'to' : 'from'} ${esc(e.hub)}</div>`, true);
+    case 'task':
+      return row(face, `<div class="tl-head"><b>${esc(e.from)}</b> handed <b>${esc(e.to)}</b> a task</div>
+        <div class="tl-card surface task"><div class="title">${ic('clip')}${esc(e.title)}</div>${rich(e.body, k)}</div>`);
+    case 'task-update': {
+      const t = S.tasks.find((x) => x.id === e.taskId);
+      if (e.status === 'accepted') {
+        const wait = t ? `<span class="t">${dur(tsOf(e.ts) - tsOf(t.ts))} after it was assigned</span>` : '';
+        return row(`<span class="mark go">${ic('arrow')}</span>`, `<div class="tl-head"><b>${esc(e.from)}</b> accepted <span class="q">${esc(e.title)}</span>${wait}</div>`, true);
+      }
+      const took = t ? `<span class="t">took ${dur(tsOf(e.ts) - tsOf(t.ts))}</span>` : '';
+      return row(face, `<div class="tl-head"><b>${esc(e.from)}</b> ${e.status === 'done' ? 'finished' : 'could not finish'} <span class="q">${esc(e.title)}</span>${taskStatus(e.status)}${took}</div>
+        ${e.report ? `<div class="tl-card surface ${e.status}">${rich(e.report, k)}</div>` : ''}`);
+    }
+    case 'message': {
+      const head = e.to === '*' ? `<b>${esc(e.from)}</b> ${e.replyTo ? 'replied on' : 'posted to'} the board` : `<b>${esc(e.from)}</b> ${ic('arrow')} <b>${esc(e.to)}</b>`;
+      return row(face, `<div class="tl-head">${head}</div><div class="tl-card surface">${rich(e.text, k)}</div>`);
+    }
+    default:
+      return '';
+  }
+}
+
+function viewActivity(h) {
+  const all = hubEvents(h).slice().sort((a, b) => tsOf(a.ts) - tsOf(b.ts));
+  if (!all.length) return emptyBox(`Nothing has happened in ${esc(h)} yet`, 'Give an agent a feature and ask it to collaborate. Plans, tasks, reports and messages show up here as they happen.');
+  const people = [...new Set(all.filter((e) => e.type !== 'membership').flatMap((e) => [e.from, e.to]).filter((n) => n && n !== '*' && n !== 'user'))].sort();
+  if (sel.who && !people.includes(sel.who)) sel.who = null;
+  const evs = sel.who ? all.filter((e) => e.from === sel.who || e.to === sel.who) : all;
+  const filters = people.length > 1 ? `<div class="filters"><span class="lbl">Show</span><button class="chip plain ${sel.who ? '' : 'on'}" data-who="">Everyone</button>${people.map((p) =>
+    `<button class="chip ${sel.who === p ? 'on' : ''}" data-who="${esc(p)}">${avatar(p)}${esc(p)}</button>`).join('')}</div>` : '';
+  // Split into work sessions wherever nothing happened for a while. Newest session first.
+  const sessions = [];
+  for (const e of evs) {
+    const cur = sessions[sessions.length - 1];
+    if (!cur || tsOf(e.ts) - tsOf(cur[cur.length - 1].ts) > SESSION_GAP) sessions.push([e]); else cur.push(e);
+  }
+  return filters + sessions.reverse().map((s) => {
+    const first = tsOf(s[0].ts), last = tsOf(s[s.length - 1].ts);
+    const faces = [...new Set(s.map((e) => e.from).filter((n) => n !== 'user'))];
+    const tasks = s.filter((e) => e.type === 'task').length;
+    const day = new Date(first).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    return `<div class="session-h"><div><div class="when">${day}, ${clock(first)}${last - first > 60000 ? ` to ${clock(last)}` : ''}</div>
+      <small class="d">${plural(s.length, 'event')}${tasks ? `, ${plural(tasks, 'task')} handed out` : ''}</small></div>
+      <span class="faces">${faces.map((n) => avatar(n)).join('')}</span><span class="line"></span></div>
+      <div class="tl">${s.map(tlItem).join('')}</div>`;
+  }).join('');
+}
+
+// ---------- board ----------
+
 function msgRow(e, reply) {
   return `<div class="msg ${reply ? 'reply' : ''}">${avatar(e.from)}<div class="msg-b">
     <div class="msg-h"><span class="name">${esc(e.from)}</span>${when(e.ts)}<span class="t mono">#${e.id}</span></div>
-    <div class="text">${esc(e.text)}</div></div></div>`;
+    ${rich(e.text, `b:${e.id}`)}</div></div>`;
 }
 
 function viewBoard(h) {
   const posts = hubEvents(h).filter((e) => e.type === 'message' && e.to === '*');
-  if (!posts.length) return `<div class="empty"><b>The board is quiet</b>Posts that agents in ${esc(h)} send to everyone appear here.</div>`;
+  if (!posts.length) return emptyBox('The board is quiet', `Posts that agents in ${esc(h)} send to everyone appear here.`);
   const byId = Object.fromEntries(posts.map((p) => [p.id, p]));
   const rootOf = (p) => { let r = p; const seen = new Set(); while (r.replyTo && byId[r.replyTo] && !seen.has(r.id)) { seen.add(r.id); r = byId[r.replyTo]; } return r; };
   const threads = new Map();
   for (const p of posts) { const r = rootOf(p); if (!threads.has(r.id)) threads.set(r.id, []); if (p !== r) threads.get(r.id).push(p); }
-  const ordered = [...threads.keys()].map((id) => byId[id])
-    .sort((a, b) => Math.max(b.ts, ...threads.get(b.id).map((x) => x.ts)) - Math.max(a.ts, ...threads.get(a.id).map((x) => x.ts)));
-  return ordered.map((r) => `<div class="thread">${msgRow(r)}${threads.get(r.id).map((x) => msgRow(x, true)).join('')}</div>`).join('');
+  const latest = (id) => Math.max(tsOf(byId[id].ts), ...threads.get(id).map((x) => tsOf(x.ts)));
+  return [...threads.keys()].sort((a, b) => latest(b) - latest(a))
+    .map((id) => `<div class="thread surface">${msgRow(byId[id])}${threads.get(id).map((x) => msgRow(x, true)).join('')}</div>`).join('');
 }
+
+// ---------- conversations ----------
 
 const pairKey = (a, b) => [a, b].sort().join('|');
 
@@ -371,112 +854,167 @@ function conversations(h) {
     if (!map.has(k)) map.set(k, []);
     map.get(k).push(e);
   }
-  return [...map.entries()].map(([k, evs]) => ({ k, evs, last: evs[evs.length - 1].ts })).sort((a, b) => b.last - a.last);
+  return [...map.entries()].map(([k, evs]) => ({ k, evs, last: tsOf(evs[evs.length - 1].ts) })).sort((a, b) => b.last - a.last);
 }
 
 function bubble(e, left) {
-  const side = e.from === left ? '' : 'right';
   if (e.type === 'task-update') {
-    const cls = e.status === 'done' ? 'ok' : e.status === 'failed' ? 'bad' : 'accent';
-    return `<div class="sys"><span class="pill ${cls}">${esc(e.status)}</span> ${esc(e.from)} · “${esc(e.title)}” · ${ago(e.ts)}${e.report ? `<div class="text" style="text-align:left;max-width:560px;margin-top:4px">${esc(e.report)}</div>` : ''}</div>`;
+    if (e.status === 'accepted') return `<div class="sys">${taskStatus('accepted')}<b>${esc(e.from)}</b> accepted ${esc(e.title)}<span class="t">· ${ago(e.ts)}</span></div>`;
+    const t = S.tasks.find((x) => x.id === e.taskId);
+    return `<div class="report surface ${e.status === 'failed' ? 'failed' : ''}"><div class="head">${taskStatus(e.status)}<b>${esc(e.from)}</b> reported on ${esc(e.title)}
+      ${t ? `<span class="t">· took ${dur(tsOf(e.ts) - tsOf(t.ts))}</span>` : ''}<span class="t">· ${ago(e.ts)}</span></div>${rich(e.report, `c:${e.id}`)}</div>`;
   }
+  const side = e.from === left ? '' : 'right';
   const isTask = e.type === 'task';
   return `<div class="bubble-row ${side}">${avatar(e.from)}<div class="bubble ${isTask ? 'task' : ''}">
-    <div class="msg-h"><span class="name">${esc(e.from)}</span>${isTask ? '<span class="pill accent">Task</span>' : ''}${when(e.ts)}</div>
-    ${isTask ? `<div style="font-weight:600">${esc(e.title)}</div>${e.body ? `<div class="text">${esc(e.body)}</div>` : ''}` : `<div class="text">${esc(e.text)}</div>`}
+    <div class="msg-h"><span class="name">${esc(e.from)}</span>${isTask ? `<span class="kind">${ic('clip')}Task</span>` : ''}${when(e.ts)}</div>
+    ${isTask ? `<div style="font-weight:700;margin-bottom:3px">${esc(e.title)}</div>${rich(e.body, `c:${e.id}`)}` : rich(e.text, `c:${e.id}`)}
   </div></div>`;
 }
 
 function viewConversations(h) {
   const list = conversations(h);
-  if (!list.length) return `<div class="empty"><b>No direct conversations yet</b>Messages and tasks between two agents in ${esc(h)} appear here.</div>`;
+  if (!list.length) return emptyBox('No direct conversations yet', `Messages and tasks between two agents in ${esc(h)} appear here.`);
   const cur = list.find((c) => c.k === sel.convo) || list[0];
-  const [a, b] = cur.k.split('|');
+  const [a] = cur.k.split('|');
   return `<div class="convos">
-    <div class="c-list">${list.map((c) => {
+    <div class="c-list surface">${list.map((c) => {
       const [x, y] = c.k.split('|');
       return `<button class="c-item ${c === cur ? 'active' : ''}" data-convo="${esc(c.k)}"><span class="pair">${avatar(x)}${avatar(y)}</span>
-        <span style="min-width:0"><div style="font-weight:580">${esc(x)} ↔ ${esc(y)}</div><div class="meta">${c.evs.length} item${c.evs.length > 1 ? 's' : ''} · ${ago(c.last)}</div></span></button>`;
+        <span style="min-width:0"><div class="nm">${esc(x)} and ${esc(y)}</div><small class="d">${plural(c.evs.length, 'item')}, last ${ago(c.last)}</small></span></button>`;
     }).join('')}</div>
-    <div class="chat">${cur.evs.map((e) => bubble(e, a)).join('')}</div>
+    <div class="chat surface">${cur.evs.map((e) => bubble(e, a)).join('')}</div>
   </div>`;
 }
 
-function statusPill(s) {
-  const cls = { done: 'ok', failed: 'bad', accepted: 'accent', assigned: 'warn' }[s] || '';
-  return `<span class="pill ${cls}">${esc(s)}</span>`;
-}
+// ---------- tasks ----------
 
 function viewTasks(h) {
   const tasks = S.tasks.filter((t) => t.hub === h);
-  if (!tasks.length) return `<div class="empty"><b>No tasks yet</b>When an agent leads a feature, the tasks it hands out appear here as a tree.</div>`;
+  if (!tasks.length) return emptyBox('No tasks yet', 'When an agent leads a feature, the tasks it hands out appear here as a tree.');
   const ids = new Set(tasks.map((t) => t.id));
   const kids = (id) => tasks.filter((t) => t.parent === id);
-  const node = (t) => `<div class="task-node"><details class="task" data-id="${t.id}">
-    <summary>${statusPill(t.status)}<span class="title">${esc(t.title)}</span><span class="route">${esc(t.from)} → ${esc(t.to)} · ${ago(t.ts)}</span></summary>
+  const n = (s) => tasks.filter((t) => t.status === s).length;
+  const summary = `<div class="summary"><span class="total">${plural(tasks.length, 'task')}</span>${['done', 'accepted', 'assigned', 'failed'].filter((s) => n(s)).map((s) => {
+    const [c, i, l] = TASK_ST[s]; return `<span class="st ${c}">${ic(i)}${n(s)} ${l.toLowerCase()}</span>`;
+  }).join('')}</div>`;
+  const node = (t) => {
+    const info = taskInfo(t);
+    const steps = [`Assigned <b>${clock(t.ts)}</b>`];
+    if (info.accepted) steps.push(`accepted <b>${clock(info.accepted.ts)}</b>`);
+    if (info.end) steps.push(`${info.end.status} <b>${clock(info.end.ts)}</b>`);
+    return `<div class="task-node"><details class="task surface" data-id="${t.id}">
+    <summary>${ic('chev', 'chev')}${taskStatus(t.status)}<span class="title">${esc(t.title)}</span>
+      <span class="route">${avatar(t.from)}${esc(t.from)} ${ic('arrow')} ${avatar(t.to)}${esc(t.to)}<span class="sep">|</span>${info.took !== null ? `took ${dur(info.took)}` : `open ${dur(info.open)}`}</span></summary>
     <div class="body">
-      ${t.body ? `<div><div class="lbl">Spec</div><div class="text">${esc(t.body)}</div></div>` : ''}
-      ${t.report ? `<div><div class="lbl">Report</div><div class="text">${esc(t.report)}</div></div>` : ''}
-      <div class="mono" style="color:var(--faint)">#${t.id}</div>
+      <div class="steps">${steps.join(ic('arrow'))}<span class="t mono">#${t.id}</span></div>
+      ${t.body ? `<div><span class="lbl">Spec</span><small class="d">What the lead asked for</small>${rich(t.body, `t:${t.id}:s`)}</div>` : ''}
+      ${t.report ? `<div><span class="lbl">Report</span><small class="d">What ${esc(t.to)} did and what the lead should know</small>${rich(t.report, `t:${t.id}:r`)}</div>` : ''}
     </div>
   </details>${kids(t.id).length ? `<div class="children">${kids(t.id).map(node).join('')}</div>` : ''}</div>`;
-  return tasks.filter((t) => !t.parent || !ids.has(t.parent)).reverse().map(node).join('');
+  };
+  return summary + tasks.filter((t) => !t.parent || !ids.has(t.parent)).reverse().map(node).join('');
 }
+
+// ---------- graph ----------
 
 function viewGraph(h) {
   const members = inHub(h);
-  if (!members.length) return `<div class="empty"><b>No agents in ${esc(h)}</b>The graph shows who talks to whom once agents join.</div>`;
-  const W = 820, H = 520, cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 80;
+  if (!members.length) return emptyBox(`No agents in ${esc(h)}`, 'The graph shows who talks to whom once agents join.');
+  const W = 820, H = 540, cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 90, NR = 27;
   const pos = {};
   members.forEach((a, i) => {
     const ang = -Math.PI / 2 + (2 * Math.PI * i) / members.length;
     pos[a.name] = [cx + R * Math.cos(ang), cy + R * Math.sin(ang)];
   });
-  const evs = hubEvents(h);
   const posts = {};
-  for (const e of evs) if (e.type === 'message' && e.to === '*') posts[e.from] = (posts[e.from] || 0) + 1;
-  const convos = conversations(h).filter((c) => c.k.split('|').every((n) => pos[n]));
-  const w = (n) => Math.min(1.2 + Math.log2(n + 1) * 1.6, 9);
+  const flow = new Map(); // "from>to" -> counts
+  for (const e of hubEvents(h)) {
+    if (e.type === 'message' && e.to === '*') { posts[e.from] = (posts[e.from] || 0) + 1; continue; }
+    if (!['message', 'task', 'task-update'].includes(e.type) || !pos[e.from] || !pos[e.to]) continue;
+    const k = `${e.from}>${e.to}`;
+    if (!flow.has(k)) flow.set(k, { msgs: 0, tasks: 0, reports: 0 });
+    flow.get(k)[e.type === 'task' ? 'tasks' : e.type === 'task-update' ? 'reports' : 'msgs']++;
+  }
+  const w = (n) => Math.min(1.6 + Math.log2(n + 1) * 1.6, 8);
+  const totalPosts = Object.values(posts).reduce((a, b) => a + b, 0);
   const boardEdges = Object.entries(posts).filter(([n]) => pos[n]).map(([n, c]) =>
-    `<line x1="${cx}" y1="${cy}" x2="${pos[n][0]}" y2="${pos[n][1]}" stroke="var(--border-strong)" stroke-width="${w(c)}" stroke-dasharray="4 5"><title>${esc(n)} posted ${c}× on the board</title></line>`).join('');
-  const pairEdges = convos.map((c) => {
-    const [a, b] = c.k.split('|');
+    `<line x1="${cx}" y1="${cy}" x2="${pos[n][0]}" y2="${pos[n][1]}" stroke="var(--border-strong)" stroke-width="1.6" stroke-dasharray="3 6" stroke-linecap="round"><title>${esc(n)} posted ${c} times on the board</title></line>`).join('');
+  const labels = [];
+  const edges = [...flow.entries()].map(([k, c]) => {
+    const [a, b] = k.split('>');
     const [x1, y1] = pos[a], [x2, y2] = pos[b];
-    return `<g class="edge" data-convo="${esc(c.k)}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--accent)" stroke-opacity=".55" stroke-width="${w(c.evs.length)}" stroke-linecap="round"/>
-      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="transparent" stroke-width="16"/>
-      <title>${esc(a)} ↔ ${esc(b)}: ${c.evs.length} item(s). Click to open.</title></g>`;
+    const both = flow.has(`${b}>${a}`);
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+    const off = both ? 36 : 0; // the two directions bow apart so both arrows show
+    const mx = (x1 + x2) / 2 - (dy / len) * off, my = (y1 + y2) / 2 + (dx / len) * off;
+    const toward = (px, py, qx, qy, d) => { const l = Math.hypot(qx - px, qy - py) || 1; return [px + ((qx - px) / l) * d, py + ((qy - py) / l) * d]; };
+    const [sx, sy] = toward(x1, y1, mx, my, NR + 5);
+    const [ex, ey] = toward(x2, y2, mx, my, NR + 10);
+    const total = c.msgs + c.tasks + c.reports;
+    const parts = [c.tasks && plural(c.tasks, 'task'), c.reports && plural(c.reports, 'update'), c.msgs && plural(c.msgs, 'message')].filter(Boolean);
+    const lx = 0.25 * x1 + 0.5 * mx + 0.25 * x2, ly = 0.25 * y1 + 0.5 * my + 0.25 * y2;
+    labels.push(`<text x="${lx}" y="${ly + 4}" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent-text)" stroke="var(--panel)" stroke-width="6" stroke-linejoin="round" paint-order="stroke" pointer-events="none">${esc(parts.join(', '))}</text>`);
+    const d = `M${sx} ${sy} Q${mx} ${my} ${ex} ${ey}`;
+    return `<g class="edge" data-convo="${esc(pairKey(a, b))}">
+      <path class="ln" d="${d}" fill="none" stroke="var(--accent)" stroke-opacity=".55" stroke-width="${w(total)}" stroke-linecap="round" marker-end="url(#arr)"/>
+      <path class="flow" d="${d}" fill="none" stroke="var(--lime)" stroke-width="${Math.max(1.5, w(total) - 2)}" stroke-linecap="round"/>
+      <path d="${d}" fill="none" stroke="transparent" stroke-width="18"/>
+      <title>${esc(a)} to ${esc(b)}: ${esc(parts.join(', '))}. Click to open the conversation.</title></g>`;
   }).join('');
   const nodes = members.map((a) => {
     const [x, y] = pos[a.name];
-    return `<g><circle cx="${x}" cy="${y}" r="27" fill="${color(a.name)}"/>
-      <circle cx="${x + 19}" cy="${y + 19}" r="6" fill="${a.online ? 'var(--ok)' : 'var(--faint)'}" stroke="var(--panel)" stroke-width="2.5"/>
-      <text x="${x}" y="${y + 4.5}" text-anchor="middle" fill="#fff" font-size="13" font-weight="650">${esc(initials(a.name))}</text>
-      <text x="${x}" y="${y + 47}" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="600" stroke="var(--panel)" stroke-width="5" paint-order="stroke">${esc(a.name)}</text>
-      <text x="${x}" y="${y + 63}" text-anchor="middle" fill="var(--faint)" font-size="11.5" stroke="var(--panel)" stroke-width="5" paint-order="stroke">${esc((a.doing || 'Idle').slice(0, 34))}${(a.doing || '').length > 34 ? '…' : ''}</text>
-      <title>${esc(a.name)}: ${esc(a.role)}</title></g>`;
+    const doing = a.doing || 'Idle';
+    const above = y < cy - 10; // keep labels on the outer side, away from incoming lines
+    const ny = above ? y - NR - 26 : y + 49, dy = above ? y - NR - 10 : y + 65;
+    return `<g class="node" data-open-agent="${esc(a.name)}">
+      ${isBusy(a) ? `<circle class="halo" cx="${x}" cy="${y}" r="${NR}" fill="var(--lime)"/>` : ''}
+      <g class="body"><circle cx="${x}" cy="${y}" r="${NR}" fill="${color(a.name)}" stroke="var(--panel)" stroke-width="3"/>
+      <text x="${x}" y="${y + 4.5}" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">${esc(initials(a.name))}</text>
+      <circle cx="${x + 19}" cy="${y + 19}" r="6" fill="${a.online ? 'var(--ok)' : 'var(--faint)'}" stroke="var(--panel)" stroke-width="2.5"/></g>
+      <text x="${x}" y="${ny}" text-anchor="middle" fill="var(--text)" font-size="13.5" font-weight="700" stroke="var(--panel)" stroke-width="6" stroke-linejoin="round" paint-order="stroke">${esc(a.name)}</text>
+      <text x="${x}" y="${dy}" text-anchor="middle" fill="var(--faint)" font-size="11.5" stroke="var(--panel)" stroke-width="6" stroke-linejoin="round" paint-order="stroke">${esc(doing.slice(0, 34))}${doing.length > 34 ? '…' : ''}</text>
+      <title>${esc(a.name)}, ${esc(a.role)}. Click for details.</title></g>`;
   }).join('');
-  const board = `<g><rect x="${cx - 38}" y="${cy - 17}" width="76" height="34" rx="9" fill="var(--panel-2)" stroke="var(--border-strong)"/>
-    <text x="${cx}" y="${cy + 4.5}" text-anchor="middle" fill="var(--muted)" font-size="12.5" font-weight="600">Board</text></g>`;
-  return `<div class="graph-wrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Who talks to whom in ${esc(h)}">${boardEdges}${pairEdges}${board}${nodes}</svg>
-    <div class="legend"><span><b style="color:var(--accent)">━</b> direct messages and tasks (thicker = more; click to open)</span><span>┅ board posts</span></div></div>`;
+  const bw = 100;
+  const board = `<g><rect x="${cx - bw / 2}" y="${cy - 22}" width="${bw}" height="44" rx="12" fill="var(--panel-2)" stroke="var(--border-strong)"/>
+    <text x="${cx}" y="${cy - 2}" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="700">Board</text>
+    <text x="${cx}" y="${cy + 13}" text-anchor="middle" fill="var(--faint)" font-size="11">${plural(totalPosts, 'post')}</text></g>`;
+  const defs = `<defs><marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>`;
+  const key = (inner) => `<svg class="k" viewBox="0 0 26 10">${inner}</svg>`;
+  return `<div class="graph-wrap surface"><svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="Who talks to whom in ${esc(h)}">${defs}${boardEdges}${edges}${board}${nodes}${labels.join('')}</svg>
+    <div class="legend">
+      <span>${key('<path d="M2 5h20" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><path d="M19 2l3 3-3 3" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>')}Tasks, messages and updates, in the direction they went. Thicker means more.</span>
+      <span>${key('<path d="M2 5h22" stroke="var(--border-strong)" stroke-width="1.6" stroke-dasharray="3 5" stroke-linecap="round"/>')}Board posts</span>
+      <span>${key('<circle cx="13" cy="5" r="4" fill="var(--lime)"/>')}Glowing agents are working now</span>
+    </div></div>`;
 }
 
 // ---------- main render ----------
 
-function render(resetScroll) {
+const TABS = {
+  activity: ['activity', 'Activity', 'Everything, in order'],
+  agents: ['users', 'Agents', 'Cards and status'],
+  board: ['board', 'Board', 'Posts to the whole hub'],
+  conversations: ['chat', 'Conversations', 'One to one threads'],
+  tasks: ['tasks', 'Tasks', 'Who is doing what'],
+  graph: ['graph', 'Graph', 'Who talks to whom'],
+};
+
+function render(navigated) {
   if (!S) return;
   if (sel.scope.startsWith('hub:') && !S.hubs.includes(scopeHub())) sel.scope = 'hub:main';
+  if (sel.agent && !agent(sel.agent)) sel.agent = null;
   $('project').textContent = S.project;
   $('project').title = S.root;
   renderSide();
 
   const h = scopeHub();
   const main = $('main');
-  const keepScroll = resetScroll ? 0 : main.scrollTop;
+  const keepScroll = navigated ? 0 : main.scrollTop;
   const open = new Set([...document.querySelectorAll('details[open][data-id]')].map((d) => d.dataset.id));
 
-  let tabs = '';
-  let body = '';
+  let tabs = '', body = '', title = '', subtitle = '';
   if (h) {
     const evs = hubEvents(h);
     const counts = {
@@ -485,47 +1023,59 @@ function render(resetScroll) {
       conversations: conversations(h).length,
       tasks: S.tasks.filter((t) => t.hub === h).length,
     };
-    const names = { agents: 'Agents', board: 'Board', conversations: 'Conversations', tasks: 'Tasks', graph: 'Graph' };
-    if (!names[sel.tab]) sel.tab = 'agents';
-    tabs = Object.entries(names).map(([k, v]) =>
-      `<button class="tab ${sel.tab === k ? 'active' : ''}" data-tab="${k}">${v}${counts[k] !== undefined ? `<span class="n">${counts[k]}</span>` : ''}</button>`).join('');
-    $('title').innerHTML = `${h === 'main' ? HUB_ICON : LOCK_ICON} ${esc(h)}`;
-    $('subtitle').textContent = h === 'main' ? 'Default hub. Sessions that run /hub without a keyword join here.' : 'Private hub. Only agents in this hub can talk to each other here.';
-    body = { agents: () => viewAgents(inHub(h), h), board: () => viewBoard(h), conversations: () => viewConversations(h), tasks: () => viewTasks(h), graph: () => viewGraph(h) }[sel.tab]();
+    if (!TABS[sel.tab]) sel.tab = 'activity';
+    tabs = Object.entries(TABS).map(([k, [i, name, desc]]) =>
+      `<button class="tab ${sel.tab === k ? 'active' : ''}" data-tab="${k}">${ic(i)}<span>${term(`${name}${counts[k] !== undefined ? `<span class="n">${counts[k]}</span>` : ''}`, desc)}</span></button>`).join('');
+    title = `${ic(h === 'main' ? 'leaf' : 'lock')}${esc(h)}`;
+    subtitle = h === 'main' ? 'The default hub. Sessions that run /hub without a keyword join here.' : 'A private hub. Only agents in it can talk to each other.';
+    body = { activity: () => viewActivity(h), agents: () => viewAgents(inHub(h), h), board: () => viewBoard(h), conversations: () => viewConversations(h), tasks: () => viewTasks(h), graph: () => viewGraph(h) }[sel.tab]();
   } else if (sel.scope === 'unassigned') {
-    $('title').textContent = 'Unassigned';
-    $('subtitle').textContent = 'Agents in no hub. They can’t send or receive messages until you drag them into one.';
+    title = `${ic('userOut')}Unassigned`;
+    subtitle = 'Agents in no hub. They can’t send or receive messages until you drag them into one.';
     body = viewAgents(S.agents.filter((a) => !a.hubs.length));
   } else {
-    $('title').textContent = 'All agents';
-    $('subtitle').textContent = 'Every session that has run /hub in this project. Drag a card onto a hub in the sidebar to add it.';
+    title = `${ic('users')}All agents`;
+    subtitle = 'Every session that has run /hub in this project. Drag a card onto a hub in the sidebar to add it.';
     body = viewAgents(S.agents);
   }
-  $('tabs').innerHTML = tabs;
-  $('view').innerHTML = body;
-  document.querySelectorAll('details[data-id]').forEach((d) => { if (open.has(d.dataset.id)) d.open = true; });
-  main.scrollTop = keepScroll;
+  setHTML($('tabs'), tabs);
+  setHTML($('title'), title);
+  setHTML($('subtitle'), subtitle);
+  const view = $('view');
+  if (setHTML(view, body)) {
+    document.querySelectorAll('details[data-id]').forEach((d) => { if (open.has(d.dataset.id)) d.open = true; });
+    main.scrollTop = keepScroll;
+  }
+  if (navigated) { view.classList.remove('enter'); void view.offsetWidth; view.classList.add('enter'); main.scrollTop = 0; }
+  renderDrawer();
+  placeInks();
 }
 
 // Don't redraw under the user's pointer mid-drag.
 let dragging = false;
+let pending = null;
 document.addEventListener('dragstart', () => { dragging = true; });
 document.addEventListener('dragend', () => { dragging = false; if (pending) { S = pending; pending = null; render(); } });
-let pending = null;
 
 function connect() {
   const es = new EventSource('/api/stream');
-  es.onopen = () => { $('connDot').className = 'dot ok'; $('connText').textContent = 'Live'; };
+  es.onopen = () => { $('conn').className = 'conn'; $('connText').textContent = 'Live'; };
   es.onmessage = (m) => {
     const next = JSON.parse(m.data);
     if (dragging) { pending = next; return; }
     S = next; render();
   };
-  es.onerror = () => { $('connDot').className = 'dot bad'; $('connText').textContent = 'Disconnected · retrying'; };
+  es.onerror = () => { $('conn').className = 'conn bad'; $('connText').textContent = 'Reconnecting'; };
 }
-fetch('/api/state').then((r) => r.json()).then((s) => { if (!S) { S = s; render(); } }).catch(() => {});
+
+$('logo').innerHTML = ic('sprout');
+$('newHubBtn').innerHTML = ic('plus');
+$('hubsHead').innerHTML = `${ic('hubs')}<div>${term('Hubs', 'Groups of agents that can talk to each other')}</div>`;
+$('agentsHead').innerHTML = `${ic('users')}<div>${term('Agents', 'Sessions registered with /hub')}</div>`;
+fetch('/api/state').then((r) => r.json()).then((s) => { if (!S) { S = s; render(true); } }).catch(() => {});
 connect();
 setInterval(() => { if (S && !dragging) render(); }, 15000); // refresh "x ago" labels
+if (document.fonts) document.fonts.ready.then(placeInks);
 </script>
 </body>
 </html>

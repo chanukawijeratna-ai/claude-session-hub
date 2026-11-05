@@ -74,7 +74,7 @@ async function handle(req, res, port) {
     if (!trustedWrite(req, port)) return send(res, 403, { error: 'forbidden' });
     try {
       const body = await readBody(req);
-      if (url.pathname === '/api/hubs') hub.ensureHub(String(body.name || '').trim(), 'user');
+      if (url.pathname === '/api/hubs') hub.createHubNamed(String(body.name || '').trim(), 'user');
       else if (body.action === 'add') hub.addToHub(String(body.agent), String(body.hub), 'user');
       else if (body.action === 'remove') hub.removeFromHub(String(body.agent), String(body.hub), 'user');
       else throw new HubError('action must be add or remove');
