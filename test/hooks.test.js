@@ -79,13 +79,13 @@ test('every user turn carries the standing rule to ask before touching unfamilia
   assert.doesNotMatch(r.hookSpecificOutput.additionalContext, /new item/); // nothing unread this time
 });
 
-test('a session that left goes quiet, and comes back on its next turn after the user re-adds it', () => {
+test('a session that left goes quiet and cannot be added back except by /hub', () => {
   link('S-tmp', 'tmpagent');
   hub('quit', '--as', 'tmpagent');
   assert.strictEqual(hook({ hook_event_name: 'UserPromptSubmit', session_id: 'S-tmp' }), null); // left: hooks ignore it
-  require('../lib/core').createHub(root).addToHub('tmpagent', 'main', 'user'); // the user drags it into a hub
-  const r = hook({ hook_event_name: 'UserPromptSubmit', session_id: 'S-tmp' });
-  assert.match(r.hookSpecificOutput.additionalContext, /\[HUB\] user added you to hub "main"[\s\S]*active again[\s\S]*hub wait --as tmpagent/);
+  assert.throws(() => require('../lib/core').createHub(root).addToHub('tmpagent', 'main', 'user'), /has left/);
+  link('S-tmp', 'tmpagent'); // /hub again
+  assert.match(hook({ hook_event_name: 'UserPromptSubmit', session_id: 'S-tmp' }).hookSpecificOutput.additionalContext, /you are "tmpagent"/);
   hub('quit', '--as', 'tmpagent');
 });
 

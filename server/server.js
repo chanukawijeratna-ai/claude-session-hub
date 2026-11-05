@@ -39,7 +39,7 @@ function state(slug) {
     root: project.root,
     project: project.name,
     hubs: hub.listHubs().map((h) => h.name),
-    agents: hub.listAgents().map((a) => ({ ...a, online: hub.isOnline(a), listening: hub.isListening(a.name) })),
+    agents: hub.activeAgents().map((a) => ({ ...a, online: hub.isOnline(a), listening: hub.isListening(a.name) })),
     events,
     tasks: hub.listTasks(events),
     claims: hub.listClaims(),
@@ -51,7 +51,7 @@ function summary(p) {
     const hub = createHub(p.root);
     const events = hub.listEvents();
     const tasks = hub.listTasks(events);
-    const agents = hub.listAgents().map((a) => ({ name: a.name, role: a.role, doing: a.doing, online: hub.isOnline(a), left: Boolean(a.left) }));
+    const agents = hub.activeAgents().map((a) => ({ name: a.name, role: a.role, doing: a.doing, online: hub.isOnline(a), left: Boolean(a.left) }));
     return {
       slug: p.slug, name: p.name, root: p.root, registered: p.registered,
       hubs: hub.listHubs().length,
@@ -151,13 +151,21 @@ async function handle(req, res, port) {
     req.on('close', () => { const s = streams.get(slug); if (s) { s.clients.delete(res); if (!s.clients.size) streams.delete(slug); } });
     return undefined;
   }
-  if (req.method === 'POST' && ['hubs', 'membership', 'work'].includes(action)) {
+  if (req.method === 'POST' && ['hubs', 'membership', 'work', 'deletehub'].includes(action)) {
     if (!trustedWrite(req, port)) return send(res, 403, { error: 'forbidden' });
     const ph = projectHub(slug);
     if (!ph) return send(res, 404, { error: 'no such project' });
     const { hub } = ph;
     try {
       const body = await readBody(req, action === 'work' ? 70 * 1024 * 1024 : 20000);
+      if (action === 'deletehub') {
+        const name = String(body.name || '');
+        // The page asks the user to type the hub's name; the server checks it too.
+        if (String(body.confirm || '').trim().toLowerCase() !== name) throw new HubError(`type the hub name "${name.toUpperCase()}" to confirm`);
+        const r = hub.deleteHub(name, 'user');
+        push(slug);
+        return send(res, 200, { ok: true, ...r });
+      }
       if (action === 'hubs') hub.createHubNamed(String(body.name || '').trim(), 'user');
       else if (action === 'work') hub.postWork({ hub: String(body.hub || ''), lead: String(body.lead || ''), title: body.title, body: body.body, images: body.images });
       else if (body.action === 'add') hub.addToHub(String(body.agent), String(body.hub), 'user');

@@ -100,7 +100,7 @@ function run() {
     return t;
   };
   const agentsVisibleTo = (name) => {
-    const all = hub.listAgents();
+    const all = hub.activeAgents();
     if (!name) return all;
     const a = hub.mustAgent(name);
     return all.filter((b) => b.name !== name && hub.shared(a, b).length);
@@ -148,7 +148,8 @@ function run() {
     }
     case 'quit': {
       hub.leave(needMe());
-      console.log(`${me} has left every hub and its listener is stopped. Its card and file claims are kept; /hub rejoins.`);
+      console.log(`${me} has left: it is out of every hub, hidden from the web UI, and its listener is stopped. ` +
+        'Its file claims stay so others still know who wrote what. /hub in this session brings it back.');
       return;
     }
     case 'join': {
@@ -173,7 +174,7 @@ function run() {
       return;
     }
     case 'hubs': {
-      const agents = hub.listAgents();
+      const agents = hub.activeAgents();
       for (const h of hub.listHubs()) {
         const members = agents.filter((a) => a.hubs.includes(h.name)).map((a) => a.name);
         console.log(`${h.name}: ${members.join(', ') || '(empty)'}`);
@@ -266,7 +267,9 @@ function run() {
       if (!c) { console.log(`${hub.relPath(pos[0])}: unclaimed.`); return; }
       const owner = hub.getAgent(c.agent);
       let reach = '';
-      if (me && owner && c.agent !== me && !hub.shared(hub.mustAgent(me), owner).length) {
+      if (owner?.left) {
+        reach = '\n    (this agent has left the hub, so nobody can answer for it; ask the user before changing it)';
+      } else if (me && owner && c.agent !== me && !hub.shared(hub.mustAgent(me), owner).length) {
         reach = '\n    (not in any of your hubs, so you cannot message them; ask the user)';
       }
       console.log(`${c.path}: claimed by ${c.agent} at ${c.ts}` + (c.note ? `\n    note: ${c.note}` : '') +

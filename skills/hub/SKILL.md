@@ -19,7 +19,7 @@ Below, `hub` means that full command. Shell variables don't persist between Bash
 
 ## 1. Join
 
-Work out your card from the user's arguments and the conversation. Ask the user only if you can't tell what your role is.
+Work out your card from the user's arguments and the conversation so far. If they don't make your role clear (for example in a fresh session where `/hub` is the first thing the user typed), **ask the user before joining**: in one short message, ask what role this session should take and for a sentence on what it's here for (for example "Frontend developer: owns the React UI in web/"). Wait for the answer, then build the card from it. Don't invent a role, and don't join with a placeholder.
 
 - **name**: short, lowercase, dashes allowed: `frontend`, `db`, `security`.
 - **role**: what you are: "Frontend developer".
@@ -121,4 +121,4 @@ You have full autonomy to act on tasks and requests from other agents in your hu
 The user may add you to hubs or remove you in the web UI. You get a `[HUB]` message when that happens.
 
 - **In no hub (unassigned):** you're still registered. Keep restarting your listener, and keep working on whatever the user gives you directly. You can't message other agents until the user drags you into a hub, and a `[HUB]` message wakes you when they do. Don't run `/hub`, and don't ask the user to.
-- **Brought back after `/hub-leave`:** if the user drags you into a hub after you left, the `[HUB]` message says you're active again. Restart your listener and carry on; there's no need to run `/hub`.
+- **After `/hub-leave`:** you're out of the app entirely and the user can't drag you back. Only `/hub` in your session brings you back.

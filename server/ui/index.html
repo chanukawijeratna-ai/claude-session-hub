@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Session Hub</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231f2522'/%3E%3Cg fill='none' stroke='%23c6e05a' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-7'/%3E%3Cpath d='M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z'/%3E%3Cpath d='M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%232f6b3a'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3Ccircle cx='6' cy='7' r='1.8'/%3E%3Ccircle cx='18' cy='7' r='1.8'/%3E%3Ccircle cx='12' cy='18.5' r='1.8'/%3E%3Cpath d='m7.5 8.2 2.6 2.2M16.5 8.2l-2.6 2.2M12 14.6v2.1'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -15,46 +15,46 @@
 .side { position: relative; color: var(--side-text); padding: 8px 12px 20px; overflow-y: auto; }
 .cat { margin-top: 18px; }
 .cat-h { display: flex; gap: 10px; align-items: flex-start; padding: 0 8px 8px; }
-.cat-h svg.i { color: var(--lime); margin-top: 3px; }
-.cat-h b { display: block; font: 700 15px/1.3 var(--serif); color: var(--side-text); }
+.cat-h svg.i { color: var(--side-accent); margin-top: 3px; }
+.cat-h b { display: block; font: 700 12px/1.3 var(--font); letter-spacing: .09em; text-transform: uppercase; color: var(--side-muted); }
 .cat-h small.d { color: var(--side-faint); }
 .side-ink { position: absolute; left: 0; top: 0; border-radius: 10px; background: var(--side-2); pointer-events: none; opacity: 0; box-shadow: inset 0 0 0 1px var(--side-3); }
-.side-ink::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--lime); }
+.side-ink::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--side-accent); }
 .side.ready .side-ink { transition: transform .32s var(--ease), height .32s var(--ease), width .32s var(--ease), opacity .2s; }
-.nav-item { position: relative; z-index: 1; display: flex; align-items: center; gap: 11px; width: 100%; padding: 8px 10px; margin: 1px 0; border: 1px dashed transparent; border-radius: 10px; background: none; cursor: pointer; text-align: left; color: var(--side-muted); transition: color .2s, background-color .2s, border-color .2s; }
-.nav-item:hover { color: var(--side-text); background: rgba(255,255,255,.035); }
-.nav-item:focus-visible { outline-color: var(--lime); }
+.nav-item { position: relative; z-index: 1; display: flex; align-items: center; gap: 11px; width: 100%; padding: 7px 10px; margin: 1px 0; border: 1px dashed transparent; border-radius: 10px; background: none; cursor: pointer; text-align: left; color: var(--side-muted); transition: color .2s, background-color .2s, border-color .2s; }
+.nav-item:hover { color: var(--side-text); background: var(--side-hover); }
+.nav-item:focus-visible { outline-color: var(--side-accent); }
 .nav-item.active { color: var(--side-text); background: none; }
 .nav-item .tile { width: 30px; height: 30px; border-radius: 8px; background: var(--side-2); display: grid; place-items: center; flex: none; transition: background-color .25s, color .25s, transform .25s var(--ease); }
 .nav-item:hover .tile { transform: translateY(-1px); }
-.nav-item.active .tile { background: var(--lime); color: #1f2522; }
+.nav-item.active .tile { background: var(--side-accent); color: var(--side-accent-fg); }
 .nav-item .txt { min-width: 0; flex: 1; }
-.nav-item .txt b { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-item .txt b { display: block; font-weight: 650; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-item .txt small.d { color: var(--side-faint); font-size: 11.5px; }
 .nav-item .count { font-size: 12px; color: var(--side-faint); font-variant-numeric: tabular-nums; min-width: 18px; text-align: right; }
-.nav-item.active .count { color: var(--lime); }
-.nav-item.drop { border-color: var(--lime); background: rgba(207,232,106,.08); }
+.nav-item.active .count { color: var(--side-accent); font-weight: 700; }
+.nav-item.drop { border-color: var(--side-accent); background: var(--side-drop); }
 .new-hub { display: flex; gap: 6px; padding: 8px 2px 2px; }
 .new-hub input { flex: 1; min-width: 0; padding: 7px 10px; border: 1px solid var(--side-3); border-radius: 9px; background: var(--side-2); color: var(--side-text); transition: border-color .2s; }
 .new-hub input::placeholder { color: var(--side-faint); }
-.new-hub input:focus { outline: none; border-color: var(--lime); }
-.new-hub button { width: 34px; border-radius: 9px; border: 1px solid var(--side-3); background: var(--side-2); color: var(--lime); cursor: pointer; display: grid; place-items: center; transition: background-color .2s, transform .15s; }
+.new-hub input:focus { outline: none; border-color: var(--side-accent); }
+.new-hub button { width: 34px; border-radius: 9px; border: 1px solid var(--side-3); background: var(--side-2); color: var(--side-accent); cursor: pointer; display: grid; place-items: center; transition: background-color .2s, transform .15s; }
 .new-hub button:hover { background: var(--side-3); }
 .new-hub button:active { transform: scale(.94); }
 .side .hint { font-size: 12px; color: var(--side-faint); padding: 14px 8px 0; margin: 18px 0 0; border-top: 1px solid var(--side-line); line-height: 1.5; }
 
 main { overflow-y: auto; }
 .main-h { position: sticky; top: 0; z-index: 3; background: color-mix(in srgb, var(--bg) 94%, transparent); padding: 22px 30px 0; border-bottom: 1px solid var(--border); }
-.main-h h1 { margin: 0 0 3px; font: 700 28px/1.15 var(--serif); letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+.main-h h1 { margin: 0 0 16px; font: 700 26px/1.15 var(--serif); letter-spacing: .02em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
 .main-h h1 svg.i { width: 21px; height: 21px; color: var(--accent); }
 .sub { color: var(--muted); font-size: 14px; margin-bottom: 14px; }
 .tabbar { position: relative; }
 .tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
-.tab { display: flex; gap: 9px; align-items: flex-start; padding: 8px 14px 11px 10px; border: none; background: none; cursor: pointer; color: var(--muted); text-align: left; border-radius: 9px 9px 0 0; transition: color .2s, background-color .2s; }
-.tab svg.i { margin-top: 2px; transition: transform .25s var(--ease); }
+.tab { display: flex; gap: 8px; align-items: center; padding: 9px 14px 12px 10px; border: none; background: none; cursor: pointer; color: var(--muted); text-align: left; border-radius: 9px 9px 0 0; transition: color .2s, background-color .2s; }
+.tab svg.i { margin-top: 0; transition: transform .25s var(--ease); }
 .tab:hover { color: var(--text); background: color-mix(in srgb, var(--panel) 70%, transparent); }
 .tab:hover svg.i { transform: translateY(-1px); }
-.tab b { font-weight: 600; white-space: nowrap; }
+.tab b { font-weight: 650; font-size: 13px; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
 .tab .n { font-size: 12px; color: var(--faint); margin-left: 3px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .tab small.d { font-size: 11.5px; white-space: nowrap; }
 .tab.active { color: var(--text); }
@@ -116,8 +116,6 @@ main { overflow-y: auto; }
 .files .p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card-f { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); }
 .card-f .t { margin-left: auto; }
-.left-note { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--warn); background: color-mix(in srgb, var(--warn) 9%, var(--panel)); border-radius: 9px; padding: 8px 11px; }
-.left-note svg.i { margin-top: 2px; }
 .card .go { color: var(--faint); transition: color .25s, transform .3s var(--ease); }
 .card:hover .go { color: var(--accent); transform: translateX(3px); }
 
@@ -130,7 +128,7 @@ main { overflow-y: auto; }
 .chip .avatar { width: 20px; height: 20px; font-size: 8.5px; border-radius: 6px; }
 .chip.on { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); font-weight: 600; }
 .session-h { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
-.session-h .when { font: 700 16px/1.2 var(--serif); }
+.session-h .when { font: 700 14px/1.2 var(--serif); text-transform: uppercase; letter-spacing: .04em; }
 .session-h .faces { display: flex; padding-left: 4px; }
 .session-h .faces .avatar { width: 22px; height: 22px; font-size: 9px; border-radius: 7px; margin-left: -5px; box-shadow: 0 0 0 2px var(--bg); }
 .session-h .line { flex: 1; height: 1px; background: var(--border-strong); opacity: .6; }
@@ -173,7 +171,7 @@ main { overflow-y: auto; }
 .composer { padding: 16px 18px; display: grid; gap: 12px; }
 .composer-h { display: flex; gap: 10px; align-items: flex-start; }
 .composer-h svg.i { color: var(--accent); margin-top: 3px; }
-.composer-h b { font: 700 17px/1.3 var(--serif); }
+.composer-h b { font: 700 15px/1.3 var(--serif); text-transform: uppercase; letter-spacing: .04em; }
 .composer input, .composer textarea, .composer select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); transition: border-color .2s, box-shadow .2s, background-color .2s; }
 .composer textarea { resize: vertical; min-height: 64px; }
 .composer input:focus, .composer textarea:focus, .composer select:focus { outline: none; border-color: var(--accent); background: var(--panel); box-shadow: 0 0 0 3px var(--accent-soft); }
@@ -245,7 +243,7 @@ main { overflow-y: auto; }
 
 /* tasks */
 .summary { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 18px; align-items: center; }
-.summary .total { font: 700 17px/1.2 var(--serif); }
+.summary .total { font: 700 15px/1.2 var(--serif); text-transform: uppercase; letter-spacing: .04em; }
 .task { margin-bottom: 11px; box-shadow: none; }
 .task:hover { border-color: var(--border-strong); }
 .children { padding: 0 0 0 22px; border-left: 2px solid var(--border); margin: -2px 0 13px 24px; }
@@ -281,6 +279,29 @@ main { overflow-y: auto; }
 .node:hover .body { transform: scale(1.07); }
 .halo { transform-box: fill-box; transform-origin: center; animation: halo 2.4s var(--ease) infinite; }
 @keyframes halo { from { transform: scale(1); opacity: .55; } to { transform: scale(1.7); opacity: 0; } }
+
+/* delete-hub button and confirmation */
+.title-row { display: flex; align-items: flex-start; gap: 12px; }
+.title-row h1 { flex: 1; min-width: 0; }
+.head-actions:empty { display: none; }
+.danger-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid color-mix(in srgb, var(--bad) 35%, var(--border)); border-radius: 10px; background: var(--panel); color: var(--bad); font-weight: 600; font-size: 13px; cursor: pointer; transition: background-color .2s, transform .2s var(--ease); }
+.danger-btn:hover { background: color-mix(in srgb, var(--bad) 9%, var(--panel)); }
+.danger-btn:active { transform: scale(.97); }
+.modal-scrim { position: fixed; inset: 0; background: rgba(15,18,16,.42); z-index: 30; display: grid; place-items: center; padding: 16px; animation: fade .2s; }
+.modal { width: min(470px, 100%); background: var(--panel); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-lg); padding: 22px 24px; display: grid; gap: 12px; animation: pop .25s var(--ease); }
+.modal h2 { margin: 0; font: 700 19px/1.25 var(--serif); text-transform: uppercase; letter-spacing: .03em; display: flex; gap: 9px; align-items: center; }
+.modal h2 svg.i { color: var(--bad); width: 20px; height: 20px; }
+.modal p { margin: 0; color: var(--muted); }
+.modal ul { margin: 0; padding-left: 20px; color: var(--muted); display: grid; gap: 3px; }
+.modal label { font-weight: 600; font-size: 14px; }
+.modal input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); letter-spacing: .03em; transition: border-color .2s, box-shadow .2s; }
+.modal input:focus { outline: none; border-color: var(--bad); box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent); }
+.modal-f { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.btn-ghost { padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel); cursor: pointer; font-weight: 600; transition: background-color .2s; }
+.btn-ghost:hover { background: var(--panel-2); }
+.btn-danger { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 10px; border: none; background: var(--bad); color: #fff; cursor: pointer; font-weight: 650; transition: opacity .2s, transform .2s var(--ease); }
+.btn-danger:disabled { opacity: .4; cursor: not-allowed; }
+.btn-danger:not(:disabled):active { transform: scale(.97); }
 
 /* agent drawer */
 .scrim { position: fixed; inset: 56px 0 0 0; background: rgba(15,18,16,.28); z-index: 9; animation: fade .2s; }
@@ -341,12 +362,12 @@ main { overflow-y: auto; }
       <div class="cat-h" id="agentsHead"></div>
       <nav id="agentNav"></nav>
     </div>
-    <p class="hint">Drag an agent card onto a hub to add it. Open a hub and press × on a card to remove it. Click a card to see its history.</p>
+    
   </aside>
   <main id="main" class="camo">
     <div class="main-h">
-      <h1 id="title"></h1>
-      <div class="sub" id="subtitle"></div>
+      <div class="title-row"><h1 id="title"></h1><div class="head-actions" id="headActions"></div></div>
+      
       <div class="tabbar" id="tabbar"><div class="tabs" id="tabs"></div><span class="tab-ink" id="tabInk"></span></div>
     </div>
     <section class="composer-wrap" id="composerWrap" hidden>
@@ -370,6 +391,7 @@ main { overflow-y: auto; }
   </main>
 </div>
 <div id="drawer"></div>
+<div id="modal"></div>
 <div id="toast"></div>
 
 <script src="/ui/base.js"></script>
@@ -390,12 +412,12 @@ let seenIds = null;
 
 const who = (name) => (name === 'user' ? 'You' : name);
 function color(name) {
-  if (name === 'user') return 'var(--side)';
+  if (name === 'user') return 'var(--side-accent)';
   const i = S ? S.agents.map((a) => a.name).sort().indexOf(name) : -1;
   return EARTH[(i >= 0 ? i : nameHash(name)) % EARTH.length];
 }
 function avatar(name, a) {
-  if (name === 'user') return `<span class="avatar" style="background:var(--side);color:var(--lime)" title="You">${ic('me')}</span>`;
+  if (name === 'user') return `<span class="avatar" style="background:var(--side-accent);color:var(--side-accent-fg)" title="You">${ic('me')}</span>`;
   const on = a ? `<span class="on ${a.online ? 'yes' : ''}"></span>` : '';
   return `<span class="avatar ${a && isBusy(a) ? 'busy' : ''}" style="background:${color(name)}" title="${esc(name)}">${esc(initials(name))}${on}</span>`;
 }
@@ -479,7 +501,9 @@ const TASK_ST = {
   failed: ['bad', 'fail', 'Failed'],
 };
 function taskStatus(s) { const [c, i, l] = TASK_ST[s] || ['', 'ring', s]; return `<span class="st ${c}">${ic(i)}${esc(l)}</span>`; }
-const hubTag = (h) => `<span class="tag">${ic(h === 'main' ? 'leaf' : 'lock')}${esc(h)}</span>`;
+// Hub names are shown in capitals everywhere in the UI; the real (lowercase) name is used for commands.
+const HN = (h) => esc(String(h).toUpperCase());
+const hubTag = (h) => `<span class="tag">${ic(h === 'main' ? 'home' : 'lock')}${HN(h)}</span>`;
 
 // ---------- derived data ----------
 
@@ -510,7 +534,7 @@ function navItem({ scope, icon, name, desc, count, drop }) {
 
 function renderSide() {
   setHTML($('hubNav'), S.hubs.map((h) => navItem({
-    scope: 'hub:' + h, icon: h === 'main' ? 'leaf' : 'lock', name: h, drop: h, count: inHub(h).length,
+    scope: 'hub:' + h, icon: h === 'main' ? 'home' : 'lock', name: h.toUpperCase(), drop: h, count: inHub(h).length,
     desc: h === 'main' ? 'Default for every session' : 'Private, members only',
   })).join(''));
   const loose = S.agents.filter((a) => !a.hubs.length).length;
@@ -544,7 +568,7 @@ document.addEventListener('click', (ev) => {
   if (rm) {
     const [name, h] = rm.dataset.remove.split('|');
     api('membership', { agent: name, hub: h, action: 'remove' })
-      .then(() => toast(`Removed ${name} from ${h}`)).catch((e) => toast(e.message));
+      .then(() => toast(`Removed ${name} from ${h.toUpperCase()}`)).catch((e) => toast(e.message));
     return;
   }
   if (ev.target.closest('[data-close]')) { go({ agent: null }, true); return; }
@@ -590,30 +614,63 @@ document.addEventListener('drop', (ev) => {
   const h = t.dataset.drop;
   if (!name) return;
   const a = agent(name);
-  if (a?.hubs.includes(h)) { toast(`${name} is already in ${h}`); return; }
+  if (a?.hubs.includes(h)) { toast(`${name} is already in ${h.toUpperCase()}`); return; }
   // Say when the agent will actually notice: a session with no listener only hears about it on its next turn.
-  const later = !a ? '' : a.left ? ' It had left, so it comes back the next time you type in its session.'
-    : !a.online ? ' It is offline, so it sees this when its session runs again.'
+  const later = !a ? '' : !a.online ? ' It is offline, so it sees this when its session runs again.'
     : !a.listening ? ' It isn’t listening, so it sees this the next time it works.' : '';
   api('membership', { agent: name, hub: h, action: 'add' })
-    .then(() => toast(`Added ${name} to ${h}.${later}`)).catch((e) => toast(e.message));
+    .then(() => toast(`Added ${name} to ${h.toUpperCase()}.${later}`)).catch((e) => toast(e.message));
 });
 
 $('newHub').addEventListener('submit', (ev) => {
   ev.preventDefault();
   const name = $('newHubName').value.trim().toLowerCase().replace(/\s+/g, '-');
   if (!name) return;
-  if (S?.hubs.includes(name)) { toast(`A hub named ${name} already exists`); $('newHubName').select(); return; }
-  api('hubs', { name }).then(() => { $('newHubName').value = ''; toast(`Created hub ${name}`); go({ scope: 'hub:' + name, tab: 'agents' }); })
+  if (S?.hubs.includes(name)) { toast(`A hub named ${name.toUpperCase()} already exists`); $('newHubName').select(); return; }
+  api('hubs', { name }).then(() => { $('newHubName').value = ''; toast(`Created hub ${name.toUpperCase()}`); go({ scope: 'hub:' + name, tab: 'agents' }); })
     .catch((e) => toast(e.message));
 });
 
-const emptyBox = (title, text) => `<div class="empty">${ic('sprout')}<b>${title}</b>${text}</div>`;
+// ---------- deleting a hub: the user types its name to confirm ----------
+
+function closeModal() { $('modal').innerHTML = ''; }
+
+function openDeleteHub(h) {
+  const evs = hubEvents(h).length, tasks = S.tasks.filter((t) => t.hub === h).length, members = inHub(h).length;
+  $('modal').innerHTML = `<div class="modal-scrim" id="mScrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <h2 id="mTitle">${ic('alert')}Delete hub ${HN(h)}</h2>
+    <p>This can’t be undone. It deletes:</p>
+    <ul><li>${plural(evs, 'event')}: board posts, messages and reports</li>
+      <li>${plural(tasks, 'task')}, and any images attached to its work</li>
+      <li>its membership: ${plural(members, 'agent')} will be taken out. Agents in no other hub become unassigned.</li></ul>
+    <label for="mConfirm">Type <b>${HN(h)}</b> to confirm</label>
+    <input id="mConfirm" autocomplete="off" spellcheck="false" aria-describedby="mTitle">
+    <div class="modal-f"><button type="button" class="btn-ghost" id="mCancel">Cancel</button>
+      <button type="button" class="btn-danger" id="mDelete" disabled>${ic('x')}Delete hub</button></div>
+  </div></div>`;
+  const input = $('mConfirm'), del = $('mDelete');
+  const ok = () => input.value.trim().toLowerCase() === h;
+  input.addEventListener('input', () => { del.disabled = !ok(); });
+  input.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && ok()) del.click(); });
+  $('mCancel').addEventListener('click', closeModal);
+  $('mScrim').addEventListener('click', (ev) => { if (ev.target.id === 'mScrim') closeModal(); });
+  del.addEventListener('click', () => {
+    del.disabled = true;
+    api('deletehub', { name: h, confirm: input.value })
+      .then(() => { closeModal(); toast(`Deleted hub ${h.toUpperCase()}`); go({ scope: 'hub:main', tab: 'activity' }); })
+      .catch((e) => { del.disabled = false; toast(e.message); });
+  });
+  input.focus();
+}
+document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape' && $('modal').innerHTML) closeModal(); });
+document.addEventListener('click', (ev) => { const b = ev.target.closest('[data-delete-hub]'); if (b) openDeleteHub(b.dataset.deleteHub); });
+
+const emptyBox = (title, text) => `<div class="empty">${ic('inbox')}<b>${title}</b>${text}</div>`;
 
 // ---------- agents ----------
 
 function statsRow(st) {
-  const cell = (n, name, desc, hot) => `<div class="stat ${hot ? 'hot' : ''}"><b>${n}</b><span>${name}</span><small class="d">${desc}</small></div>`;
+  const cell = (n, name, desc, hot) => `<div class="stat ${hot ? 'hot' : ''}" title="${n} ${desc}"><b>${n}</b><span>${name}</span></div>`;
   return `<div class="stats">${cell(st.led.length, 'Led', 'tasks handed out')}${cell(st.done, 'Done', 'tasks finished')}${cell(st.open, 'Open', 'still on its plate', st.open)}${cell(st.files.length, 'Files', 'it owns')}</div>`;
 }
 const doingBox = (a) => `<div class="doing ${isBusy(a) ? 'busy' : 'idle'}"><span class="lbl">Working on</span><span class="val">${isBusy(a) ? ic('spin') : ''}${esc(a.doing || 'Idle')}</span></div>`;
@@ -626,10 +683,9 @@ function agentCard(a, h) {
     <div class="card-h">
       ${avatar(a.name, a)}
       <div class="who"><div class="name">${esc(a.name)}</div><div class="role">${esc(a.role)}</div></div>
-      ${h ? `<button class="x" title="Remove from ${esc(h)}" aria-label="Remove ${esc(a.name)} from ${esc(h)}" data-remove="${esc(a.name)}|${esc(h)}">${ic('x')}</button>` : ''}
+      ${h ? `<button class="x" title="Remove from ${HN(h)}" aria-label="Remove ${esc(a.name)} from ${HN(h)}" data-remove="${esc(a.name)}|${esc(h)}">${ic('x')}</button>` : ''}
     </div>
     <div class="purpose">${esc(a.purpose)}</div>
-    ${a.left ? `<div class="left-note">${ic('out')}<span>Left the hub. Drag it onto a hub to bring it back; it rejoins the next time you type in its session.</span></div>` : ''}
     ${doingBox(a)}
     ${statsRow(st)}
     ${shown.length ? `<div class="files">${shown.map((c) => `<span class="f" title="${esc(c.note || '')}">${ic('file')}<span class="p">${esc(c.path)}</span></span>`).join('')}${st.files.length > 3 ? `<span>and ${st.files.length - 3} more</span>` : ''}</div>` : ''}
@@ -639,7 +695,7 @@ function agentCard(a, h) {
 
 function viewAgents(list, h) {
   if (!list.length) {
-    return h ? emptyBox(`No agents in ${esc(h)} yet`, `Drag agents here from All agents, or run <span class="mono">/hub${h === 'main' ? '' : ' ' + esc(h)}</span> in a session.`)
+    return h ? emptyBox(`No agents in ${HN(h)} yet`, `Drag agents here from All agents, or run <span class="mono">/hub${h === 'main' ? '' : ' ' + esc(h)}</span> in a session.`)
       : emptyBox('Nothing here', 'Run <span class="mono">/hub</span> in a Claude Code session to register it.');
   }
   const order = (a) => (a.online ? 0 : a.left ? 2 : 1);
@@ -666,7 +722,7 @@ function drawerBody(a) {
   const tasks = [...st.got.map((t) => ({ t, dir: 'From', other: t.from })), ...st.led.map((t) => ({ t, dir: 'Given to', other: t.to }))]
     .sort((x, y) => tsOf(y.t.ts) - tsOf(x.t.ts));
   const recent = S.events.filter((e) => e.type !== 'membership' && (e.from === a.name || e.to === a.name)).slice(-25).reverse();
-  const head = (name, desc) => `<span class="lbl">${name}</span><small class="d">${desc}</small>`;
+  const head = (name, desc) => `<span class="lbl" title="${desc}">${name}</span>`;
   return `<div class="drawer-h">${avatar(a.name, a)}
       <div class="who"><div class="name">${esc(a.name)}</div><div class="role">${esc(a.role)}</div></div>
       <button class="x" data-close aria-label="Close">${ic('x')}</button></div>
@@ -712,7 +768,7 @@ function tlItem(e) {
   const cardCls = `tl-card surface ${freshCls(e.id)}`;
   switch (e.type) {
     case 'membership':
-      return row(`<span class="mark">${ic(e.hub === 'main' ? 'leaf' : 'lock')}</span>`, `<div class="tl-head">${e.from === 'user' ? 'You' : `<b>${esc(e.from)}</b>`} ${esc(e.action)} <b>${esc(e.to)}</b> ${e.action === 'added' ? 'to' : 'from'} ${esc(e.hub)}</div>`, true);
+      return row(`<span class="mark">${ic(e.hub === 'main' ? 'home' : 'lock')}</span>`, `<div class="tl-head">${e.from === 'user' ? 'You' : `<b>${esc(e.from)}</b>`} ${esc(e.action)} <b>${esc(e.to)}</b> ${e.action === 'added' ? 'to' : 'from'} ${HN(e.hub)}</div>`, true);
     case 'task':
       if (e.work) return row(face, `<div class="tl-head"><b>You</b> posted work on the board for <b>${esc(e.to)}</b> to lead</div>
         <div class="${cardCls} work"><div class="title">${ic('flag')}${esc(e.title)}</div>${rich(e.body, k)}${imagesOf(e)}</div>`);
@@ -739,7 +795,7 @@ function tlItem(e) {
 
 function viewActivity(h) {
   const all = hubEvents(h).slice().sort((a, b) => tsOf(a.ts) - tsOf(b.ts));
-  if (!all.length) return emptyBox(`Nothing has happened in ${esc(h)} yet`, 'Post work on the Board, or give an agent a feature and ask it to collaborate. Plans, tasks, reports and messages show up here as they happen.');
+  if (!all.length) return emptyBox(`Nothing has happened in ${HN(h)} yet`, 'Post work on the Board, or give an agent a feature and ask it to collaborate. Plans, tasks, reports and messages show up here as they happen.');
   const people = [...new Set(all.filter((e) => e.type !== 'membership').flatMap((e) => [e.from, e.to]).filter((n) => n && n !== '*' && n !== 'user'))].sort();
   if (sel.who && !people.includes(sel.who)) sel.who = null;
   const evs = sel.who ? all.filter((e) => e.from === sel.who || e.to === sel.who) : all;
@@ -756,8 +812,7 @@ function viewActivity(h) {
     const faces = [...new Set(s.map((e) => e.from))];
     const tasks = s.filter((e) => e.type === 'task').length;
     const day = new Date(first).toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
-    return `<div class="session-h"><div><div class="when">${day}, ${clock(first)}${last - first > 60000 ? ` to ${clock(last)}` : ''}</div>
-      <small class="d">${plural(s.length, 'event')}${tasks ? `, ${plural(tasks, 'task')} handed out` : ''}</small></div>
+    return `<div class="session-h"><div><div class="when">${day}, ${clock(first)}${last - first > 60000 ? ` to ${clock(last)}` : ''}</div></div>
       <span class="faces">${faces.map((n) => avatar(n)).join('')}</span><span class="line"></span></div>
       <div class="tl">${s.map(tlItem).join('')}</div>`;
   }).join('');
@@ -800,7 +855,7 @@ function workThread(t) {
 function viewBoard(h) {
   const posts = hubEvents(h).filter((e) => e.type === 'message' && e.to === '*');
   const work = hubWork(h);
-  if (!posts.length && !work.length) return emptyBox('The board is quiet', `Post work above, or wait for agents in ${esc(h)} to post to everyone.`);
+  if (!posts.length && !work.length) return emptyBox('The board is quiet', `Post work above, or wait for agents in ${HN(h)} to post to everyone.`);
   const byId = Object.fromEntries(posts.map((p) => [p.id, p]));
   const rootOf = (p) => { let r = p; const seen = new Set(); while (r.replyTo && byId[r.replyTo] && !seen.has(r.id)) { seen.add(r.id); r = byId[r.replyTo]; } return r; };
   const threads = new Map();
@@ -840,8 +895,8 @@ function leadNote(h, none) {
   const note = $('leadNote');
   const a = agent($('workLead').value);
   let cls = 'note', html = '';
-  if (none) { cls += ' warn'; html = `${ic('alert')}Add an agent to ${esc(h)} first. Drag one here from All agents.`; }
-  else if (!a) html = `The lead plans the work, hands parts to the others in ${esc(h)} and reports back here.`;
+  if (none) { cls += ' warn'; html = `${ic('alert')}Add an agent to ${HN(h)} first. Drag one here from All agents.`; }
+  else if (!a) html = `The lead plans the work, hands parts to the others in ${HN(h)} and reports back here.`;
   else if (!a.online || a.left) { cls += ' warn'; html = `${ic('alert')}${esc(a.name)} is offline. It sees this when its session runs again.`; }
   else if (!a.listening) { cls += ' warn'; html = `${ic('alert')}${esc(a.name)} isn’t listening, so it sees this the next time it works.`; }
   else html = isBusy(a) ? `${ic('spin')}${esc(a.name)} is busy with ${esc(a.doing)}. It will queue this.` : `${ic('dot')}${esc(a.name)} is free and will start right away.`;
@@ -958,7 +1013,7 @@ function bubble(e, left) {
 
 function viewConversations(h) {
   const list = conversations(h);
-  if (!list.length) return emptyBox('No direct conversations yet', `Messages and tasks between two agents in ${esc(h)} appear here.`);
+  if (!list.length) return emptyBox('No direct conversations yet', `Messages and tasks between two agents in ${HN(h)} appear here.`);
   const cur = list.find((c) => c.k === sel.convo) || list[0];
   const [a] = cur.k.split('|');
   return `<div class="readonly">${ic('eye')}Read only. To talk to an agent yourself, use its Claude Code session. To give the hub work, post it on the Board.</div>
@@ -993,8 +1048,8 @@ function viewTasks(h) {
       <span class="route">${avatar(t.from)}${esc(who(t.from))} ${ic('arrow')} ${avatar(t.to)}${esc(t.to)}<span class="took t">${info.took !== null ? `took ${dur(info.took)}` : `open ${dur(info.open)}`}</span></span></summary>
     <div class="body">
       <div class="steps">${steps.join(ic('arrow'))}</div>
-      ${t.body || t.images?.length ? `<div><span class="lbl">Spec</span><small class="d">What ${t.work ? 'you' : 'the lead'} asked for</small>${rich(t.body, `t:${t.id}:s`)}${imagesOf(t)}</div>` : ''}
-      ${t.report ? `<div><span class="lbl">Report</span><small class="d">What ${esc(t.to)} did and what ${t.work ? 'you' : 'the lead'} should know</small>${rich(t.report, `t:${t.id}:r`)}</div>` : ''}
+      ${t.body || t.images?.length ? `<div><span class="lbl">Spec</span>${rich(t.body, `t:${t.id}:s`)}${imagesOf(t)}</div>` : ''}
+      ${t.report ? `<div><span class="lbl">Report</span>${rich(t.report, `t:${t.id}:r`)}</div>` : ''}
     </div>
   </details>${kids(t.id).length ? `<div class="children">${kids(t.id).map(node).join('')}</div>` : ''}</div>`;
   };
@@ -1005,7 +1060,7 @@ function viewTasks(h) {
 
 function viewGraph(h) {
   const members = inHub(h);
-  if (!members.length) return emptyBox(`No agents in ${esc(h)}`, 'The graph shows who talks to whom once agents join.');
+  if (!members.length) return emptyBox(`No agents in ${HN(h)}`, 'The graph shows who talks to whom once agents join.');
   const W = 820, H = 540, cx = W / 2, cy = H / 2, R = Math.min(W, H) / 2 - 90, NR = 27;
   const pos = {};
   members.forEach((a, i) => {
@@ -1067,7 +1122,7 @@ function viewGraph(h) {
     <text x="${cx}" y="${cy + 13}" text-anchor="middle" fill="var(--faint)" font-size="11">${plural(totalPosts, 'post')}</text></g>`;
   const defs = `<defs><marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M1 1 9 5 1 9" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>`;
   const key = (inner) => `<svg class="k" viewBox="0 0 26 10">${inner}</svg>`;
-  return `<div class="graph-wrap surface"><svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="Who talks to whom in ${esc(h)}">${defs}${boardEdges}${edges}${board}${nodes}${labels.join('')}</svg>
+  return `<div class="graph-wrap surface"><svg class="g" viewBox="0 0 ${W} ${H}" role="img" aria-label="Who talks to whom in ${HN(h)}">${defs}${boardEdges}${edges}${board}${nodes}${labels.join('')}</svg>
     <div class="legend">
       <span>${key('<path d="M2 5h20" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/><path d="M19 2l3 3-3 3" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>')}Tasks, messages and updates, in the direction they went. Thicker means more.</span>
       <span>${key('<path d="M2 5h22" stroke="var(--border-strong)" stroke-width="1.6" stroke-dasharray="3 5" stroke-linecap="round"/>')}Board posts</span>
@@ -1111,7 +1166,7 @@ function render(navigated) {
     if (!TABS[sel.tab]) sel.tab = 'activity';
     tabs = Object.entries(TABS).map(([k, [i, name, desc]]) =>
       `<button class="tab ${sel.tab === k ? 'active' : ''}" data-tab="${k}">${ic(i)}<span>${term(`${name}${counts[k] !== undefined ? `<span class="n">${counts[k]}</span>` : ''}`, desc)}</span></button>`).join('');
-    title = `${ic(h === 'main' ? 'leaf' : 'lock')}${esc(h)}`;
+    title = `${ic(h === 'main' ? 'home' : 'lock')}${HN(h)}`;
     subtitle = h === 'main' ? 'The default hub. Sessions that run /hub without a name join here.' : 'A private hub. Only agents in it can talk to each other.';
     body = { activity: () => viewActivity(h), agents: () => viewAgents(inHub(h), h), board: () => viewBoard(h), conversations: () => viewConversations(h), tasks: () => viewTasks(h), graph: () => viewGraph(h) }[sel.tab]();
   } else if (sel.scope === 'unassigned') {
@@ -1124,8 +1179,9 @@ function render(navigated) {
     body = viewAgents(S.agents);
   }
   setHTML($('tabs'), tabs);
+  setHTML($('headActions'), h && h !== 'main' ? `<button class="danger-btn" type="button" data-delete-hub="${esc(h)}">${ic('x')}Delete hub</button>` : '');
   setHTML($('title'), title);
-  setHTML($('subtitle'), subtitle);
+  $('title').title = subtitle;
   const view = $('view');
   if (setHTML(view, body)) {
     document.querySelectorAll('details[data-id]').forEach((d) => { if (open.has(d.dataset.id)) d.open = true; });
@@ -1141,9 +1197,9 @@ function render(navigated) {
 function renderGone() {
   $('conn').className = 'conn bad'; $('connText').textContent = 'Not found';
   setHTML($('crumb'), `${ic('chev')}<a href="/">All projects</a>`);
-  setHTML($('title'), `${ic('sprout')}No hub here`);
-  setHTML($('subtitle'), '');
+  setHTML($('title'), `${ic('inbox')}No hub here`);
   setHTML($('tabs'), '');
+  setHTML($('headActions'), '');
   $('composerWrap').hidden = true;
   setHTML($('view'), emptyBox('This project has no Session Hub', 'It may have been wiped with /hub-wipe. Run /hub in a session in the project to start a new one, or <a href="/">see all projects</a>.'));
 }
@@ -1181,7 +1237,7 @@ function connect() {
   };
 }
 
-$('logo').innerHTML = ic('sprout');
+$('logo').innerHTML = ic('hubs');
 $('newHubBtn').innerHTML = ic('plus');
 $('hubsHead').innerHTML = `${ic('hubs')}<div>${term('Hubs', 'Groups of agents that can talk to each other')}</div>`;
 $('agentsHead').innerHTML = `${ic('users')}<div>${term('Agents', 'Sessions registered with /hub')}</div>`;

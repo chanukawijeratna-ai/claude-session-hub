@@ -193,25 +193,54 @@ test('quit takes an agent out of every hub and stops its listener', async () => 
   hub('quit', '--as', 'backend');
   await Promise.race([exited, new Promise((_, rej) => setTimeout(() => rej(new Error('listener still running')), 4000))]);
   const { json: s } = await json('GET', api('state'));
-  const b = s.agents.find((a) => a.name === 'backend');
-  assert.deepStrictEqual(b.hubs, []);
-  assert.strictEqual(b.online, false);
+  assert.ok(!s.agents.some((a) => a.name === 'backend'), 'an agent that left is not shown');
   hub('join', 'backend');
   assert.match(hub('hubs'), /main: backend/);
 });
 
-test('an unassigned agent is told to keep listening, and dragging a left agent back reactivates it', async () => {
+test('unassigned agents stay in the app; agents that left are gone from it until /hub', async () => {
   await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'remove' });
-  const out = hub('inbox', '--as', 'frontend');
-  assert.match(out, /no hub[\s\S]*keep restarting your listener[\s\S]*Do not run \/hub/);
+  assert.match(hub('inbox', '--as', 'frontend'), /no hub[\s\S]*keep restarting your listener[\s\S]*Do not run \/hub/);
+  assert.ok((await json('GET', api('state'))).json.agents.some((a) => a.name === 'frontend' && a.hubs.length === 0));
+  await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'add' }); // drag back in
+  assert.match(hub('hubs'), /main: [^\n]*frontend/);
 
-  hub('quit', '--as', 'frontend'); // like /hub-leave
-  assert.strictEqual((await json('GET', api('state'))).json.agents.find((a) => a.name === 'frontend').left !== undefined, true);
-  await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'add' });
-  const back = (await json('GET', api('state'))).json.agents.find((a) => a.name === 'frontend');
-  assert.strictEqual(back.left, undefined);
-  assert.deepStrictEqual(back.hubs, ['main']);
-  assert.match(hub('inbox', '--as', 'frontend'), /active again[\s\S]*hub wait --as frontend/);
+  hub('quit', '--as', 'frontend'); // /hub-leave
+  const s = (await json('GET', api('state'))).json;
+  assert.ok(!s.agents.some((a) => a.name === 'frontend'), 'hidden from the UI');
+  assert.ok(!(await json('GET', '/api/projects')).json.projects[0].agents.some((a) => a.name === 'frontend'));
+  assert.doesNotMatch(hub('agents'), /^frontend/m);
+  const r = await json('POST', api('membership'), { agent: 'frontend', hub: 'main', action: 'add' });
+  assert.strictEqual(r.status, 400);
+  assert.match(r.json.error, /has left[\s\S]*\/hub/);
+  hub('join', 'frontend'); // /hub brings it back
+  assert.ok((await json('GET', api('state'))).json.agents.some((a) => a.name === 'frontend'));
+});
+
+test('deleting a hub needs its name typed, wipes its data and takes its agents out; MAIN stays', async () => {
+  await json('POST', api('hubs'), { name: 'temp' });
+  await json('POST', api('membership'), { agent: 'frontend', hub: 'temp', action: 'add' });
+  hub('post', 'temp news', '--hub', 'temp', '--as', 'frontend');
+  const png = Buffer.from('89504e470d0a1a0a', 'hex').toString('base64');
+  await json('POST', api('work'), { hub: 'temp', lead: 'frontend', title: 'temp work', images: [{ name: 'a.png', type: 'image/png', data: png }] });
+  const before = (await json('GET', api('state'))).json;
+  const img = before.tasks.find((t) => t.title === 'temp work').images[0].file;
+  hub('inbox', '--as', 'frontend');
+
+  assert.match((await json('POST', api('deletehub'), { name: 'temp', confirm: 'tmp' })).json.error, /type the hub name "TEMP"/);
+  assert.match((await json('POST', api('deletehub'), { name: 'main', confirm: 'main' })).json.error, /MAIN hub cannot be deleted/);
+  const r = await json('POST', api('deletehub'), { name: 'temp', confirm: 'TEMP' });
+  assert.strictEqual(r.status, 200, r.body);
+  assert.deepStrictEqual(r.json.members, ['frontend']);
+
+  const after = (await json('GET', api('state'))).json;
+  assert.ok(!after.hubs.includes('temp'));
+  assert.ok(!after.events.some((e) => e.hub === 'temp'));
+  assert.ok(!after.agents.find((a) => a.name === 'frontend').hubs.includes('temp'));
+  assert.ok(!fs.existsSync(path.join(root, '.claude-hub', 'attachments', img)));
+  assert.match(hub('inbox', '--as', 'frontend'), /\[HUB\] user deleted hub "temp"/);
+  await json('POST', api('hubs'), { name: 'temp' }); // a new hub with the same name starts empty
+  assert.ok(!(await json('GET', api('state'))).json.events.some((e) => e.hub === 'temp'));
 });
 
 test('wipe needs the user to type the slug, then deletes everything', async () => {

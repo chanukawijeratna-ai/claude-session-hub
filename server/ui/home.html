@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Session Hub</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%231f2522'/%3E%3Cg fill='none' stroke='%23c6e05a' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-7'/%3E%3Cpath d='M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z'/%3E%3Cpath d='M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%232f6b3a'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='2.6'/%3E%3Ccircle cx='6' cy='7' r='1.8'/%3E%3Ccircle cx='18' cy='7' r='1.8'/%3E%3Ccircle cx='12' cy='18.5' r='1.8'/%3E%3Cpath d='m7.5 8.2 2.6 2.2M16.5 8.2l-2.6 2.2M12 14.6v2.1'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@ body { display: grid; grid-template-rows: 56px 1fr; min-height: 100%; }
 .page { overflow-y: auto; }
 .wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 64px; padding-left: max(28px, env(safe-area-inset-left, 0px)); padding-right: max(28px, env(safe-area-inset-right, 0px)); }
 .hero { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 40px; margin-bottom: 28px; }
-.hero h1 { margin: 0; font: 700 40px/1.05 var(--serif); letter-spacing: -.02em; }
+.hero h1 { margin: 0; font: 700 34px/1.05 var(--serif); letter-spacing: .02em; text-transform: uppercase; }
 .hero p { margin: 8px 0 0; color: var(--muted); max-width: 60ch; }
 .totals { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-left: auto; font-size: 14px; color: var(--muted); }
 .totals span { display: inline-flex; align-items: center; gap: 7px; }
@@ -27,11 +27,11 @@ body { display: grid; grid-template-rows: 56px 1fr; min-height: 100%; }
 .proj.enter { animation: rise .45s var(--ease) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 .proj-h { display: flex; gap: 13px; align-items: center; min-width: 0; }
-.proj-h .tile { width: 42px; height: 42px; border-radius: 11px; background: var(--side); color: var(--lime); display: grid; place-items: center; flex: none; transition: transform .35s var(--ease); }
+.proj-h .tile { width: 42px; height: 42px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; flex: none; transition: transform .35s var(--ease); }
 .proj:hover .proj-h .tile { transform: rotate(-6deg); }
 .proj-h .tile svg.i { width: 21px; height: 21px; }
 .proj-h .nm { min-width: 0; }
-.proj-h .nm b { display: block; font: 700 19px/1.2 var(--serif); letter-spacing: -.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.proj-h .nm b { display: block; font: 700 16px/1.2 var(--serif); letter-spacing: .03em; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .proj-h .nm small.d { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .crew { display: flex; align-items: center; gap: 12px; }
 .faces { display: flex; padding-left: 5px; }
@@ -71,7 +71,7 @@ body { display: grid; grid-template-rows: 56px 1fr; min-height: 100%; }
     <section class="hero">
       <div>
         <h1>Your projects</h1>
-        <p>Every project on this computer with a Session Hub. Open one to see its agents, their work and how they talk.</p>
+        
       </div>
       <div class="totals" id="totals"></div>
     </section>
@@ -118,7 +118,7 @@ function render(list) {
   setHTML($('totals'), list.length ? `<span>${ic('folder')}<b>${list.length}</b> ${list.length === 1 ? 'project' : 'projects'}</span>
     <span>${ic('users')}<b>${agents}</b> online</span><span>${ic('tasks')}<b>${open}</b> open ${open === 1 ? 'task' : 'tasks'}</span>` : '');
   setHTML($('projects'), list.length ? list.map(card).join('')
-    : `<div class="empty" style="grid-column:1/-1">${ic('sprout')}<b>No projects yet</b>Open a Claude Code session in a project and run <span class="mono">/hub-init</span>. It shows up here.</div>`);
+    : `<div class="empty" style="grid-column:1/-1">${ic('inbox')}<b>No projects yet</b>Open a Claude Code session in a project and run <span class="mono">/hub-init</span>. It shows up here.</div>`);
   first = false;
 }
 
@@ -133,7 +133,7 @@ async function load() {
   }
 }
 
-$('logo').innerHTML = ic('sprout');
+$('logo').innerHTML = ic('hubs');
 initTheme();
 load();
 setInterval(load, 3000);

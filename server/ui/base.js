@@ -8,8 +8,8 @@ function setHTML(el, html) { if (el._html === html) return false; el.innerHTML =
 
 // ---------- icons (24px line set) ----------
 const P = {
-  sprout: '<path d="M12 20v-7"/><path d="M12 13c0-4 2.6-6.6 7-6.6 0 4-2.6 6.6-7 6.6z"/><path d="M12 15.2c0-3.1-2.2-5.3-6-5.3 0 3.1 2.2 5.3 6 5.3z"/>',
-  leaf: '<path d="M5 19c0-8.5 5.2-14 15-14 0 9.8-5.5 15-14 15"/><path d="M5 19c3.2-4.2 6.4-6.9 10.5-9"/>',
+  home: '<path d="M4 11 12 4.5 20 11"/><path d="M6 9.5v10h12v-10"/><path d="M10 19.5v-5h4v5"/>',
+  inbox: '<path d="M3.5 13.5 6 5h12l2.5 8.5V19a1 1 0 0 1-1 1h-15a1 1 0 0 1-1-1z"/><path d="M3.5 13.5h5l1.5 2.5h4l1.5-2.5h5"/>',
   lock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
   hubs: '<circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="20" r="2"/><path d="m6.6 7.3 3.1 2.6M17.4 7.3l-3.1 2.6M12 15v3"/>',
   users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .6 3.2 2.3 3.6 5.2"/>',
@@ -67,14 +67,14 @@ function dur(ms) {
 }
 const clock = (ts) => new Date(tsOf(ts)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
-const term = (name, desc) => `<b>${name}</b><small class="d">${desc}</small>`;
+const term = (name, desc) => `<b title="${esc(String(desc).replace(/<[^>]*>/g, ''))}">${name}</b>`;
 
 const EARTH = ['#3f7d4e', '#6b7f2a', '#2c7a74', '#8a6a3a', '#a8643a', '#4f7591', '#5f8a3c', '#7d5a74', '#99502f', '#37698a'];
 function nameHash(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h; }
 function initials(name) { const p = name.split('-'); return (p.length > 1 ? p[0][0] + p[1][0] : name.slice(0, 2)).toUpperCase(); }
 
 function toast(msg) {
-  const t = $('toast'); t.innerHTML = `${ic('sprout')}<span>${esc(msg)}</span>`; t.classList.add('show');
+  const t = $('toast'); t.innerHTML = `${ic('check')}<span>${esc(msg)}</span>`; t.classList.add('show');
   clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
